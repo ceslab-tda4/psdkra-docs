@@ -1,0 +1,205 @@
+
+Release notes - 06_01_01
+========================
+
+Features
+--------
+
+.. NOTE::
+
+   New features vs previous release are marked in **bold**
+
+
+Hardware support
+****************
+
+#. J721E Alpha and Beta EVM support with Leo PMIC processor board
+#. Fusion1 RevC daughter card with UB960 FPDLink deserializer
+#. IMX390 2MP CSI2 image sensor + UB953 FPDLink serializer
+#. AR0233 2.5MP CSI2 image sensor + UB953 FPDLink serializer
+#. AR0820 8MP CSI2 image sensor + UB953 FPDLink serializer
+#. GESI(Gateway/Ethernet Switch/Industrial) daughter card (for additional ethernet and CAN ports)
+#. Infotainment daughter card (for HDMI output)
+
+Software features
+*****************
+
+.. IMPORTANT::
+
+   Below is a summary of key features. Refer individual :ref:`sdk_components` release notes for more details
+
+Vision Apps (ADAS, Vision, DL demos)
+####################################
+
+- OpenVX based demos for ADAS, Vision, deep learning applications
+
+  - TI-RTOS on C7x, C6x, R5F and Linux on A72
+  - Integrates all major PSDKRA and PSDKLA SW components like TIDL, MMALIB, PDK, OpenVX, OpenGL, video codec, C6x algorithms, imaging/sensors, IPC, Linux, TI-RTOS, SPL/uboot.
+  - Integrates all major HW components like CSI2 camera, eDP/HDMI display, UART, I2C, ethernet, SD card
+- Deep learning demos
+
+  - Image Classification demo
+  - Auto valet parking (AVP) demo
+
+    - semantic segmentation, Parking spot detect and Vehicle detect algorithms
+    - **1 channel, 3 algo @ 56 fps mode**
+    - **3 channel, 3 algo @ 28 fps mode (combined network for parking spot and vehicle detect)**
+
+- Surround view demos
+
+  - 3D surround view using GPU on 4x 2MP 30fps live camera input
+  - 3D surround view calibration application
+
+- ADAS/Vision demos
+
+  - **Dense optical flow (DOF) demo**
+  - **Stereo disparity engine demo**
+  - Single and multi camera CSI2RX + VISS + LDC + MSC + Display demo
+  - C7x algorithm offload demo
+
+- Perception Toolkit (PTK) Demos
+
+  - **Camera based SFM and occupancy grid mapping using Dense optical flow HW engine**
+  - **Radar and lidar occupancy grid mapping**
+  - **Camera SFM, radar, lidar fusion for occupancy grid mapping**
+
+- OpenVX target nodes
+
+  - image pre-processing (YUV 2 RGB) nodes for DL demos
+  - image post-processing and visualization nodes for deep learning, DOF, Stereo demos
+  - **lidar, radar, camera SFM nodes for PTK demos**
+  - OpenGL nodes for surround view
+
+- Profiling, logging and other utility APIs
+
+Gateway Demos
+#############
+- CAN-Ethernet gateway demo to showcase P2P (Protocol to Protocol) translation
+- Full duplex routing between: CAN-to-Ethernet, Ethernet-to-CAN and CAN-to-CAN.
+
+Platform Development Kit (PDK)
+##############################
+- RTOS device drivers running on R5F, C6x, C7x, A72
+- Supported drivers and modules
+
+  - Board diagnostic library
+  - CPSW (2G and 9G)
+  - CSI2 camera
+  - CSL-FL (Chip support library)
+  - DSS display (eDP and HDMI, BT601 discrete sync mode)
+  - GPIO
+  - I2C
+  - IPC (inter processor communication)
+  - McASP
+  - MMCSD with FATFS (A72 with RTOS)
+  - OSAL
+  - SBL secondary bootloader
+  - SCI Client (DMSC interface)
+  - SPI driver (SPI, QSPI, OSPI, Hyperflash)
+  - UART
+  - UDMA and DRU
+  - VPAC and DMAC (VHWA)
+
+
+MCU Software (MCU SW)
+#####################
+- AutoSAR MCAL driver and demo applications running on R5F
+- AutoSAR MCAL driver for Adc, Can, CDD IPC,Dio, Eth, Gpt, Pwm, Spi & Wdg
+- MCU Demo Applications
+
+  - CAN Profiling Application
+  - CDD IPC Profiling Application
+  - SPI IPC Profiling Application
+
+TI Deep learning Library (TIDL) and MMALIB
+###########################################
+- TIDL deep learning inference engine library running on C7x/MMA
+- MMALIB for accelerating convolution, deconvolution layers on MMA (used by TIDL internally)
+- TIDL network import tool and performance analyzer tool
+- Supports Caffe, ONXX, TFlite network import formats
+- Supported layers: Convolution, **deconvolution**, pooling, ReLU, Elt-wise, Inner product, Soft-max, and many more, refer TIDL user guide (|tidl_user_guide|)
+- **Custom / User defined layer Call-back** to plugin user specific layers
+
+TI OpenVX (TIOVX)
+#################
+- OpenVX v1.1 compliant implementation with graph pipelining and user data object extension support
+- OpenVX API on A72 running Linux
+- OpenVX target kernels on C7x, C6x, R5F, A72
+- OpenVX v1.1 C6x kernels
+- OpenVX nodes for
+
+  - TIDL (C7x)
+  - VISS (R5F)
+  - LDC (R5F)
+  - MSC (multi-scalar) (R5F)
+  - Pyramid (using MSC) (R5F)
+  - BLNF (bilateral noise filter) (R5F)
+  - CSI2 camera (R5F)
+  - Display (eDP and HDMI) (R5F)
+  - **Video decode (R5F)**
+- OpenVX tutorials for getting started
+- PyTIOVX tools for target kernel code generation
+
+Imaging
+#######
+- IMX390 2MP sensor driver (30/60fps) with IQ tuning
+- AR0233 2.5MP sensor driver with IQ tuning
+- **AR0820 8MP sensor driver with IQ tuning**
+- TI Auto-exposure and auto white-balance algorithms
+
+Ethernet Switch Firmware (ETHFW)
+################################
+- Ethernet switch firmware running on R5F for CPSW9G
+- Layer 2 switching
+- NDK integration
+- Remote switch configuration server
+- GUI switch configuration tool
+- Inter VLAN routing
+- IP next header filtering
+- Rate limiting
+
+TI Autonomous Driving Algorithms (TIADALG)
+##########################################
+- Image pre-processing APIs for color plane conversion and separation YUV to RGB for DL applications (C6x optimized)
+- Camera Pose estimation API using solve pnp technique (C6x optimized)
+- **Visual localization algorithm (C6x optimized)**
+
+Video Codecs
+############
+- Single and multi channel H264 decoder on RTOS R5F
+- Upto 1080p 30fps resolution, I and I+P frame
+- NV12 and 8b output
+
+TI-RTOS
+#######
+- SysBIOS for R5F, C6x, C7x, A72
+- Network developer kit (NDK) on R5F
+
+Code Gen Tools (CGT)
+####################
+- TI Compiler, assembler, linker for R5F, C6x, C7x
+- GCC compiler for A72 (needs to be downloaded separately)
+
+Device Support and Validation Information
+-----------------------------------------
+
++--------------------+-------------------------------+---------------------------------+-------------------------------+
+| SoC                | Build Host (OS)               | Run Target (OS)                 | Test Plaform                  |
++====================+===============================+=================================+===============================+
+| J721e              | x86_64 (Linux Ubuntu 18.04)   | R5F, C6x, C7x running TI-RTOS   | J721e EVM with daughter cards |
+|                    |                               |                                 |                               |
+|                    |                               | A72 running Linux               |                               |
++--------------------+-------------------------------+---------------------------------+-------------------------------+
+| PC emulation mode  | x86_64 (Linux Ubuntu 18.04)   | x86_64 (Linux Ubuntu 18.04)     | x86_64 (Linux Ubuntu 18.04)   |
++--------------------+-------------------------------+---------------------------------+-------------------------------+
+
+Known Issues
+------------
+
+Refer to individual :ref:`sdk_components` release notes for known issues in each component
+
+Additional Reports
+------------------
+
+For additional reports like test report, traceability refer [|psdkra_additional_reports|]
+

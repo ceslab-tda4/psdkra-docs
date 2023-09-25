@@ -1,0 +1,208 @@
+
+.. _developing-with-hs-devices:
+
+Developing with High Security Devices
+=====================================
+
+Introduction
+------------
+
+The K3 security architecture supports different "Device Types" controlled by eFuse settings programmed
+during device manufacturing. Each Device Type offers different capabilities for Debug and Emulation as
+well as different behavior in functional operating modes. Depending on the Device Type, some security
+mechanisms are relaxed or enforced.
+
+|platform| supports General Purpose (GP) devices and High Secure (HS) device types. The high level
+difference between these devices are:
+
+- GENERAL PURPOSE (GP):
+  The device is not capable of secure operation. Security features are
+  transparent and do not affect operation either functionally and for Debug.
+  However, secrets such as the secure ROM code, secure keys and other secure
+  peripherals are not accessible.
+
+- HIGH SECURITY - Field Securable (HS-FS):
+  In an HS-FS device, only the secure island is protected and no other security
+  on the device is enforced. This is the device variant which is used for
+  blowing customer keys into the device eFuses using the OTP keywriter (separate
+  overlay package). This action will transition the device to an HS-SE device,
+  as described in the next bullet
+
+- HIGH SECURITY - SECURE ENFORCED (HS-SE):
+  In an HS-SE device, all security features are enabled, all secrets within the
+  device are fully protected, all of the security goals are fully enforced,
+  debug override sequence is supported, and the device enforces secure boot.
+
+- HIGH SECURITY Prime (HS Prime):
+  HS-SE Prime is a variant of the standard HS-SE device. HS Prime uses customer
+  keys for establishing root of trust on the device, bypassing all TI keys. This
+  is accomplished via signing/encrypting the DMSC image with the customer keyset
+  and requires custom DMSC add-on package to enable. This device type and add-on
+  package is only available for select users.
+
+The scope of this developer note is to point to build bootloaders/applications
+and run on HS devices.
+
+Documentation References
+------------------------
+
+X.509 Extensions
+****************
+
+All boot images are accompanied by a signed X.509 certificate. Custom
+certificate extensions defined by TI provide information for both ROM and SYSFW
+to use for image authentication. The extensions are defined for each below:
+
+========= ===================================================================================== ====================================
+Component Documentation Reference                                                               Section
+========= ===================================================================================== ====================================
+ROM       See device Technical Reference Manual                                                 Initialization --> Boot Image Format
+SYSFW     http://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/security/sec_cert_format.html Extensions
+========= ===================================================================================== ====================================
+
+.. note::
+
+   All certificates bootloader, SYSFW, and board configuration certificates use
+   a SWREV extension to indicate respective software revisions. SWREV in the
+   certificate must be greater or equal than the SWREV programmed into the
+   device eFuses in order for the device to boot properly.
+
+   SWREV must be set to **at least 1** for all devices to ensure boot
+   as all TI devices now ship from the factory with the default SWREV set to 1
+   for SBL, SYSFW, and board configuration. The certificate values **must** be
+   equal or greater than the current value in the device efuses and will need to
+   be incremented during the device lifecycle whenever the efuse values are
+   incremented to provide anti-rollback protection. See
+   http://software-dl.ti.com/tisci/esd/latest/6_topic_user_guides/otp_revision.html
+   for more details on the efuse values and how to read and increment using the
+   TISCI API.
+
+Linux Guides to work with HS devices
+************************************
+
+=============   ====================================================================== ================================================================================ =========
+SDK Component   Documentation                                                          Description                                                                       Section
+=============   ====================================================================== ================================================================================ =========
+uboot           |uboot_README|                                                         Overview of boot flow and steps to build u-boot and boot on GP devices           Boot Flow
+uboot           https://github.com/u-boot/u-boot/blob/master/doc/README.ti-secure      Steps to build u-boot and boot on HS devices                                     Invoking the script for K3 Secure Devices
+k3-image-gen    https://git.ti.com/cgit/k3-image-gen/k3-image-gen/tree/README.md       Steps to create an image tree blob (a.k.a. FIT image) on GP Devices              Building SYSFW Image and Configuration Data
+k3-image-gen    https://git.ti.com/cgit/k3-image-gen/k3-image-gen/tree/README.md       Steps to create an image tree blob (a.k.a. FIT image) on HS Devices              Building SYSFW Image for High-Security(HS) devices
+=============   ====================================================================== ================================================================================ =========
+
+RTOS Guides to work with HS devices
+***********************************
+
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+SBL             |pdk_user_guide|                       Bootloader Execution Sequence (Sequnce of steps from ROM to SBL to Application   5. Bootloader (SBL) » 5.2. Jacinto 7 SBL >> Bootloader Execution Sequence
+SBL             |pdk_user_guide|                       Build steps to create an SBL Image for GP devices                                5. Bootloader (SBL) » 5.2. Jacinto 7 SBL >> Building the SBL and its components
+SBL             |pdk_user_guide|                       Steps to enable and disable JTAG for HS devices                                  5. Bootloader (SBL) » 5.2. Jacinto 7 SBL >> Enabling/Disabling JTAG on secure devices
+SBL             |pdk_user_guide|                       Steps to prepare boot media for GP and HS devices                                5. Bootloader (SBL) » 5.2. Jacinto 7 SBL >> Compiling apps that can be loaded by SBL
+=============   ====================================== ================================================================================ =========
+
+
+PDK steps for HS Devices
+------------------------
+
+The steps to build HS SBL and HS Uniflash Programmer are as below:
+
+- TIFS board configuration update
+
+  PDK provides a default board configuration definition which is intended for
+  use with the standard SDK options. Any customization of the board
+  configurations requires that the board config binaries are rebuilt before the
+  bootloader can consume their binary data for TIFS configuration.
+
+::
+
+   cd <pdk_install_dir>/packages/ti/build
+   make sciclient_boardcfg_hs BOARD=$BOARD
+
+- Building HS SBL
+
+::
+
+   cd <pdk_install_dir>/packages/ti/build
+   make -s sbl_<bootmode>_img_hs BOARD=$BOARD
+
+  where boot mode is mmcsd, ospi, hyperflash, uart
+  This generates HS SBL images under <pdk_install_dir>/packages/ti/boot/sbl/binary/<$BOARD>_hs folder
+
+- Building HS Uniflash programmer
+  Similar to SBL. Instead provide the make target as “board_utils_uart_flash_programmer_hs”
+  This generates HS uniflash programmer image under <pdk_install_dir>/packages/ti/board/utils/uniflash/target/bin/<$BOARD>_hs folder
+
+Linux SPL steps for HS Devices
+------------------------------
+
+.. ifconfig:: CONFIG_part_variant in ('J721E', 'J721S2')
+
+    - Reference the developer note :ref:`psdkl-with-psdkr`
+
+.. ifconfig:: CONFIG_part_variant in ('J7200')
+
+    - Not applicable to J7200 devices.
+
+.. ifconfig:: CONFIG_part_variant in ('AM65XX')
+
+    - Not applicable to AM65XX devices.
+
+
+Signing TIFS for HS Prime Device Variants
+-----------------------------------------
+
+.. ifconfig:: CONFIG_part_variant not in ('J721E', 'J7200')
+
+   HS Prime is not supported for the |platform| platform.
+
+.. ifconfig:: CONFIG_part_variant in ('J721E', 'J7200')
+
+   For the HS Prime device variant, the TIFS image is built and signed directly
+   by the user, and no building or signing is provided by TI. Please refer to
+   the TIFS build steps described in the add-on source package for HS prime
+   devices.
+
+   Once the TIFS binary has been successfully built, it can be signed using the
+   SDK tools. A reference is provided in the PDK scripts in the SDK:
+
+.. ifconfig:: CONFIG_part_variant in ('J721E')
+
+   .. code:: bash
+
+      cd <pdk_install_dir>/packages/ti/drv/sciclient
+      TIFS_DIR=<path_to_tifs_dir> ./tools/firmwareHeaderGen.sh j721e-hsp
+
+   J721E PG1.1 HS-SE Production parts have the SWREV Efuse value = 1.
+   (J721E PG1.0 devices have SWREV = 0.)
+
+   ROM on these devices will boot SBL/SPL and TIFS only if the 
+   certificate contains a value of SWREV Efuse >= 1 to enforce
+   anti-rollback.
+   The SDK 8.0 enables SWREV Certificate Value = 1 for:
+
+   - SBL/SPL signing scripts
+   - TIFS HS-SE binary inner certificate.
+   - The SDK 7.1/7.2/7.3 sets the default SWREV Certificate Value = 0, 
+     and that would lead to the boot process hanging if the SDK 7.x 
+     binaries were used on a J721E PG1.1 HS device.
+   - The SDK 7.x release page have been updated with the following patches:
+       
+       - SDK 7.1: https://software-dl.ti.com/jacinto7/esd/processor-sdk-rtos-jacinto7/07_01_00_11/exports/psdk_rtos_j721e_7.1_es11_src_patch2.tar.gz
+       - SDK 7.2: https://software-dl.ti.com/jacinto7/esd/processor-sdk-rtos-jacinto7/07_02_00_06/exports/psdk_rtos_j721e_es11_src_patch2.tar.gz
+       - SDK 7.3: https://software-dl.ti.com/jacinto7/esd/processor-sdk-rtos-jacinto7/07_03_00_07/exports/psdk_rtos_j721e_7.3_es11_src_patch.tar.gz
+ 
+
+   - This patch provides the following:
+       - PDK patch for SBL signing scripts to set SWREV Certificate Value =1
+       - PDK patch for 7.1/7.2/7.3 binaries with TIFS binary and inner certificate with SWREV Certificate Value =1
+       - Once this patch is applied the SBL/TIFS shall boot for both devices with SWREV=0 (pre-prod) and SWREV=1 (production)
+   
+
+
+.. ifconfig:: CONFIG_part_variant in ('J7200')
+
+   .. code:: bash
+
+      cd <pdk_install_dir>/packages/ti/drv/sciclient
+      TIFS_DIR=<path_to_tifs_dir> ./tools/firmwareHeaderGen.sh j7200-hsp

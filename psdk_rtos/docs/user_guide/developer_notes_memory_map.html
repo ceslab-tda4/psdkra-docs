@@ -1,0 +1,1069 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.9. Understanding and updating SDK memory map for J721E &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.10. Developing deep learning applications" href="developer_notes_tidl.html"/>
+        <link rel="prev" title="8.8. Using Processor SDK Linux with Processor SDK RTOS" href="developer_notes_psdkla.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.9. Understanding and updating SDK memory map for J721E</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.9.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#terminology">8.9.2. Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-partitions-and-constraints">8.9.3. Memory partitions and constraints</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#additional-constraint-on-c7x-memory-map-spanning-2gb">8.9.3.1. Additional Constraint on C7X Memory Map Spanning 2GB</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#applying-the-memory-map">8.9.4. Applying the memory map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-pyti-psdk-rtos-for-generating-memory-map-files">8.9.5. Using PyTI_PSDK_RTOS for generating memory map files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installing-pyti-psdk-rtos">8.9.5.1. Installing PyTI_PSDK_RTOS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-pyti-psdk-rtos">8.9.5.2. Using PyTI_PSDK_RTOS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#applying-the-generated-memory-map">8.9.5.3. Applying the generated memory map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#allocating-64-bit-ddr-space-to-c7x-dsp">8.9.5.4. Allocating 64-bit DDR space to C7x DSP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#constructing-the-memory-map">8.9.5.5. Constructing the memory map</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.9. </span>Understanding and updating SDK memory map for J721E</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="understanding-and-updating-sdk-memory-map-for-platform">
+<span id="developer-notes-memory-map"></span><h1><span class="section-number">8.9. </span>Understanding and updating SDK memory map for J721E<a class="headerlink" href="#understanding-and-updating-sdk-memory-map-for-platform" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">8.9.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Jacinto 7 SOC’s have multiple CPUs all collaborating to realize a given application.
+For all the different CPUs to co-exist and exchange data between themselves, an integrator needs to
+partition the common DDR memory among the different CPUs and shared memory regions.</p>
+<p>This developer note describes the memory partitions that are needed and their constraints.
+It also describes a Python based tool which can be used to automate the generation of certain files which are used
+to build the software for a given memory map</p>
+</div>
+<div class="section" id="terminology">
+<h2><span class="section-number">8.9.2. </span>Terminology<a class="headerlink" href="#terminology" title="Permalink to this headline">¶</a></h2>
+<p>The CPU names used on Linux side and RTOS side are slightly different as listed below,</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 47%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>CPU name in RTOS</p></th>
+<th class="head"><p>CPU name in Linux</p></th>
+<th class="head"><p>Applicable SoC’s</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mcu1_0 / mcu1_1</p></td>
+<td><p>mcu_r5fss0_core0 / mcu_r5fss0_core1</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu2_0 / mcu2_1</p></td>
+<td><p>main_r5fss0_core0 / main_r5fss0_core1</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu3_0 / mcu3_1</p></td>
+<td><p>main_r5fss1_core0 / main_r5fss1_core1</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu4_0 / mcu4_1</p></td>
+<td><p>main_r5fss2_core0 / main_r5fss2_core1</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mpu1</p></td>
+<td><p>na</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>c6x_1</p></td>
+<td><p>c66_0</p></td>
+<td><p>J721E</p></td>
+</tr>
+<tr class="row-even"><td><p>c6x_2</p></td>
+<td><p>c66_1</p></td>
+<td><p>J721E</p></td>
+</tr>
+<tr class="row-odd"><td><p>c7x_1</p></td>
+<td><p>c71_0</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>c7x_2</p></td>
+<td><p>c71_1</p></td>
+<td><p>J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>c7x_3</p></td>
+<td><p>c71_2</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>c7x_4</p></td>
+<td><p>c71_3</p></td>
+<td><p>J784S4</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this document we will use RTOS names, unless stated explicitly.</p>
+</div>
+</div>
+<div class="section" id="memory-partitions-and-constraints">
+<h2><span class="section-number">8.9.3. </span>Memory partitions and constraints<a class="headerlink" href="#memory-partitions-and-constraints" title="Permalink to this headline">¶</a></h2>
+<p>The table below shows the various partitions that are needed in a typical Jacinto 7 memory map.
+Depending on the end applications there can be more or less partitions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li><p>All partitions for the MCU’s listed below MUST be in the 32b address space i.e starting with 0x80000000.  Otherwise, a RAT must be performed on
+region to map it into the 32b address space.  Please note a few important considerations below when configuring your memory map.</p>
+<blockquote>
+<div><ul>
+<li><p>Consideration 1:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The upper limit of the 32b memory region will depend on the u-boot memory reservation as described here <a class="reference external" href="https://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-jacinto7/09.00.00.08/exports/docs/linux/Foundational_Components/U-Boot/UG-General-Info.html#available-ram-for-image-download">https://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-jacinto7/09.00.00.08/exports/docs/linux/Foundational_Components/U-Boot/UG-General-Info.html#available-ram-for-image-download</a>.</p></li>
+<li><p>If the memory being used in the vision apps memory map conflicts with the u-boot memory, there will be an error thrown in the u-boot log.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Consideration 2:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If using SBL as the bootloader, please note that the SBL uses scratch memory at a specified address.  Please refer to the document here
+<a href="../../../pdk_jacinto_09_00_00_45/docs/userguide/jacinto/boot/boot_k3.html#image-formats" target="_blank">LINK</a> which describes this location (“SBL_SCRATCH_MEM_START”) and where it can be reconfigured.</p></li>
+<li><p>Ideally, this memory would be located within the DMA Buf shared memory region in order to avoid errors when loading remote cores.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The 16MB alignment “constraints” are mainly due to in C6x, cache/non-cache granularity.</p></li>
+</ul>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 29%" />
+<col style="width: 27%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Partition</p></th>
+<th class="head"><p>Constraints</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Applicable SoC’s</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mcu1_0 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu1_0 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu1_1 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu1_1 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu2_0 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu2_0 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu2_1 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu2_1 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu3_0 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu3_0 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu3_1 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu3_1 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu4_0 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu4_0 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>mcu4_1 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>mcu4_1 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>c6x_1 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 16MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E</p></td>
+</tr>
+<tr class="row-odd"><td><p>c6x_1 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+<li><p>MUST not overlap with a 16MB region
+starting from c6x_1 IPC region</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E</p></td>
+</tr>
+<tr class="row-even"><td><p>c6x_2 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 16MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E</p></td>
+</tr>
+<tr class="row-odd"><td><p>c6x_2 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+<li><p>MUST not overlap with a 16MB region
+starting from c6x_2 IPC region</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E</p></td>
+</tr>
+<tr class="row-even"><td><p>c7x_1 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>c7x_1 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>c7x_2 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>c7x_2 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J721S2 / J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>c7x_3 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>c7x_3 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>c7x_4 &lt;-&gt; linux IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 1MB aligned</p></li>
+<li><p>MUST be non-cached on this CPU and Linux</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between this CPU and Linux</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-odd"><td><p>c7x_4 code/data</p></td>
+<td><ul class="simple">
+<li><p>cached on this CPU</p></li>
+</ul>
+</td>
+<td><p>Used for holding code/data for this CPU</p></td>
+<td><p>J784S4</p></td>
+</tr>
+<tr class="row-even"><td><p>RTOS &lt;-&gt; RTOS IPC shared region</p></td>
+<td><ul class="simple">
+<li><p>MUST be 16MB aligned</p></li>
+<li><p>MUST be atleast 32MB</p></li>
+<li><p>MUST be multiple of 16MB</p></li>
+<li><p>MUST be non-cached on all CPUs</p></li>
+</ul>
+</td>
+<td><p>Used for IPC between all the RTOS CPUs</p></td>
+<td><p>J721E / J721S2 / J784S4</p></td>
+</tr>
+</tbody>
+</table>
+<p>The table below lists additional partitions required when using vision_apps and tiovx,</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 30%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Partition</p></th>
+<th class="head"><p>Constraints</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vision apps remote log memory</p></td>
+<td><ul class="simple">
+<li><p>MUST be 16MB aligned</p></li>
+<li><p>MUST be non-cached at all CPUs</p></li>
+</ul>
+</td>
+<td><p>Used to redirect printf from all CPUs to Linux</p></td>
+</tr>
+<tr class="row-odd"><td><p>tiovx object descriptor memory</p></td>
+<td><ul class="simple">
+<li><p>MUST be placed after “vision apps log
+memory”</p></li>
+<li><p>Total size of “vision apps remote log
+memory” and this memory MUST be multiple
+of 16MB</p></li>
+<li><p>MUST be non-cached at all CPUs</p></li>
+</ul>
+</td>
+<td><p>Used to hold TI OpenVX object descriptors. Basically acts as
+meta data shared memory between all OpenVX CPUs</p></td>
+</tr>
+<tr class="row-even"><td><p>DMA Buf shared memory</p></td>
+<td><ul class="simple">
+<li><p>MUST be 16MB aligned</p></li>
+<li><p>MUST be cached at all CPUs</p></li>
+</ul>
+</td>
+<td><p>Used to hold large pixel/IO buffers which are to be exchanged
+between different CPUs</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="additional-constraint-on-c7x-memory-map-spanning-2gb">
+<h3><span class="section-number">8.9.3.1. </span>Additional Constraint on C7X Memory Map Spanning 2GB<a class="headerlink" href="#additional-constraint-on-c7x-memory-map-spanning-2gb" title="Permalink to this headline">¶</a></h3>
+<p>For the C7X memory map, if the range of the addresses span beyond 2GB, additional changes are required to be made in the code.  For more information, please
+reference the FAQ link <a class="reference external" href="https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1186433/faq-tda4vm-c7x-compiler-status-on-address-beyond---2gb">here</a>.</p>
+</div>
+</div>
+<div class="section" id="applying-the-memory-map">
+<h2><span class="section-number">8.9.4. </span>Applying the memory map<a class="headerlink" href="#applying-the-memory-map" title="Permalink to this headline">¶</a></h2>
+<p>The memory map described in previous section needs to be applied in the software to take effect when the software is run.
+This memory map is applied at multiple places within the software. In this section we list the files in which the
+memory map is applied. In next section, we describe a tool such that memory map can be specified at one place and then the
+modifications to different files are generated by the tool.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 40%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File type</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Example files</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Linux dts, dtso file</p></td>
+<td><p>The various carve outs or memory partitions as seen by Linux are listed
+here</p></td>
+<td><ul class="simple">
+<li><p>arch/arm64/boot/dts/ti/k3-&lt;soc&gt;-vision-apps.dtso</p></li>
+<li><p>arch/arm64/boot/dts/ti/k3-&lt;soc&gt;-rtos-memory-map.dtsi</p></li>
+<li><p>arch/arm64/boot/dts/ti/k3-&lt;soc&gt;-som-p0.dtsi</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Linker command file</p></td>
+<td><p>Defines the memory partitions as seen by a specific RTOS CPU</p></td>
+<td><ul class="simple">
+<li><p>vision_apps/platform/&lt;soc&gt;/rtos/&lt;cpu&gt;/linker_mem_map.cmd</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>MPU/MMU init files</p></td>
+<td><p>Sets up the different CPU specific MMU/MPU based on defined memory
+regions</p></td>
+<td><ul class="simple">
+<li><p>vision_apps/platform/&lt;soc&gt;/rtos/&lt;cpu&gt;/&lt;soc&gt;_mpu_cfg.c</p></li>
+<li><p>vision_apps/platform/&lt;soc&gt;/rtos/&lt;cpu&gt;/main.c</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>System init files</p></td>
+<td><p>System init functions where we need to pass memory partition information
+to different APIs, SW modules</p></td>
+<td><ul class="simple">
+<li><p>vision_apps/platform/&lt;soc&gt;/rtos/app_mem_map.h</p></li>
+<li><p>vision_apps/platform/&lt;soc&gt;/rtos/common/app_init.c</p></li>
+<li><p>vision_apps/platform/&lt;soc&gt;/&lt;hlos&gt;/app_init.c</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="using-pyti-psdk-rtos-for-generating-memory-map-files">
+<h2><span class="section-number">8.9.5. </span>Using PyTI_PSDK_RTOS for generating memory map files<a class="headerlink" href="#using-pyti-psdk-rtos-for-generating-memory-map-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installing-pyti-psdk-rtos">
+<span id="install-pyti-sdk-rtos"></span><h3><span class="section-number">8.9.5.1. </span>Installing PyTI_PSDK_RTOS<a class="headerlink" href="#installing-pyti-psdk-rtos" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Make sure python3.x and pip3.x is installed</p></li>
+<li><p>Do below to install PyTI_PSDK_RTOS using pip3</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span><span class="w"> </span><span class="n">vision_apps</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">PyTI_PSDK_RTOS</span>
+<span class="n">pip3</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="using-pyti-psdk-rtos">
+<h3><span class="section-number">8.9.5.2. </span>Using PyTI_PSDK_RTOS<a class="headerlink" href="#using-pyti-psdk-rtos" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>An example python script to generate memory is located at below path</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">vision_apps</span><span class="o">/</span><span class="n">platform</span><span class="o">/&lt;</span><span class="n">soc</span><span class="o">&gt;/</span><span class="n">rtos</span><span class="o">/</span><span class="n">gen_linker_mem_map</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p>To generate the memory map related files do below</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span><span class="w"> </span><span class="n">vision_apps</span><span class="o">/</span><span class="n">platform</span><span class="o">/&lt;</span><span class="n">soc</span><span class="o">&gt;/</span><span class="n">rtos</span>
+<span class="p">.</span><span class="o">/</span><span class="n">gen_linker_mem_map</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p>Executing the script generates below files (paths below relative to vision_apps/platform/&lt;soc&gt;/rtos)</p>
+<blockquote>
+<div><ul>
+<li><p>Linker command files for various RTOS CPUs</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">c66x_1</span><span class="o">/</span><span class="n">linker_mem_map</span><span class="p">.</span><span class="n">cmd</span>
+<span class="p">.</span><span class="o">/</span><span class="n">c66x_2</span><span class="o">/</span><span class="n">linker_mem_map</span><span class="p">.</span><span class="n">cmd</span>
+<span class="p">.</span><span class="o">/</span><span class="n">c7x_1</span><span class="o">/</span><span class="n">linker_mem_map</span><span class="p">.</span><span class="n">cmd</span>
+<span class="p">.</span><span class="o">/</span><span class="n">mcu2_0</span><span class="o">/</span><span class="n">linker_mem_map</span><span class="p">.</span><span class="n">cmd</span>
+<span class="p">.</span><span class="o">/</span><span class="n">mcu2_1</span><span class="o">/</span><span class="n">linker_mem_map</span><span class="p">.</span><span class="n">cmd</span>
+</pre></div>
+</div>
+</li>
+<li><p>Memory map .h file that is used by various system init, mmu/mpu init functions</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">app_mem_map</span><span class="p">.</span><span class="n">h</span>
+</pre></div>
+</div>
+</li>
+<li><p>Linux DTS file snippets to copy/paste into linux DTS/DTSO files</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">k3</span><span class="o">-&lt;</span><span class="n">soc</span><span class="o">&gt;-</span><span class="n">rtos</span><span class="o">-</span><span class="n">memory</span><span class="o">-</span><span class="n">map</span><span class="p">.</span><span class="n">dts</span>
+</pre></div>
+</div>
+</li>
+<li><p>A human readable html table showing the different memory map sections</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">system_memory_map</span><span class="p">.</span><span class="n">html</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="applying-the-generated-memory-map">
+<h3><span class="section-number">8.9.5.3. </span>Applying the generated memory map<a class="headerlink" href="#applying-the-generated-memory-map" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>The linker command files</p>
+<ul class="simple">
+<li><p>The linker command files defines the different memory sections specific to a CPU</p></li>
+<li><p>These names should be used in another .cmd file to place memory sections into the defined memory regions</p></li>
+</ul>
+</li>
+<li><p>Memory map .h file</p>
+<ul class="simple">
+<li><p>This defines the various memory segments as C #define values for start address and size of the memory region</p></li>
+<li><p>Include this file in various C files to pass these #define’s as init parameters to various APIs</p></li>
+</ul>
+</li>
+<li><p>Linux DTS file snippets</p>
+<ul>
+<li><p>Follow these instructions to apply the changes:</p>
+<blockquote>
+<div><ul>
+<li><ol class="arabic">
+<li><p>Copy the contents of the generated k3-{SOC}-rtos-memory-map.dtsi file and replace the
+reserved_memory section of the k3-{SOC}-rtos-memory-map.dtsi file that is located here:</p>
+<p>PSDK_LINUX_PATH/board-support/linux*/arch/arm64/boot/dts/ti</p>
+<div class="figure align-default">
+<img alt="_images/reserved_memory_region.png" src="_images/reserved_memory_region.png" />
+</div>
+</li>
+</ol>
+</li>
+<li><ol class="arabic" start="2">
+<li><p>Rebuild the dtb and dtbo from the PSDK_LINUX_PATH directory with the following:</p>
+<blockquote>
+<div><p>make linux-dtbs</p>
+</div></blockquote>
+</li>
+</ol>
+</li>
+<li><ol class="arabic" start="3">
+<li><p>Install the dtb and dtbo to the rootfs/boot folder on the SD card from the same directory with the following:</p>
+<blockquote>
+<div><p>sudo make linux-dtbs_install; sync</p>
+</div></blockquote>
+</li>
+</ol>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>Apply the changes for r5f MPU. <strong>This step MUST be done manually as of now</strong>.</p>
+<ul>
+<li><p>The below sections MUST be made non-cache in R5F MPU config (&lt;soc&gt;_mpu_cfg.c)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>APP_LOG_MEM_ADDR         # remote printf shared region
+APP_FILEIO_MEM_ADDR      # remote core file i/o region
+TIOVX_OBJ_DESC_MEM_ADDR  # OpenVX IPC shared region
+IPC_VRING_MEM_ADDR       # RTOS &lt;-&gt; RTOS IPC shared region
+DDR_MCUx_y_IPC_ADDR      # R5F  &lt;-&gt; Linux IPC shared region
+</pre></div>
+</div>
+</li>
+<li><p>Ensure that the section address matches the one generated in the linker.cmd</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="allocating-64-bit-ddr-space-to-c7x-dsp">
+<h3><span class="section-number">8.9.5.4. </span>Allocating 64-bit DDR space to C7x DSP<a class="headerlink" href="#allocating-64-bit-ddr-space-to-c7x-dsp" title="Permalink to this headline">¶</a></h3>
+<p>C7x DSP can access 64-bit address space via MMU. We can move the C7x heap to this space and make room
+for other 32-bit cores like C66x and R5F in the 32-bit address space.</p>
+<dl class="simple">
+<dt>In devices like J721E which has 4GB of DDR is split as below,</dt><dd><ul class="simple">
+<li><p>Lower 2GB org = 0x0000_8000_0000 to 0x0000_FFFF_FFFF (physical)</p></li>
+<li><p>Upper 2GB org = 0x0008_8000_0000 to 0x0008_FFFF_FFFF (physical)</p></li>
+</ul>
+</dd>
+<dt>Using C7x MMU we can map this upper 2GB space which is physically non-contiguous as a virtually contiguous address as below</dt><dd><ul class="simple">
+<li><p>Lower 2GB org = 0x0000_8000_0000 to 0x0000_FFFF_FFFF (virtual)</p></li>
+<li><p>Upper 2GB org = 0x0001_0000_0000 to 0x0001_7FFF_FFFF (virtual)</p></li>
+</ul>
+</dd>
+</dl>
+<p>The MMU will take care of address translations across the boundary. Please note that C7x MMU serves only for the CPU and not DRU.
+Users will have to be careful not to provide virtual address to DRU while initiating the transfer as DRU does not have access to C7x MMU in J721E</p>
+<p>The gen_linker_mem_map.py python script is updated to generate the C7x DSP linker cmd files and program the MMU accordingly but it does not provide
+the dtb section to be updated in Linux. User will have to manually add a section as shown below.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>vision_apps_core_heaps_lo:<span class="w"> </span>vision-apps-core-heap-memory-lo@d8000000<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nv">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;shared-dma-pool&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>&lt;0x00<span class="w"> </span>0xd8000000<span class="w"> </span>0x00<span class="w"> </span>0x24000000&gt;<span class="p">;</span>
+<span class="w">    </span>no-map<span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+vision_apps_core_heaps_hi:<span class="w"> </span>vision-apps-core-heap-memory-hi@880000000<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nv">compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;shared-dma-pool&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>&lt;0x08<span class="w"> </span>0x80000000<span class="w"> </span>0x00<span class="w"> </span>0x40000000&gt;<span class="p">;</span>
+<span class="w">    </span>no-map<span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constructing-the-memory-map">
+<h3><span class="section-number">8.9.5.5. </span>Constructing the memory map<a class="headerlink" href="#constructing-the-memory-map" title="Permalink to this headline">¶</a></h3>
+<p>This section shows how to make your own memory map taking the memory map of vision_apps as an example.
+See file</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">vision_apps</span><span class="o">/</span><span class="n">platform</span><span class="o">/&lt;</span><span class="n">soc</span><span class="o">&gt;/</span><span class="n">rtos</span><span class="o">/</span><span class="n">gen_linker_mem_map</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<ul>
+<li><p>Install PyTI_PSDK_RTOS as shown here, <a class="reference internal" href="#install-pyti-sdk-rtos"><span class="std std-ref">Installing PyTI_PSDK_RTOS</span></a></p></li>
+<li><p>Create a file say gen_linker_mem_map.py. Recommend to have a folder structure as seen inside vision_apps/platform/&lt;soc&gt;/rtos/</p></li>
+<li><p>Import the python package using</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">from</span><span class="w"> </span><span class="n">ti_psdk_rtos_tools</span><span class="w"> </span><span class="k">import</span><span class="w"> </span><span class="o">*</span>
+</pre></div>
+</div>
+</li>
+<li><p>Define and assign global variables for different memory section base addresses and size’s. Recommend to assign values for addresses and size’s
+using values relative to some base value. This allows to change one memory section and others get adjusted based on the change.</p>
+<p>Example, below we create a section for mcu2_1 CPU relative to mcu2_0 and within mcu2_1 we create partition such that all fit within 64MB.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mcu2_1_ddr_ipc_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mcu2_0_ddr_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">mcu2_0_ddr_size</span><span class="p">;</span>
+<span class="n">mcu2_1_ddr_resource_table_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mcu2_1_ddr_ipc_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">linux_ddr_ipc_size</span><span class="p">;</span>
+<span class="n">mcu2_1_ddr_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mcu2_1_ddr_resource_table_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">linux_ddr_resource_table_size</span><span class="p">;</span>
+<span class="n">mcu2_1_ddr_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">64</span><span class="o">*</span><span class="n">MB</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">mcu2_1_ddr_addr</span><span class="o">-</span><span class="n">mcu2_1_ddr_ipc_addr</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Using these variables create objects of type <strong>MemSection</strong>.</p>
+<ul>
+<li><p>MemSection can be given a name, a attribute string, memory region address, size and a descriptive comment.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mcu2_1_ddr_ipc</span><span class="w">             </span><span class="o">=</span><span class="w"> </span><span class="n">MemSection</span><span class="p">(</span><span class="s">&quot;DDR_MCU2_1_IPC&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RWIX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mcu2_1_ddr_ipc_addr</span><span class="p">,</span><span class="w"> </span><span class="n">linux_ddr_ipc_size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DDR for MCU2_1 for Linux IPC&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>It can also be give a string name used in DTS file. Note, the names given for different CPUs these need to match as given in the example file, since the names are used within linux kernel</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mcu2_1_ddr_ipc</span><span class="p">.</span><span class="n">setDtsName</span><span class="p">(</span><span class="s">&quot;main_r5fss0_core1_dma_memory_region&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r5f-dma-memory&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>In DTS files, the internal memory regions within a CPU are not relavent and only total CPU memory region is needed.
+Use the concat() function to concat internal regions to make one large memory region, which is used for DTS file.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mcu2_1_ddr_resource_table</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">MemSection</span><span class="p">(</span><span class="s">&quot;DDR_MCU2_1_RESOURCE_TABLE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RWIX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mcu2_1_ddr_resource_table_addr</span><span class="p">,</span><span class="w"> </span><span class="n">linux_ddr_resource_table_size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DDR for MCU2_1 for Linux resource table&quot;</span><span class="p">);</span>
+<span class="n">mcu2_1_ddr</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="n">MemSection</span><span class="p">(</span><span class="s">&quot;DDR_MCU2_1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RWIX&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mcu2_1_ddr_addr</span><span class="p">,</span><span class="w"> </span><span class="n">mcu2_1_ddr_size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DDR for MCU2_1 for code/data&quot;</span><span class="p">);</span>
+<span class="n">mcu2_1_ddr_total</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="n">MemSection</span><span class="p">(</span><span class="s">&quot;DDR_MCU2_1_DTS&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DDR for MCU2_1 for all sections, used for reserving memory in DTS file&quot;</span><span class="p">);</span>
+<span class="n">mcu2_1_ddr_total</span><span class="p">.</span><span class="n">concat</span><span class="p">(</span><span class="n">mcu2_1_ddr_resource_table</span><span class="p">);</span>
+<span class="n">mcu2_1_ddr_total</span><span class="p">.</span><span class="n">concat</span><span class="p">(</span><span class="n">mcu2_1_ddr</span><span class="p">);</span>
+<span class="n">mcu2_1_ddr_total</span><span class="p">.</span><span class="n">setDtsName</span><span class="p">(</span><span class="s">&quot;main_r5fss0_core1_memory_region&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r5f-memory&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>In some cases like the ION heap used as shared memory, we dont want the “no-map” flag in DTS file.
+Use the function setNoMap() to indicate this</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">ddr_shared_mem</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">MemSection</span><span class="p">(</span><span class="s">&quot;DDR_SHARED_MEM&quot;</span><span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ddr_shared_mem_addr</span><span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">ddr_shared_mem_size</span><span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Memory for shared memory buffers in DDR&quot;</span><span class="p">);</span>
+<span class="n">ddr_shared_mem</span><span class="p">.</span><span class="n">setDtsName</span><span class="p">(</span><span class="s">&quot;vision_apps_shared_region&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vision_apps_shared-memories&quot;</span><span class="p">);</span>
+<span class="n">ddr_shared_mem</span><span class="p">.</span><span class="n">setNoMap</span><span class="p">(</span><span class="n">False</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Once MemSection objects are created, now create MemoryMap objects and add the MemSection objects to it.</p>
+<ul>
+<li><p>Create a MemoryMap object one per CPU, this is needed for the CPU specific linker command file</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mcu2_1_mmap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MemoryMap</span><span class="p">(</span><span class="s">&quot;mcu2_0&quot;</span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">r5f_tcma</span><span class="w">           </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">r5f_tcmb0</span><span class="w">          </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_ipc</span><span class="w">     </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_resource_table</span><span class="w">  </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr</span><span class="w">         </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">app_log_mem</span><span class="w">        </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">app_fileio_mem</span><span class="w">        </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">tiovx_obj_desc_mem</span><span class="w"> </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">ipc_vring_mem</span><span class="w">      </span><span class="p">);</span>
+<span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">ddr_shared_mem</span><span class="w">     </span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Use the function checkOverlap() to make sure you are not overlapping memory section’s by mistake</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mcu2_1_mmap</span><span class="p">.</span><span class="n">checkOverlap</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create a MemoryMap object for the global memory map .h file</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">c_header_mmap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MemoryMap</span><span class="p">(</span><span class="s">&quot;Memory Map for C header file&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">c_header_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_0_ddr_ipc</span><span class="w">     </span><span class="p">);</span>
+<span class="n">c_header_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_ipc</span><span class="w">     </span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">c_header_mmap</span><span class="p">.</span><span class="n">checkOverlap</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create a MemoryMap object for DTS file</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">dts_mmap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MemoryMap</span><span class="p">(</span><span class="s">&quot;Memory Map for Linux kernel dts/dtsi file&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">dts_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_ipc</span><span class="w">     </span><span class="p">);</span>
+<span class="n">dts_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_total</span><span class="w">   </span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">dts_mmap</span><span class="p">.</span><span class="n">checkOverlap</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p>Create a MemoryMap object for HTML table file</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">html_mmap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MemoryMap</span><span class="p">(</span><span class="s">&quot;System Memory Map for Linux+RTOS mode&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">html_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_ipc</span><span class="w">     </span><span class="p">);</span>
+<span class="n">html_mmap</span><span class="p">.</span><span class="n">addMemSection</span><span class="p">(</span><span class="w"> </span><span class="n">mcu2_1_ddr_resource_table</span><span class="w">      </span><span class="p">);</span>
+<span class="p">...</span>
+<span class="n">html_mmap</span><span class="p">.</span><span class="n">checkOverlap</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>Finally invoke the export() function to generate the various files using the created MemoryMap objects</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">LinkerCmdFile</span><span class="p">(</span><span class="n">mcu2_1_mmap</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;./mcu2_1/linker_mem_map.cmd&quot;</span><span class="p">).</span><span class="k">export</span><span class="p">();</span>
+
+<span class="n">HtmlMmapTable</span><span class="p">(</span><span class="n">html_mmap</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;./system_memory_map.html&quot;</span><span class="p">).</span><span class="k">export</span><span class="p">();</span>
+
+<span class="n">CHeaderFile</span><span class="p">(</span><span class="n">c_header_mmap</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;./app_mem_map.h&quot;</span><span class="p">).</span><span class="k">export</span><span class="p">();</span>
+
+<span class="n">DtsFile</span><span class="p">(</span><span class="n">dts_mmap</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;./k3-&lt;soc&gt;-vision_apps.dts&quot;</span><span class="p">).</span><span class="k">export</span><span class="p">();</span>
+</pre></div>
+</div>
+</li>
+<li><p>Execute this python file to generate the files</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">gen_linker_mem_map</span><span class="p">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_tidl.html" class="btn btn-neutral float-right" title="8.10. Developing deep learning applications" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes_psdkla.html" class="btn btn-neutral" title="8.8. Using Processor SDK Linux with Processor SDK RTOS" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

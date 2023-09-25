@@ -1,0 +1,242 @@
+
+Understanding concerto makefile system
+======================================
+
+Introduction
+------------
+
+**concerto** is a GNU make based build system used by many components within PSDK RTOS.
+It is a collection of make rules and make macro's to stream line compile and link
+across multiple code gen tools, CPU arch's, operating systems, SoC's.
+
+Below components use concerto based build system in PSDK RTOS
+
+.. ifconfig:: CONFIG_part_variant in ('J7200')
+
+    - Ethernet firmware
+    - Remote Device
+
+.. ifconfig:: CONFIG_part_variant in ('J721S2')
+
+    - Imaging
+    - Perception (PTK)
+    - TI OpenVX
+    - Vision apps
+
+.. ifconfig:: CONFIG_part_variant in ('J721E', 'J784S4')
+
+    - Ethernet firmware
+    - Remote Device
+    - Imaging
+    - Perception (PTK)
+    - TI OpenVX
+    - Vision apps
+
+This developer note describes common command line and makefile options that an
+end user will find useful when building software using concerto
+
+Directories and files of concerto
+---------------------------------
+
+- The software package, also referred to as project here, supports a concerto based build system when you find a folder named **concerto** at top level.
+  You will also find a top level **Makefile** and a file **target.mak** ::
+
+    ${SW_COMPONENT}/concerto/
+    ${SW_COMPONENT}/Makefile
+    ${SW_COMPONENT}/target.mak
+
+- The concerto folder is agnostic of the software project and the same folder will be present
+  in different software projects
+
+- The **concerto/** folder also contains a **README** file which has more details about the internal working of concerto
+
+- The **concerto/** folder contains common make rules and make macros which are then used to build libraries and exectuables.
+
+- The **concerto/compilers** contains compiler specific rules, for example, c6x, c7x, r5f, x86 compiler specific rules
+
+- The **/target.mak** has project specific make rules, the most common rules are listed below
+
+    - include paths, **SYSIDIRS**, that are needed for all files in this project
+    - library paths, **SYSLDIRS**,  that are searched for all libraries in this project
+    - global defines, **SYSDEFS**, or **-D** compile flags, that are applied for all files in this project
+
+- The **/Makefile** is the top level entry point to the project build
+
+    - Doing **make all** or simply **make** will build all the software for this project
+    - Doing **make clean** will clean all the build for this project
+
+- The output of concerto build is kept in the folder **${SW_COMPONENT}/out/**
+
+    - The files are arranged hierarchically, based on first PLATFORM, then CPU, then OS, then PROFILE, then **module**
+    - Example ::
+
+        out/J7/A72/LINUX/release/module
+
+    - module contains  multiple folder, one for each library or executable in this project. It will contain the string
+      mentioned in TARGET variable in concerto.mak file
+
+Concerto basics
+---------------
+
+- concerto searches for files named **concerto.mak** starting from project root folder and all sub directories within it
+
+  - Each **concerto.mak** builds a library or an executable
+  - The directories to search for are listed in the make variable **DIRECTORIES** in **/Makefile**
+
+- concerto builds the files for a list of **TARGET_COMBOS** defined in **/Makefile**
+
+  - A sample target combo is listed below ::
+
+        TARGET_COMBOS += J721E:FREERTOS:R5F:3:debug:TIARMCGT
+
+  - It defines a combo/tuple of SOC, OS, CPU ARCH, CPU NUMBER(not used), BUILD PROFILE, TOOL CHAIN
+  - Typically in a SDK like in Jacinto 7, the same files or libaries are built for multiple CPUs by having more than one target combo.
+  - Using top level make variables, we can skip certain target combo's if not needed.
+    For example, build only debug profile or build only C7x libraries and so on.
+
+Common command line options to use when building
+------------------------------------------------
+
+============================================ =================================================
+make command                                 Description
+============================================ =================================================
+make all                                     Build everything
+make clean                                   Clean everything
+make scrub                                   Delete all generated files
+make <maketarget> SHOW_COMMANDS=1            Verbose build, shows compiler invocation including all arguments passed to the compiler
+make <maketarget> PROFILE=<profile name>     Build's a specific profile, valid values are, **debug** **release** **all**
+make targets                                 List all granular targets (libraries or executables) enabled in current build
+make <maketarget>                            Build a specific target listed during make targets
+============================================ =================================================
+
+.. NOTE::
+
+    **make targets** lists all enabled granular build targets. An example is shown below::
+
+        CONCERTO_TARGETS+=targetname1
+        CONCERTO_TARGETS+=targetname2
+        CONCERTO_TARGETS+=targetname3
+        ...
+
+    Do **make targetname1** to build the target named **targetname1**. This will build all dependant libraries and files within this project
+    as well.
+
+    This can be used when you dont want to build the whole SW, but want to only build a specific library or executable.
+
+    It will not build libraries outside this project.
+
+Anatomy of concerto.mak file
+----------------------------
+
+- A sample concerto.mak file is shown below ::
+
+    include $(PRELUDE)
+
+    # all variable setup should be between PRELUDE and FINALE
+
+    TARGET      := my_lib_name
+    TARGETTYPE  := library
+    CSOURCES    := $(call all-c-files)
+
+    include $(FINALE)
+
+- Each concerto.mak builds a library or executable.
+
+  - Above example is a minimum concerto.mak file content
+  - This builds all C files present in the folder where this concerto.mak is located
+  - Here TARGETTYPE is **library**, another option is **exe** for executable type
+  - The final output file name (library or executable), will contain the string "my_lib_name"
+
+    - Depending on the compiler type, a filename prefix, postfix and extension would be chosen
+    - Example, for linux systems the library name would be libmy_lib_name.a
+
+- Users can set additional variables or use usual makefile commands to customize this file
+
+- Predefined and commonly used variables are listed below
+
+  ========================== ====================
+  Variable                   Purpose
+  ========================== ====================
+  CSOURCES                   List of C files to build, list each file explicitly or use the macro $(call all-c-files)
+  DEFS                       -D defines to apply when compiling files for this target
+  IDIRS                      include search paths to apply when compiling files for this target
+  CFLAGS                     additional compiler flags to apply when compiling files for this target
+  LDIRS                      library search paths to apply when linking files for this executable target
+  STATIC_LIBS                static libraries (.a) to link when creating executable
+  SYS_SHARED_LIBS            shared libraries (.so) to link when creating executable
+  LFLAGS                     additional linker flags to apply when linking files for this executable target
+  SKIPBUILD                  when SKIPBUILD=1, it would skip build of this target, useful to temporarily skip building certain concerto.mak files
+  ========================== ====================
+
+- Typically a SW project would put the contents of the concerto.mak under a **ifeq** as shown below ::
+
+    ifeq ($(TARGET_CPU),$(filter $(TARGET_CPU), x86_64 A72))
+
+  - This allows to build certain libraries for certain CPUs or certain OS or certain SoCs
+  - Below variables are used to control this
+
+    ================== =====================================
+    Variable           Purpose
+    ================== =====================================
+    TARGET_CPU         CPU architecture type
+    TARGET_OS          OS type
+    TARGET_PLATFORM    SoC or SoC family type
+    TARGET_BUILD       Build profile
+    ================== =====================================
+
+- Using these building blocks and variables users can now use the usual makefile rules to make their project build
+  more modular. Examples,
+
+  - use **ifeq** with **$(filter ...)** to conditionally select files based on make variables
+  - use **include** to collect common include paths, libraries in common files
+  - define project specific variables and use them in concerto.mak to conditionally build files or set specific compiler flags
+
+Concerto tip's and trick's
+--------------------------
+
+How do I build just one library or executable ?
+***********************************************
+
+- Do **make targets** to list all enabled granular targets
+- Do **make <targetname>** to build a specific target
+
+How do I clean just one library or executable ?
+***********************************************
+
+- You need to know which PLATFORM, OS, CPU, PROFILE, you have built the library or executable.
+- You need to know the name of the target as mentioned in the concerto.mak file
+- Goto the folder **out/<PLATFORM>/<OS>/<CPU>/<PROFILE>/module/**
+- Delete the required **\*<targetname>\*** folder's
+
+How do I see what exact options were passed to the compiler, linker ?
+*********************************************************************
+
+Do **make SHOW_COMMANDS=1**
+
+How do I not build a specific target or concerto.mak file ?
+***********************************************************
+
+Add the variable **SKIPBUILD=1** in the concerto.mak file.
+Make sure to add in between the include $(PRELUDE) and include $(FINALE).
+
+My project executable depends on a library file from another concerto project, will concerto trigger a build of the external library ?
+**************************************************************************************************************************************
+
+NO. concerto or rather make only builds libraries and executables within the current project.
+You need to add rules manually to trigger build of dependent external libraries.
+
+Will usual make options like -jN work with concerto ?
+*****************************************************
+
+Yes. concerto is not a build system on its own. It is a collection of common make rules and make variables.
+So all usual make options and make commands will work with concerto.
+
+How do I integrate a new build macro into multiple projects ?
+*************************************************************
+
+The Imaging, TI OpenVX, and Vision Apps projects all include a common file that contain shared flags.
+This file is located at tiovx/build_flags.mak.  This file is included in the Makefiles of each of these projects.
+To create a new build macro, first add a new variable to this file.  Next, edit the Makefiles of each of these
+projects to add a new flag to the BUILD_DEFS compiler flag based on the flag set in tiovx/build_flags.mak.
+If further projects need to add the same flag, the tiovx/build_flags.mak must be included within that project's
+Makefile.

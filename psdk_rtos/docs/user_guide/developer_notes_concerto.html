@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.1. Understanding concerto makefile system &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)" href="developer_notes_bootloaders.html"/>
+        <link rel="prev" title="8. Developer Notes" href="developer_notes.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.1. Understanding concerto makefile system</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.1.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#directories-and-files-of-concerto">8.1.2. Directories and files of concerto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#concerto-basics">8.1.3. Concerto basics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-command-line-options-to-use-when-building">8.1.4. Common command line options to use when building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#anatomy-of-concerto-mak-file">8.1.5. Anatomy of concerto.mak file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#concerto-tip-s-and-trick-s">8.1.6. Concerto tip’s and trick’s</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-do-i-build-just-one-library-or-executable">8.1.6.1. How do I build just one library or executable ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-do-i-clean-just-one-library-or-executable">8.1.6.2. How do I clean just one library or executable ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-do-i-see-what-exact-options-were-passed-to-the-compiler-linker">8.1.6.3. How do I see what exact options were passed to the compiler, linker ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-do-i-not-build-a-specific-target-or-concerto-mak-file">8.1.6.4. How do I not build a specific target or concerto.mak file ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#my-project-executable-depends-on-a-library-file-from-another-concerto-project-will-concerto-trigger-a-build-of-the-external-library">8.1.6.5. My project executable depends on a library file from another concerto project, will concerto trigger a build of the external library ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#will-usual-make-options-like-jn-work-with-concerto">8.1.6.6. Will usual make options like -jN work with concerto ?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-do-i-integrate-a-new-build-macro-into-multiple-projects">8.1.6.7. How do I integrate a new build macro into multiple projects ?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.1. </span>Understanding concerto makefile system</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="understanding-concerto-makefile-system">
+<h1><span class="section-number">8.1. </span>Understanding concerto makefile system<a class="headerlink" href="#understanding-concerto-makefile-system" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">8.1.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p><strong>concerto</strong> is a GNU make based build system used by many components within PSDK RTOS.
+It is a collection of make rules and make macro’s to stream line compile and link
+across multiple code gen tools, CPU arch’s, operating systems, SoC’s.</p>
+<p>Below components use concerto based build system in PSDK RTOS</p>
+<ul class="simple">
+<li><p>Ethernet firmware</p></li>
+<li><p>Remote Device</p></li>
+<li><p>Imaging</p></li>
+<li><p>Perception (PTK)</p></li>
+<li><p>TI OpenVX</p></li>
+<li><p>Vision apps</p></li>
+</ul>
+<p>This developer note describes common command line and makefile options that an
+end user will find useful when building software using concerto</p>
+</div>
+<div class="section" id="directories-and-files-of-concerto">
+<h2><span class="section-number">8.1.2. </span>Directories and files of concerto<a class="headerlink" href="#directories-and-files-of-concerto" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>The software package, also referred to as project here, supports a concerto based build system when you find a folder named <strong>concerto</strong> at top level.
+You will also find a top level <strong>Makefile</strong> and a file <strong>target.mak</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">$</span><span class="p">{</span><span class="n">SW_COMPONENT</span><span class="p">}</span><span class="o">/</span><span class="n">concerto</span><span class="o">/</span>
+<span class="n">$</span><span class="p">{</span><span class="n">SW_COMPONENT</span><span class="p">}</span><span class="o">/</span><span class="n">Makefile</span>
+<span class="n">$</span><span class="p">{</span><span class="n">SW_COMPONENT</span><span class="p">}</span><span class="o">/</span><span class="n">target</span><span class="p">.</span><span class="n">mak</span>
+</pre></div>
+</div>
+</li>
+<li><p>The concerto folder is agnostic of the software project and the same folder will be present
+in different software projects</p></li>
+<li><p>The <strong>concerto/</strong> folder also contains a <strong>README</strong> file which has more details about the internal working of concerto</p></li>
+<li><p>The <strong>concerto/</strong> folder contains common make rules and make macros which are then used to build libraries and exectuables.</p></li>
+<li><p>The <strong>concerto/compilers</strong> contains compiler specific rules, for example, c6x, c7x, r5f, x86 compiler specific rules</p></li>
+<li><p>The <strong>/target.mak</strong> has project specific make rules, the most common rules are listed below</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>include paths, <strong>SYSIDIRS</strong>, that are needed for all files in this project</p></li>
+<li><p>library paths, <strong>SYSLDIRS</strong>,  that are searched for all libraries in this project</p></li>
+<li><p>global defines, <strong>SYSDEFS</strong>, or <strong>-D</strong> compile flags, that are applied for all files in this project</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The <strong>/Makefile</strong> is the top level entry point to the project build</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Doing <strong>make all</strong> or simply <strong>make</strong> will build all the software for this project</p></li>
+<li><p>Doing <strong>make clean</strong> will clean all the build for this project</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The output of concerto build is kept in the folder <strong>${SW_COMPONENT}/out/</strong></p>
+<blockquote>
+<div><ul>
+<li><p>The files are arranged hierarchically, based on first PLATFORM, then CPU, then OS, then PROFILE, then <strong>module</strong></p></li>
+<li><p>Example</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">out</span><span class="o">/</span><span class="n">J7</span><span class="o">/</span><span class="n">A72</span><span class="o">/</span><span class="n">LINUX</span><span class="o">/</span><span class="n">release</span><span class="o">/</span><span class="k">module</span>
+</pre></div>
+</div>
+</li>
+<li><p>module contains  multiple folder, one for each library or executable in this project. It will contain the string
+mentioned in TARGET variable in concerto.mak file</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="concerto-basics">
+<h2><span class="section-number">8.1.3. </span>Concerto basics<a class="headerlink" href="#concerto-basics" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>concerto searches for files named <strong>concerto.mak</strong> starting from project root folder and all sub directories within it</p>
+<ul class="simple">
+<li><p>Each <strong>concerto.mak</strong> builds a library or an executable</p></li>
+<li><p>The directories to search for are listed in the make variable <strong>DIRECTORIES</strong> in <strong>/Makefile</strong></p></li>
+</ul>
+</li>
+<li><p>concerto builds the files for a list of <strong>TARGET_COMBOS</strong> defined in <strong>/Makefile</strong></p>
+<ul>
+<li><p>A sample target combo is listed below</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">TARGET_COMBOS</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">J721E</span><span class="o">:</span><span class="n">FREERTOS</span><span class="o">:</span><span class="n">R5F</span><span class="o">:</span><span class="mi">3</span><span class="o">:</span><span class="n">debug</span><span class="o">:</span><span class="n">TIARMCGT</span>
+</pre></div>
+</div>
+</li>
+<li><p>It defines a combo/tuple of SOC, OS, CPU ARCH, CPU NUMBER(not used), BUILD PROFILE, TOOL CHAIN</p></li>
+<li><p>Typically in a SDK like in Jacinto 7, the same files or libaries are built for multiple CPUs by having more than one target combo.</p></li>
+<li><p>Using top level make variables, we can skip certain target combo’s if not needed.
+For example, build only debug profile or build only C7x libraries and so on.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="common-command-line-options-to-use-when-building">
+<h2><span class="section-number">8.1.4. </span>Common command line options to use when building<a class="headerlink" href="#common-command-line-options-to-use-when-building" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>make command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>make all</p></td>
+<td><p>Build everything</p></td>
+</tr>
+<tr class="row-odd"><td><p>make clean</p></td>
+<td><p>Clean everything</p></td>
+</tr>
+<tr class="row-even"><td><p>make scrub</p></td>
+<td><p>Delete all generated files</p></td>
+</tr>
+<tr class="row-odd"><td><p>make &lt;maketarget&gt; SHOW_COMMANDS=1</p></td>
+<td><p>Verbose build, shows compiler invocation including all arguments passed to the compiler</p></td>
+</tr>
+<tr class="row-even"><td><p>make &lt;maketarget&gt; PROFILE=&lt;profile name&gt;</p></td>
+<td><p>Build’s a specific profile, valid values are, <strong>debug</strong> <strong>release</strong> <strong>all</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>make targets</p></td>
+<td><p>List all granular targets (libraries or executables) enabled in current build</p></td>
+</tr>
+<tr class="row-even"><td><p>make &lt;maketarget&gt;</p></td>
+<td><p>Build a specific target listed during make targets</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>make targets</strong> lists all enabled granular build targets. An example is shown below:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">CONCERTO_TARGETS</span><span class="o">+=</span><span class="n">targetname1</span>
+<span class="n">CONCERTO_TARGETS</span><span class="o">+=</span><span class="n">targetname2</span>
+<span class="n">CONCERTO_TARGETS</span><span class="o">+=</span><span class="n">targetname3</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>Do <strong>make targetname1</strong> to build the target named <strong>targetname1</strong>. This will build all dependant libraries and files within this project
+as well.</p>
+<p>This can be used when you dont want to build the whole SW, but want to only build a specific library or executable.</p>
+<p>It will not build libraries outside this project.</p>
+</div>
+</div>
+<div class="section" id="anatomy-of-concerto-mak-file">
+<h2><span class="section-number">8.1.5. </span>Anatomy of concerto.mak file<a class="headerlink" href="#anatomy-of-concerto-mak-file" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>A sample concerto.mak file is shown below</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">include</span><span class="w"> </span><span class="n">$</span><span class="p">(</span><span class="n">PRELUDE</span><span class="p">)</span>
+
+<span class="cp"># all variable setup should be between PRELUDE and FINALE</span>
+
+<span class="nl">TARGET</span><span class="w">      </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="n">my_lib_name</span>
+<span class="nl">TARGETTYPE</span><span class="w">  </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="n">library</span>
+<span class="nl">CSOURCES</span><span class="w">    </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="n">$</span><span class="p">(</span><span class="n">call</span><span class="w"> </span><span class="n">all</span><span class="o">-</span><span class="n">c</span><span class="o">-</span><span class="n">files</span><span class="p">)</span>
+
+<span class="n">include</span><span class="w"> </span><span class="n">$</span><span class="p">(</span><span class="n">FINALE</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Each concerto.mak builds a library or executable.</p>
+<ul class="simple">
+<li><p>Above example is a minimum concerto.mak file content</p></li>
+<li><p>This builds all C files present in the folder where this concerto.mak is located</p></li>
+<li><p>Here TARGETTYPE is <strong>library</strong>, another option is <strong>exe</strong> for executable type</p></li>
+<li><p>The final output file name (library or executable), will contain the string “my_lib_name”</p>
+<ul>
+<li><p>Depending on the compiler type, a filename prefix, postfix and extension would be chosen</p></li>
+<li><p>Example, for linux systems the library name would be libmy_lib_name.a</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Users can set additional variables or use usual makefile commands to customize this file</p></li>
+<li><p>Predefined and commonly used variables are listed below</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CSOURCES</p></td>
+<td><p>List of C files to build, list each file explicitly or use the macro $(call all-c-files)</p></td>
+</tr>
+<tr class="row-odd"><td><p>DEFS</p></td>
+<td><p>-D defines to apply when compiling files for this target</p></td>
+</tr>
+<tr class="row-even"><td><p>IDIRS</p></td>
+<td><p>include search paths to apply when compiling files for this target</p></td>
+</tr>
+<tr class="row-odd"><td><p>CFLAGS</p></td>
+<td><p>additional compiler flags to apply when compiling files for this target</p></td>
+</tr>
+<tr class="row-even"><td><p>LDIRS</p></td>
+<td><p>library search paths to apply when linking files for this executable target</p></td>
+</tr>
+<tr class="row-odd"><td><p>STATIC_LIBS</p></td>
+<td><p>static libraries (.a) to link when creating executable</p></td>
+</tr>
+<tr class="row-even"><td><p>SYS_SHARED_LIBS</p></td>
+<td><p>shared libraries (.so) to link when creating executable</p></td>
+</tr>
+<tr class="row-odd"><td><p>LFLAGS</p></td>
+<td><p>additional linker flags to apply when linking files for this executable target</p></td>
+</tr>
+<tr class="row-even"><td><p>SKIPBUILD</p></td>
+<td><p>when SKIPBUILD=1, it would skip build of this target, useful to temporarily skip building certain concerto.mak files</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>Typically a SW project would put the contents of the concerto.mak under a <strong>ifeq</strong> as shown below</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">ifeq</span><span class="w"> </span><span class="p">(</span><span class="n">$</span><span class="p">(</span><span class="n">TARGET_CPU</span><span class="p">),</span><span class="n">$</span><span class="p">(</span><span class="n">filter</span><span class="w"> </span><span class="n">$</span><span class="p">(</span><span class="n">TARGET_CPU</span><span class="p">),</span><span class="w"> </span><span class="n">x86_64</span><span class="w"> </span><span class="n">A72</span><span class="p">))</span>
+</pre></div>
+</div>
+<ul>
+<li><p>This allows to build certain libraries for certain CPUs or certain OS or certain SoCs</p></li>
+<li><p>Below variables are used to control this</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TARGET_CPU</p></td>
+<td><p>CPU architecture type</p></td>
+</tr>
+<tr class="row-odd"><td><p>TARGET_OS</p></td>
+<td><p>OS type</p></td>
+</tr>
+<tr class="row-even"><td><p>TARGET_PLATFORM</p></td>
+<td><p>SoC or SoC family type</p></td>
+</tr>
+<tr class="row-odd"><td><p>TARGET_BUILD</p></td>
+<td><p>Build profile</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+<li><p>Using these building blocks and variables users can now use the usual makefile rules to make their project build
+more modular. Examples,</p>
+<ul class="simple">
+<li><p>use <strong>ifeq</strong> with <strong>$(filter …)</strong> to conditionally select files based on make variables</p></li>
+<li><p>use <strong>include</strong> to collect common include paths, libraries in common files</p></li>
+<li><p>define project specific variables and use them in concerto.mak to conditionally build files or set specific compiler flags</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="concerto-tip-s-and-trick-s">
+<h2><span class="section-number">8.1.6. </span>Concerto tip’s and trick’s<a class="headerlink" href="#concerto-tip-s-and-trick-s" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-do-i-build-just-one-library-or-executable">
+<h3><span class="section-number">8.1.6.1. </span>How do I build just one library or executable ?<a class="headerlink" href="#how-do-i-build-just-one-library-or-executable" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Do <strong>make targets</strong> to list all enabled granular targets</p></li>
+<li><p>Do <strong>make &lt;targetname&gt;</strong> to build a specific target</p></li>
+</ul>
+</div>
+<div class="section" id="how-do-i-clean-just-one-library-or-executable">
+<h3><span class="section-number">8.1.6.2. </span>How do I clean just one library or executable ?<a class="headerlink" href="#how-do-i-clean-just-one-library-or-executable" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>You need to know which PLATFORM, OS, CPU, PROFILE, you have built the library or executable.</p></li>
+<li><p>You need to know the name of the target as mentioned in the concerto.mak file</p></li>
+<li><p>Goto the folder <strong>out/&lt;PLATFORM&gt;/&lt;OS&gt;/&lt;CPU&gt;/&lt;PROFILE&gt;/module/</strong></p></li>
+<li><p>Delete the required <strong>*&lt;targetname&gt;*</strong> folder’s</p></li>
+</ul>
+</div>
+<div class="section" id="how-do-i-see-what-exact-options-were-passed-to-the-compiler-linker">
+<h3><span class="section-number">8.1.6.3. </span>How do I see what exact options were passed to the compiler, linker ?<a class="headerlink" href="#how-do-i-see-what-exact-options-were-passed-to-the-compiler-linker" title="Permalink to this headline">¶</a></h3>
+<p>Do <strong>make SHOW_COMMANDS=1</strong></p>
+</div>
+<div class="section" id="how-do-i-not-build-a-specific-target-or-concerto-mak-file">
+<h3><span class="section-number">8.1.6.4. </span>How do I not build a specific target or concerto.mak file ?<a class="headerlink" href="#how-do-i-not-build-a-specific-target-or-concerto-mak-file" title="Permalink to this headline">¶</a></h3>
+<p>Add the variable <strong>SKIPBUILD=1</strong> in the concerto.mak file.
+Make sure to add in between the include $(PRELUDE) and include $(FINALE).</p>
+</div>
+<div class="section" id="my-project-executable-depends-on-a-library-file-from-another-concerto-project-will-concerto-trigger-a-build-of-the-external-library">
+<h3><span class="section-number">8.1.6.5. </span>My project executable depends on a library file from another concerto project, will concerto trigger a build of the external library ?<a class="headerlink" href="#my-project-executable-depends-on-a-library-file-from-another-concerto-project-will-concerto-trigger-a-build-of-the-external-library" title="Permalink to this headline">¶</a></h3>
+<p>NO. concerto or rather make only builds libraries and executables within the current project.
+You need to add rules manually to trigger build of dependent external libraries.</p>
+</div>
+<div class="section" id="will-usual-make-options-like-jn-work-with-concerto">
+<h3><span class="section-number">8.1.6.6. </span>Will usual make options like -jN work with concerto ?<a class="headerlink" href="#will-usual-make-options-like-jn-work-with-concerto" title="Permalink to this headline">¶</a></h3>
+<p>Yes. concerto is not a build system on its own. It is a collection of common make rules and make variables.
+So all usual make options and make commands will work with concerto.</p>
+</div>
+<div class="section" id="how-do-i-integrate-a-new-build-macro-into-multiple-projects">
+<h3><span class="section-number">8.1.6.7. </span>How do I integrate a new build macro into multiple projects ?<a class="headerlink" href="#how-do-i-integrate-a-new-build-macro-into-multiple-projects" title="Permalink to this headline">¶</a></h3>
+<p>The Imaging, TI OpenVX, and Vision Apps projects all include a common file that contain shared flags.
+This file is located at tiovx/build_flags.mak.  This file is included in the Makefiles of each of these projects.
+To create a new build macro, first add a new variable to this file.  Next, edit the Makefiles of each of these
+projects to add a new flag to the BUILD_DEFS compiler flag based on the flag set in tiovx/build_flags.mak.
+If further projects need to add the same flag, the tiovx/build_flags.mak must be included within that project’s
+Makefile.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_bootloaders.html" class="btn btn-neutral float-right" title="8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes.html" class="btn btn-neutral" title="8. Developer Notes" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

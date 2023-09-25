@@ -1,0 +1,594 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.10. Developing deep learning applications &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.11. Developing HW accelerator applications with OpenVX" href="developer_notes_hwa.html"/>
+        <link rel="prev" title="8.9. Understanding and updating SDK memory map for J721E" href="developer_notes_memory_map.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.10. Developing deep learning applications</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.10.1. Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#openvx-api-in-a72-to-execute-complete-cnn-model-on-c7x-mma">8.10.1.1. OpenVX API in A72 to execute complete CNN model on C7x-MMA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tflite-runtime-based-heterogeneous-execution-on-a72-c7x-mma">8.10.1.2. TFLite Runtime based Heterogeneous Execution on A72+C7x-MMA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onnx-runtime-based-heterogeneous-execution-on-a72-c7x-mma">8.10.1.3. ONNX Runtime based Heterogeneous Execution on A72+C7x-MMA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tvm-neo-ai-dlr-based-heterogeneous-execution-on-a72-c7x-mma">8.10.1.4. TVM/Neo-AI-DLR based Heterogeneous Execution on A72+C7x-MMA</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-references">8.10.2. Documentation References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#source-code-references">8.10.3. Source Code References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#steps-to-run-your-custom-network-with-tidl-runtime">8.10.4. Steps to run your custom network with TIDL Runtime</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#step-1-import-your-network-to-tidl-runtime-network-format">8.10.4.1. Step 1: Import your network to TIDL Runtime network format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-2-run-the-imported-tidl-network-in-pc-host-emulation-mode">8.10.4.2. Step 2: Run the imported TIDL network in PC HOST emulation mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-3-run-the-imported-tidl-network-on-evm-with-openvx-non-pipelined-mode">8.10.4.3. Step 3: Run the imported TIDL network on EVM with OpenVX (non-pipelined mode)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-4-run-the-imported-tidl-network-on-evm-with-openvx-pipelined-mode">8.10.4.4. Step 4: Run the imported TIDL network on EVM with OpenVX (pipelined mode)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.10. </span>Developing deep learning applications</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="developing-deep-learning-applications">
+<h1><span class="section-number">8.10. </span>Developing deep learning applications<a class="headerlink" href="#developing-deep-learning-applications" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p>
+<ul>
+<li><p><a class="reference internal" href="#openvx-api-in-a72-to-execute-complete-cnn-model-on-c7x-mma" id="id2">OpenVX API in A72 to execute complete CNN model on C7x-MMA</a></p></li>
+<li><p><a class="reference internal" href="#tflite-runtime-based-heterogeneous-execution-on-a72-c7x-mma" id="id3">TFLite Runtime based Heterogeneous Execution on A72+C7x-MMA</a></p></li>
+<li><p><a class="reference internal" href="#onnx-runtime-based-heterogeneous-execution-on-a72-c7x-mma" id="id4">ONNX Runtime based Heterogeneous Execution on A72+C7x-MMA</a></p></li>
+<li><p><a class="reference internal" href="#tvm-neo-ai-dlr-based-heterogeneous-execution-on-a72-c7x-mma" id="id5">TVM/Neo-AI-DLR based Heterogeneous Execution on A72+C7x-MMA</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#documentation-references" id="id6">Documentation References</a></p></li>
+<li><p><a class="reference internal" href="#source-code-references" id="id7">Source Code References</a></p></li>
+<li><p><a class="reference internal" href="#steps-to-run-your-custom-network-with-tidl-runtime" id="id8">Steps to run your custom network with TIDL Runtime</a></p>
+<ul>
+<li><p><a class="reference internal" href="#step-1-import-your-network-to-tidl-runtime-network-format" id="id9">Step 1: Import your network to TIDL Runtime network format</a></p></li>
+<li><p><a class="reference internal" href="#step-2-run-the-imported-tidl-network-in-pc-host-emulation-mode" id="id10">Step 2: Run the imported TIDL network in PC HOST emulation mode</a></p></li>
+<li><p><a class="reference internal" href="#step-3-run-the-imported-tidl-network-on-evm-with-openvx-non-pipelined-mode" id="id11">Step 3: Run the imported TIDL network on EVM with OpenVX (non-pipelined mode)</a></p></li>
+<li><p><a class="reference internal" href="#step-4-run-the-imported-tidl-network-on-evm-with-openvx-pipelined-mode" id="id12">Step 4: Run the imported TIDL network on EVM with OpenVX (pipelined mode)</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id1"><span class="section-number">8.10.1. </span>Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>TI Jacinto 7 SoCs supports below methods to deploy Deep learning Applications on the device</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>TensorFlow Lite based heterogeneous execution on cortex-A** + C7x-MMA</p></li>
+<li><p>ONNX Runtime based heterogeneous execution on cortex-A** + C7x-MMA</p></li>
+<li><p>TVM/Neo-AI-DLR based heterogeneous execution on cortex-A** + C7x-MMA</p></li>
+<li><p>OpenVX API in A72 to execute complete CNN model on C7x-MMA</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="openvx-api-in-a72-to-execute-complete-cnn-model-on-c7x-mma">
+<h3><a class="toc-backref" href="#id2"><span class="section-number">8.10.1.1. </span>OpenVX API in A72 to execute complete CNN model on C7x-MMA</a><a class="headerlink" href="#openvx-api-in-a72-to-execute-complete-cnn-model-on-c7x-mma" title="Permalink to this headline">¶</a></h3>
+<p>TI Deep Learning Product is a deep learning inference engine to accelerate your deep learning networks on TI Jacinto 7 SoCs.
+TIDL runs on C7x/MMA. TI OpenVX allows to access TIDL from A72. Hence to use TIDL in system
+scenario one need to understand the TIDL Product and also how to use it from within OpenVX.</p>
+<p>This developer note describes the high level steps one should follow to know more about TIDL and how to run custom
+networks on TI SoC using TIDL.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>It is HIGHLY recommended to follow the steps listed below to run your networks on EVM.</p></li>
+<li><p>DO NOT skip the steps listed in <a class="reference internal" href="#steps-to-run-your-custom-network-with-tidl-runtime">Steps to run your custom network with TIDL Runtime</a>.
+Each step verifies a certain aspect of the custom network and would help better
+identify and isolate issues in network execution.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="tflite-runtime-based-heterogeneous-execution-on-a72-c7x-mma">
+<h3><a class="toc-backref" href="#id3"><span class="section-number">8.10.1.2. </span>TFLite Runtime based Heterogeneous Execution on A72+C7x-MMA</a><a class="headerlink" href="#tflite-runtime-based-heterogeneous-execution-on-a72-c7x-mma" title="Permalink to this headline">¶</a></h3>
+<p>The Processor SDK implements heterogeneous execution of CNN models on A72 and C7x-MMA using the
+<a class="reference external" href="https://www.tensorflow.org/lite/guide/inference/">TensorFlow Lite</a> runtime. This heterogeneous execution enables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>TensorFlow Lite as the top level inference API for user applications</p></li>
+<li><p>Offloading subgraphs to C7x/MMA for accelerated execution with TIDL</p></li>
+<li><p>Executing layers on the ARM A72 core for layers that are not supported by TIDL</p></li>
+</ul>
+</div></blockquote>
+<p>Please refer section <a href="../../../tidl_j721e_09_00_00_06/ti_dl/docs/user_guide_html/md_tidl_osr_tflrt_tidl.html" target="_blank">TFLite Runtime</a> for detailed instruction on usage.</p>
+</div>
+<div class="section" id="onnx-runtime-based-heterogeneous-execution-on-a72-c7x-mma">
+<h3><a class="toc-backref" href="#id4"><span class="section-number">8.10.1.3. </span>ONNX Runtime based Heterogeneous Execution on A72+C7x-MMA</a><a class="headerlink" href="#onnx-runtime-based-heterogeneous-execution-on-a72-c7x-mma" title="Permalink to this headline">¶</a></h3>
+<p>The Processor SDK implements heterogeneous execution of CNN models on A72 and C7x-MMA using the
+<a class="reference external" href="https://www.onnxruntime.ai//">ONNX</a> runtime. This heterogeneous execution enables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ONNX Runtime as the top level inference API for user applications</p></li>
+<li><p>Offloading subgraphs to C7x/MMA for accelerated execution with TIDL</p></li>
+<li><p>Executing layers on the ARM A72 core for layers that are not supported by TIDL</p></li>
+</ul>
+</div></blockquote>
+<p>Please refer section <a href="../../../tidl_j721e_09_00_00_06/ti_dl/docs/user_guide_html/md_tidl_osr_onnxrt_tidl.html" target="_blank">ONNX Runtime</a> for detailed instruction on usage.</p>
+</div>
+<div class="section" id="tvm-neo-ai-dlr-based-heterogeneous-execution-on-a72-c7x-mma">
+<h3><a class="toc-backref" href="#id5"><span class="section-number">8.10.1.4. </span>TVM/Neo-AI-DLR based Heterogeneous Execution on A72+C7x-MMA</a><a class="headerlink" href="#tvm-neo-ai-dlr-based-heterogeneous-execution-on-a72-c7x-mma" title="Permalink to this headline">¶</a></h3>
+<p>The Processor SDK implements heterogeneous execution of CNN models on A72 and C7x-MMA using the
+<a class="reference external" href="https://tvm.apache.org/">TVM</a> runtime and <a class="reference external" href="https://github.com/neo-ai/neo-ai-dlr">Neo-AI-DLR</a>
+runtime. This heterogeneous execution enables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>TVM/Neo-AI-DLR as the top level inference API for user applications</p></li>
+<li><p>Offloading subgraphs to C7x/MMA for accelerated execution with TIDL</p></li>
+<li><p>Generating code and running on the ARM A72 core for layers that are not supported by TIDL</p></li>
+</ul>
+</div></blockquote>
+<p>Please refer section <a href="../../../tidl_j721e_09_00_00_06/ti_dl/docs/user_guide_html/md_tidl_osr_tvm_tidl.html" target="_blank">TVM/Neo-AI-DLR</a> for detailed instruction on usage.</p>
+</div>
+</div>
+<div class="section" id="documentation-references">
+<h2><a class="toc-backref" href="#id6"><span class="section-number">8.10.2. </span>Documentation References</a><a class="headerlink" href="#documentation-references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 17%" />
+<col style="width: 36%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>Documentation</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Section</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TIDL</p></td>
+<td><p><a href="../../../c7x-mma-tidl/ti_dl/docs/user_guide_html/index.html" target="_blank">LINK</a></p></td>
+<td><p>TIDL Product on C7x</p></td>
+<td><p>Main Page</p></td>
+</tr>
+<tr class="row-odd"><td><p>TIDL</p></td>
+<td><p><a href="../../../tidl_j721e_09_00_00_06/ti_dl/docs/user_guide_html/md_tidl_osr_tflrt_tidl.html" target="_blank">TFLite Runtime</a></p></td>
+<td><p>TensorFlow Lite Runtime</p></td>
+<td><p>Open Source Runtime &gt; TensorFlow Lite Runtime</p></td>
+</tr>
+<tr class="row-even"><td><p>TIDL</p></td>
+<td><p><a href="../../../tidl_j721e_09_00_00_06/ti_dl/docs/user_guide_html/md_tidl_osr_onnxrt_tidl.html" target="_blank">ONNX Runtime</a></p></td>
+<td><p>ONNX Runtime</p></td>
+<td><p>Open Source Runtime &gt; ONNX Runtime</p></td>
+</tr>
+<tr class="row-odd"><td><p>TIDL</p></td>
+<td><p><a href="../../../tidl_j721e_09_00_00_06/ti_dl/docs/user_guide_html/md_tidl_osr_tvm_tidl.html" target="_blank">TVM/Neo-AI-DLR</a></p></td>
+<td><p>TVM/Neo-AI DLR</p></td>
+<td><p>Open Source Runtime &gt; TVM/Neo-AI DLR</p></td>
+</tr>
+<tr class="row-even"><td><p>TI OpenVX</p></td>
+<td><p><a href="../../../tiovx/docs/user_guide/index.html" target="_blank">LINK</a></p></td>
+<td><p>TIDL OpenVX Node API on A72</p></td>
+<td><p>TIOVX User Guide &gt; TIOVX Support Kernels &gt; TI Extension Kernels &gt; tivxTIDLNode</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p><a href="../../../vision_apps/docs/user_guide/index.html" target="_blank">LINK</a></p></td>
+<td><p>Deep Learning Applications</p></td>
+<td><p>Application / Demos &gt; DL Demos</p></td>
+</tr>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p><a href="../../../vision_apps/docs/user_guide/index.html" target="_blank">LINK</a></p></td>
+<td><p>Pre/post processing sample OpenVX nodes</p></td>
+<td><p>APIs &gt; TI defined OpenVX Kernels for Vision Apps &gt; TIVX Kernels for Image Pre/Post Processing</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="source-code-references">
+<h2><a class="toc-backref" href="#id7"><span class="section-number">8.10.3. </span>Source Code References</a><a class="headerlink" href="#source-code-references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 58%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>File / Folder</p></th>
+<th class="head"><p>Decription</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TIDL</p></td>
+<td><p>c7x-mma-tidl/ti_dl/inc/itidl_ti.h</p></td>
+<td><p>TIDL Product interface on C7x</p></td>
+</tr>
+<tr class="row-odd"><td><p>TIDL</p></td>
+<td><p>c7x-mma-tidl/arm-tidl/rt/out/PC/x86_64/LINUX/release/PC_dsp_test_dl_algo_host_rt.out</p></td>
+<td><p>Standalone TIDL Runtime Host emulation executable</p></td>
+</tr>
+<tr class="row-even"><td><p>TIDL</p></td>
+<td><p>c7x-mma-tidl/arm-tidl/rt/out/J721E/A72/LINUX/release/TI_DEVICE_armv8_test_dl_algo_host_rt.out</p></td>
+<td><p>TIDL A72 executable for running model on C7x-MMA using openVX</p></td>
+</tr>
+<tr class="row-odd"><td><p>TIDL</p></td>
+<td><p>c7x-mma-tidl/ti_dl/demos/readme.txt</p></td>
+<td><p>TFLite Runtime Demo doing file based image classification</p></td>
+</tr>
+<tr class="row-even"><td><p>TIDL</p></td>
+<td><p>c7x-mma-tidl/ti_dl/demos/readme.txt</p></td>
+<td><p>ONNX Runtime Demo doing file based image classification</p></td>
+</tr>
+<tr class="row-odd"><td><p>TIDL</p></td>
+<td><p>c7x-mma-tidl/ti_dl/demos/readme.txt</p></td>
+<td><p>NEO-AI-DLR Demo doing file based image classification</p></td>
+</tr>
+<tr class="row-even"><td><p>TI OpenVX</p></td>
+<td><p>c7x-mma-tidl/arm-tidl/tiovx_kernels/tidl</p></td>
+<td><p>TIDL OpenVX Node implementation on C7x and A72</p></td>
+</tr>
+<tr class="row-odd"><td><p>TI OpenVX</p></td>
+<td><p>c7x-mma-tidl/arm-tidl/tiovx_kernels/include/TI/j7_tidl.h</p></td>
+<td><p>TIDL OpenVX Node interface on A72</p></td>
+</tr>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/dl_demos/app_tidl</p></td>
+<td><p>TIDL OpenVX Demo doing file based image classification</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/dl_demos/app_tidl_cam</p></td>
+<td><p>TIDL OpenVX Demo doing camera based image classification</p></td>
+</tr>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/dl_demos/app_tidl_od</p></td>
+<td><p>TIDL OpenVX Demo doing file based object detection</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/dl_demos/app_tidl_seg</p></td>
+<td><p>TIDL OpenVX Demo doing file based semantic segmentation</p></td>
+</tr>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/dl_demos/app_tidl_vl</p></td>
+<td><p>TIDL OpenVX Demo doing file based visual localization</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/dl_demos/app_tidl_avp*</p></td>
+<td><p>TIDL OpenVX Demo doing Auto valet parking applications</p></td>
+</tr>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p>vision_apps/kernels/img_proc</p></td>
+<td><p>Pre/post processing sample OpenVX nodes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="steps-to-run-your-custom-network-with-tidl-runtime">
+<h2><a class="toc-backref" href="#id8"><span class="section-number">8.10.4. </span>Steps to run your custom network with TIDL Runtime</a><a class="headerlink" href="#steps-to-run-your-custom-network-with-tidl-runtime" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="step-1-import-your-network-to-tidl-runtime-network-format">
+<h3><a class="toc-backref" href="#id9"><span class="section-number">8.10.4.1. </span>Step 1: Import your network to TIDL Runtime network format</a><a class="headerlink" href="#step-1-import-your-network-to-tidl-runtime-network-format" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>See TIDL Product user guide [<a href="../../../c7x-mma-tidl/ti_dl/docs/user_guide_html/index.html" target="_blank">LINK</a>], section <strong>TIDL Runtime &gt; TIDL-RT Getting Started</strong></p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Make sure your network only uses the TIDL runtime supported layers. See TIDL product user guide [<a href="../../../c7x-mma-tidl/ti_dl/docs/user_guide_html/index.html" target="_blank">LINK</a>], section <strong>TIDL Runtime &gt; TIDL-RT Supported layers</strong></p>
+</div>
+<ul class="simple">
+<li><p>Proceed to next step, after network import is successful.</p></li>
+</ul>
+</div>
+<div class="section" id="step-2-run-the-imported-tidl-network-in-pc-host-emulation-mode">
+<h3><a class="toc-backref" href="#id10"><span class="section-number">8.10.4.2. </span>Step 2: Run the imported TIDL network in PC HOST emulation mode</a><a class="headerlink" href="#step-2-run-the-imported-tidl-network-in-pc-host-emulation-mode" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Run the newly imported network on PC to confirm that TIDL runtime can execute this network.</p></li>
+<li><p>See TIDL user guide [<a href="../../../c7x-mma-tidl/ti_dl/docs/user_guide_html/index.html" target="_blank">LINK</a>], section <strong>TIDL Runtime &gt; TIDL-RT Inference</strong></p></li>
+<li><p>Proceed to next step, after network execution on PC is successful.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Typically one can use the pre-built executable and no need to build the executable from source.</p></li>
+<li><p>It is enough to run test the network with 1-2 frames at this step</p></li>
+<li><p>Here the actual execution speed will be slow since its running in a emulated manner on PC</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="step-3-run-the-imported-tidl-network-on-evm-with-openvx-non-pipelined-mode">
+<h3><a class="toc-backref" href="#id11"><span class="section-number">8.10.4.3. </span>Step 3: Run the imported TIDL network on EVM with OpenVX (non-pipelined mode)</a><a class="headerlink" href="#step-3-run-the-imported-tidl-network-on-evm-with-openvx-non-pipelined-mode" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Run the newly imported network on EVM with OpenVX. Here one can feed more number of frames.
+Use Linux to feed a large number of frames and/or visualize the output on display</p></li>
+<li><p>Choose and customize the demos as per your need,</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>vision_apps/apps/dl_demos/app_tidl</strong> for image classification</p></li>
+<li><p><strong>vision_apps/apps/dl_demos/app_tidl_od</strong> for object detection</p></li>
+<li><p><strong>vision_apps/apps/dl_demos/app_tidl_seg</strong> for semantic segmentation</p></li>
+<li><p><strong>vision_apps/apps/dl_demos/app_tidl_cam</strong> for camera based image classification</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>By default the demos are customized to run with a pre-trained network and specific pre/post processing requirements.
+You will need to modify these demos to run and visualize your DL network as required.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>In these demos, pre-processing, inference, post processing, visualization are all run on different cores.</p></li>
+<li><p>By default they run in a pipeline execution manner but can be made to run back-to-back
+by NOT defining APP_ENABLE_PIPELINE_FLOW macro in respective demo’s <strong>vision_apps/apps/dl_demos/app_tidl_XXX/main.c</strong> file.</p></li>
+<li><p>However this is not the most optimal from system execution point of view, since
+in final system many of these steps can be pipelined at frame boundary to allow overall higher system FPS.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="step-4-run-the-imported-tidl-network-on-evm-with-openvx-pipelined-mode">
+<h3><a class="toc-backref" href="#id12"><span class="section-number">8.10.4.4. </span>Step 4: Run the imported TIDL network on EVM with OpenVX (pipelined mode)</a><a class="headerlink" href="#step-4-run-the-imported-tidl-network-on-evm-with-openvx-pipelined-mode" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>At this stage you may want to run your network with rest of system processing like
+camera or display or other networks.</p></li>
+<li><p>Now you can make your own application according to your system requirements.</p></li>
+<li><p>To get maximum performance in system, one must pipeline TIDL network execution with
+other processing like camera, pre-processing, post-processing, visualization, display</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Start with single network, single task demo applications such as app_tidl_od, app_tidl_seg or app_tidl_cam, modify to run your DL network.</p></li>
+<li><p>Refer to other Auto Valet Parking Demos to perform more tasks such as running multiple networks, multiple cameras, multiple tasks etc.</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_hwa.html" class="btn btn-neutral float-right" title="8.11. Developing HW accelerator applications with OpenVX" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes_memory_map.html" class="btn btn-neutral" title="8.9. Understanding and updating SDK memory map for J721E" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Processor SDK RTOS J721E &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="#"/>
+        <link rel="next" title="1. Overview" href="overview.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Processor SDK RTOS J721E</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="processor-sdk-rtos-platform">
+<h1>Processor SDK RTOS J721E<a class="headerlink" href="#processor-sdk-rtos-platform" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="welcome">
+<h2>Welcome<a class="headerlink" href="#welcome" title="Permalink to this headline">¶</a></h2>
+<p>This documentation covers the Texas Instruments <strong>Processor SDK RTOS</strong> for the J721E platform.  The following
+table lists the product devices associated with this platform:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 62%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Platform</strong></p></td>
+<td><p><strong>Devices</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>J721E</p></td>
+<td><p>TDA4VM, DRA829V</p></td>
+</tr>
+</tbody>
+</table>
+<p>Please refer to the <a class="reference internal" href="getting_started_j721e.html#getting-started"><span class="std std-ref">Getting Started</span></a> page for an overview of dependencies and entry point into the different
+components and demos available.</p>
+<p>Please refer to <a class="reference internal" href="sdk_components_j721e.html#sdk-components"><span class="std std-ref">SDK Components</span></a> for a complete listing of components included in this platform package.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To run many of the demos in this SDK, the companion <strong>Processor SDK Linux</strong> for J721E also needs to be downloaded separately.</p>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#introduction">1.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#licenses">1.2. Licenses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#technical-support">1.3. Technical Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started_j721e.html#dependencies">2.1. Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started_j721e.html#demo-applications">2.2. Demo Applications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#hlos-support-a72">3.1. HLOS Support (A72)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#vision-apps">3.2. Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#platform-development-kit-pdk">3.3. Platform Development Kit (PDK)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#mcu-software-mcu-sw">3.4. MCU Software (MCU SW)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#ti-deep-learning-product-tidl">3.5. TI Deep learning Product (TIDL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#mma-lib">3.6. MMA LIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#fft-lib">3.7. FFT LIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#ti-openvx-tiovx">3.8. TI OpenVX (TIOVX)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#imaging">3.9. Imaging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#ethernet-switch-firmware-ethfw">3.10. Ethernet Switch Firmware (ETHFW)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#remote-device">3.11. Remote Device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#perception-toolkit-ptk">3.12. Perception Toolkit (PTK)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#ti-autonomous-driving-algorithms-tiadalg">3.13. TI Autonomous Driving Algorithms (TIADALG)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#c66x-vxlib">3.14. C66x VXLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#c66x-dsplib">3.15. C66x DSPLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#c7x-dsplib">3.16. C7x DSPLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#c66x-mathlib">3.17. C66x MATHLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#c7x-mathlib">3.18. C7x MATHLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#software-diagnostics-library-sdl">3.19. Software Diagnostics Library (SDL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#system-firmware-sysfw">3.20. System firmware (SYSFW)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#ctools-library">3.21. CTools Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#rtos">3.22. RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sdk_components_j721e.html#code-generation-tools-cgt">3.23. Code generation tools (CGT)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_09_00_00_j721e.html">4.1. Release notes - 09_00_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_08_06_00_j721e.html">4.2. Release notes - 08_06_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_08_05_00_j721e.html">4.3. Release notes - 08_05_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_08_04_00_j721e.html">4.4. Release notes - 08_04_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_08_02_00_j721e.html">4.5. Release notes - 08_02_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_08_01_00_j721e.html">4.6. Release notes - 08_01_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_08_00_00_j721e.html">4.7. Release notes - 08_00_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_07_03_00_j721e.html">4.8. Release notes - 07_03_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_07_02_00_j721e.html">4.9. Release notes - 07_02_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_07_01_00_j721e.html">4.10. Release notes - 07_01_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_07_00_00.html">4.11. Release notes - 07_00_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_06_02_00.html">4.12. Release notes - 06_02_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_06_01_01.html">4.13. Release notes - 06_01_01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_06_01_00.html">4.14. Release notes - 06_01_00</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release_notes_06_00_01.html">4.15. Release notes - 06_00_01</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="evm_setup_j721e.html#evm-setup-to-run-sdk-demos">5.1. EVM Setup to run SDK demos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evm_setup_j721e.html#evm-and-daughter-card-information">5.2. EVM and Daughter Card information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ccs_setup_j721e.html#cpu-names-used-in-psdk-rtos-vs-ccs">6.1. CPU names used in PSDK RTOS vs CCS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccs_setup_j721e.html#step-1-install-ccs">6.2. Step 1: Install CCS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccs_setup_j721e.html#debugging-without-hlos-running-on-a72-rtos-only-baremetal">6.3. Debugging without HLOS running on A72 (RTOS-only / baremetal)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ccs_setup_j721e.html#debugging-with-hlos-running-on-a72-linux-qnx">6.4. Debugging with HLOS running on A72 (Linux / QNX)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#common-parameters-used-for-performance-benchmarking">7.1. Common parameters used for performance benchmarking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#vision-apps-adas-vision-dl-demos">7.2. Vision Apps (ADAS, Vision, DL demos)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#platform-development-kit-pdk">7.3. Platform Development Kit (PDK)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#mcu-software-mcu-sw">7.4. MCU Software (MCU SW)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#ethernet-firmware-ethfw">7.5. Ethernet Firmware (EthFW)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#ti-deep-learning-product-tidl">7.6. TI Deep learning Product (TIDL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#ti-openvx-tiovx">7.7. TI OpenVX (TIOVX)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#ti-autonomous-driving-algorithms-tiadalg">7.8. TI Autonomous Driving Algorithms (TIADALG)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#c7x-dsplib">7.9. C7x DSPLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#c7x-mathlib">7.10. C7x MATHLIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#c7x-fft-lib">7.11. C7x FFT LIB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasheet_sdk_j721e.html#autosar-benchmark">7.12. AUTOSAR Benchmark</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="overview.html" class="btn btn-neutral float-right" title="1. Overview" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

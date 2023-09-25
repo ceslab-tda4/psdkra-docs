@@ -1,0 +1,180 @@
+
+.. _getting_started:
+
+Getting Started
+===============
+
+This section highlights some of the most common resources required to use this SDK and/or its components.  This SDK is made up of
+several components.  Component details, including capabilities, features, and limitations, are found in component specific documentation.
+The links to component specific documentation are indexed on the following page: :ref:`sdk_components`
+
+This SDK supports **J721E** family of SoCs including devices listed below.
+
++------------------------+---------------------------------------+
+| **Platform**           | **Devices**                           |
++------------------------+---------------------------------------+
+| |platform|             | TDA4VM, DRA829V                       |
++------------------------+---------------------------------------+
+
+Dependencies
+------------
+
+This SDK and its components are built for the family of SoC specified above. Some of the demo/example/reference applications
+provided by SDK, depends on specific board(s), below listed are the boards/hardware dependencies
+
+Hardware Dependencies
+^^^^^^^^^^^^^^^^^^^^^
+
+Evaluation Module (EVM)
+"""""""""""""""""""""""
+
+    * This SDK is intended to run on the following board combination:
+
+      * `TDA4VM & DRA829V system-on-module <https://www.ti.com/tool/J721EXSOMXEVM>`_
+      * `J7 common processor board <https://www.ti.com/tool/J721EXCPXEVM>`_.
+    * For details on configuring the EVM to run this SDK, refer to the :ref:`evm_setup_j721e` section.
+
+JTAG
+""""
+    * The common processor board listed above provides on on-board XDS110 USB debugger as shown :ref:`here <j721e_common-processor-board>`
+    * Alternately an external debugger such as `XDS560V2 <http://www.spectrumdigital.com/xds560v2-system-trace-jtag-emulator-with-target-adapters/>`_ could be used.
+    * JTAG would allow one to debug execution on different compute cores, load and run applications, etc...
+    * To be able to load a program via JTAG, the board will have to be configured in :ref:`No Boot Mode <j721e_no_boot_mode>` .
+    * **Note that** while configuring to no-boot mode is mandatory to load and run apps from CCS. It's not mandatory, once the device is booted.
+
+        e.g. When set to operate in mmc/sd boot mode and mmc/sd card include valid images, on powerup/boot completion, JTAG could be be used to connect to enabled compute core.
+
+uart terminal
+"""""""""""""
+    * Most of the example application provided in the SDK, prints status of the application via the uart terminal.
+    * Recommend to connect an serial cable to the uart terminal :ref:`Debug UART <j721e_evm_daughter_card>` of the EVM
+
+Software Dependencies (not included in SDK)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Code Composer Studio (CCS) - Recommend IDE
+""""""""""""""""""""""""""""""""""""""""""
+
+    CCS is an integrated development environment (IDE) that supports TI's Microcontroller and Embedded Processors portfolio.
+    Refer to :ref:`ccs_setup_j721e` for steps to install and configure CCS to work with this SDK.
+
+
+Demo Applications
+-----------------
+
+The SDK and its components provide multiple applications that demonstrate some of the features of the SoC. Listed below are two different ways to
+run included demos (prebuilt, or build from source).
+
+Running Prebuilt Demos
+^^^^^^^^^^^^^^^^^^^^^^
+
+The easiest way to run a subset of the demos on the EVM is to download the and run the prebuilt demos.  The prebuilt demo package includes
+a prebuilt linux filesystem and boot partition with demo binaries and firmware preintegrated.  It is included as a tar ball from the SDK
+release page and can be extracted to an SD card and loaded on the board via a simple script without the need to download the source package
+or build anything.
+
+.. NOTE::
+
+   Only Linux-based `Vision Apps Demos <../../../vision_apps/docs/user_guide/DEMOS.html>`_ are available in the prebuilt package.  For RTOS-based
+   Gateway, MCUSW, or PDK demos, they must be built from source (see :ref:`demos_from_source`).
+
+.. toctree::
+   :maxdepth: 1
+
+   out_of_box_j721e
+
+.. _demos_from_source:
+
+Build Demos from Source
+^^^^^^^^^^^^^^^^^^^^^^^
+
+If you would like access to more demos not included in the prebuilt demo package, or you would like to modify or create custom demos, then you will
+need to at least download the PROCESSOR SDK RTOS source package.  The following sections point you in the right direction depending on if you want
+to build on Linux or Windows PC.
+
+.. IMPORTANT::
+
+    Only a subset of components/demos can be built on a Windows PC, as indicated in :ref:`windows_build`.  If you would like to build more components
+    not available for Windows build, then you must build on a Linux PC or Linux virtual machine.
+
+
+.. _linux_build:
+
+Building on a Linux PC
+""""""""""""""""""""""
+
+.. IMPORTANT::
+
+   To build many of the demos in this SDK, the companion HLOS package may also need to be download separatly; either **Processor SDK Linux** or
+   **Processor SDK QNX**.
+
+- Download and Untar the SDK tar ball **ti-processor-sdk-rtos-j721e-evm-xx_xx_xx_xx.tar.gz**
+
+.. code:: bash
+
+    cd {path/to/file}
+    tar xf ti-processor-sdk-rtos-j721e-evm-xx_xx_xx_xx.tar.gz
+
+- Different components in the SDK have different demos.  Please refer to the below table to get started with which demo domain you are interested in.
+
++---------------------------+-------------------------------------------------+
+| **Topic**                 | **Documentation Links**                         |
++---------------------------+-------------------------------------------------+
+| Camera, ADAS, Vision,     | See vision apps [|vision_apps_user_guide|]      |
+| Linux/QNX, OpenVX,        |                                                 |
+| Deep Learning (TIDL)      |                                                 |
++---------------------------+-------------------------------------------------+
+| Gateway                   | See ethernet firmware [|ethfw_user_guide|]      |
++---------------------------+-------------------------------------------------+
+| Integrated MCU            | See MCUSW [|mcusw_user_guide|]                  |
++---------------------------+-------------------------------------------------+
+| RTOS Device Drivers       | See PDK [|pdk_user_guide|]                      |
++---------------------------+-------------------------------------------------+
+| HS Device Development     | See :ref:`developing-with-hs-devices`           |
++---------------------------+-------------------------------------------------+
+
+.. _windows_build:
+
+Building on a Windows PC
+""""""""""""""""""""""""
+
+The following table specifies the components which support and do **not** support building on Windows PC:
+
++---------------------------+--------------------------------------+
+| **Supports Windows**      | **Does NOT support Windows**         |
++---------------------------+--------------------------------------+
+| mcusw                     | vision_apps                          |
++---------------------------+--------------------------------------+
+| pdk                       | tiovx                                |
++---------------------------+--------------------------------------+
+| dsplib_c66x               | ethfw                                |
++---------------------------+--------------------------------------+
+| mathlib_c66x              | remote_device                        |
++---------------------------+--------------------------------------+
+| vxlib_c66x                | imaging                              |
++---------------------------+--------------------------------------+
+| mmalib (prebuilt)         | ti-perception-toolkit                |
++---------------------------+--------------------------------------+
+| ivision (not built)       | tiadalg                              |
++---------------------------+--------------------------------------+
+
+In order to build supported components on Windows PC, please follow the setup sequence below:
+
+- Download and Untar the SDK tar ball **ti-processor-sdk-rtos-j721e-evm-xx_xx_xx_xx.tar.gz**
+- Download and Untar the Windows code gen tools tar ball **ti-processor-sdk-rtos-j721e-evm-xx_xx_xx_xx-windows_codegen_tools.tar.gz**
+- Delete the following components in the SDK tar ball and replace with the corresponding
+  components in the windows installation
+    - ti-cgt-armllvm_<version>.LTS
+    - ti-cgt-c6000_<version>
+    - ti-cgt-c7000_<version>.LTS
+- Different components in the SDK have different demos.  Please refer to the below table to get started with which demo domain you are interested in.
+
++---------------------------+-------------------------------------------------+
+| **Topic**                 | **Documentation Links**                         |
++---------------------------+-------------------------------------------------+
+| Ethernet / Gateway        | See ethernet firmware [|ethfw_user_guide|]      |
++---------------------------+-------------------------------------------------+
+| Integrated MCU            | See MCUSW [|mcusw_user_guide|]                  |
++---------------------------+-------------------------------------------------+
+| RTOS Device Drivers       | See PDK [|pdk_user_guide|]                      |
++---------------------------+-------------------------------------------------+

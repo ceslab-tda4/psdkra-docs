@@ -1,0 +1,286 @@
+
+
+************************************
+Adding new image sensor to PSDK RTOS
+************************************
+
+Introduction
+------------
+
+Imaging library is a collection of sample algorithms and image sensor drivers packaged with PSDK RTOS to enable camera based applications.
+It includes sensor driver framework which is a modular and extensible framework to
+
+   - Add new sensor drivers easily.
+   - Provide a consistent interface to applications and algorithms.
+
+The goal of this framework is to add new sensors with **zero** code modifications to the applications.
+Any application using an image sensor is expected to be agnostic to the underlying HW. The application is expected to communicate with the
+driver framework using RPC commands. The details of supported sensors and the sensor capabilities are queried at runtime.
+
+Similarly algorithms communicating with image sensor (e.g. AutoExposure) are required to send RPC commands at runtime
+without knowing which sensor is operational.
+Driver framework is responsible for mapping the camera ID to the associated physical image sensor.
+
+This mechanism allows algorithm and application code to remain unchanged as new sensors are added to the framework.
+
+
+Documentation References
+------------------------
+
+=============   ====================================== ======================================= ====================================================================
+SDK Component   Documentation                          Description                             Section
+=============   ====================================== ======================================= ====================================================================
+vision apps     |vision_apps_user_guide|               Single Camera VPAC Demo                 Application / Demos > Basic Demos > Single Camera VPAC Application
+vision apps     |vision_apps_user_guide|               Multi Camera VPAC Demo                  Application / Demos > Basic Demos > Multi Camera VPAC Application
+imaging         |imaging_user_guide|                           Imaging drivers and algos               Imaging / Modules > Imaging Sensor Driver Modules
+=============   ====================================== ======================================= ====================================================================
+
+
+Source Code References
+--------------------------
+
+=====================   ==============================================    ==================================================================
+SDK Component                File / Folder                                Description
+=====================   ==============================================    ==================================================================
+Imaging                 imaging/sensor_drv                                Sensor driver source code
+vision apps             vision_apps/utils/iss                             Common ISS Utilities to be used by all camera based applications
+vision apps             vision_apps/apps/basic_demos/app_single_cam       Demo Application using a single camera instance
+vision apps             vision_apps/apps/basic_demos/app_multi_cam        Demo Application using a multiple (upto 8) camera instances
+=====================   ==============================================    ==================================================================
+
+
+.. _key_data-structs:
+
+Key Data Structures
+------------------------------------------------------------------------------------------------------------------------------
+
+IssSensor_CreateParams
+######################
+Create time parameters like width, height, dataformat, I2C address for the image sensor.
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h
+
+IssSensorFxns
+#############
+Set of callbacks of all routines to be implemented by the sensor driver.
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h
+
+IssSensorIntfParams
+###################
+Interface parameters e.g. number of CSI-2 date lanes, position, polarity etc.
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h
+
+I2cParams
+#########
+Struct containing register address, value and delay (milli seconds).
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h
+
+IssSensorConfig
+###############
+
+Struct containing pointers to sensor and SerDes configuration structures.
+
+.. NOTE::
+        - Last entry in Serializer and Deserializer config scripts must be {0xFFFF, 0x00, 0x0}
+
+
+IssSensors_Handle
+#################
+Handle to the image sensor driver including all the information about the sensor
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h
+
+
+Application - Driver Interface
+------------------------------
+
+RPC Commands
+############
+
+Application communicates with the sensor driver using RPC (*Remote Procedure Call*) commands
+The commands defined currently are listed below.
+
+=======================================                ==================================================================================================================
+Command                                                Description
+=======================================                ==================================================================================================================
+**IM_SENSOR_CMD_ENUMERATE**                            Called by the application to get a list of names of all the sensors supported.
+
+**IM_SENSOR_CMD_QUERY**                                Called by the application to query the capabilities of an image sensor by name.
+
+**IM_SENSOR_CMD_PWRON**                                Called by the application to power ON the sensor. Sensor f/w invokes *powerOn* callback of the selected sensor.
+                                                       Exact implementation of this function is left to the specific sensor driver.
+
+**IM_SENSOR_CMD_PWROFF**                               Called by the application to power OFF the sensor. Sensor f/w invokes *powerOff* callback of the selected sensor.
+                                                       Exact implementation of this function is left to the specific sensor driver.
+
+**IM_SENSOR_CMD_STREAM_ON**                            Called by the application to start streaming. Sensor f/w invokes *streamOn* callback of the selected sensor.
+                                                       Exact implementation of this function is left to the specific sensor driver.
+
+**IM_SENSOR_CMD_STREAM_OFF**                           Called by the application to stop streaming. Sensor f/w invokes *streamOff* callback of the selected sensor.
+                                                       Exact implementation of this function is left to the specific sensor driver.
+
+**IM_SENSOR_CMD_CTL**                                  Called by the application to  send runtime control commands.
+                                                       Next section describes the runtime controls currently supported.
+
+**IM_SENSOR_CMD_DEBUG**                                Called by the application for advanced debugging support.
+
+=======================================                ==================================================================================================================
+
+
+Control Commands
+################
+
+IM_SENSOR_CMD_STREAM_CTL command can have an argument for control command.
+Control commands defined currently are listed below.
+
+==========================================             ==================================================================================================================
+Command                                                Description
+==========================================             ==================================================================================================================
+**IMAGE_SENSOR_CTRLCMD_GETEXPPRG**                     Typically called by the AutoExposure algorithm to know sensor's exposure constraints, which 
+                                                       can then be used for initializing AutoExposure algorithm.
+
+**IMAGE_SENSOR_CTRLCMD_GETWBCFG**                      Typically called by the AutoWhiteBalnce algorithm to know sensor's WB constraints, which 
+                                                       can then be used for initializing AutoWhiteBalance algorithm. This is needed only if 
+                                                       WB gains are to be applied in sensor vs ISP.  
+
+**IMAGE_SENSOR_CTRLCMD_SETEXPGAIN**                    Typically called by the AutoExposure algorithm to set exposure  time and analog/digital gain.
+                                                       Sensor f/w invokes *setAeParams* callback of the selected sensor.
+                                                       Exact implementation of this function is left to the specific sensor driver.
+
+**IMAGE_SENSOR_CTRLCMD_GETEXPGAIN**                    Reserved for future use.
+
+**IMAGE_SENSOR_CTRLCMD_SETWBGAIN**                     Typically called by the AutoWhiteBalance algorithm to set color gains.
+                                                       Sensor f/w invokes *setAwbParams* callback of the selected sensor.
+                                                       Exact implementation of this function is left to the specific sensor driver.
+
+**IMAGE_SENSOR_CTRLCMD_GETWBGAIN**                     Reserved for future use.
+
+**IMAGE_SENSOR_CTRLCMD_READ_SENSOR_REG**               Used for reading or writing sensor/serilaizer/deserializer registers through a script.
+
+**IMAGE_SENSOR_CTRLCMD_WRITE_SENSOR_REG**              Used for reading or writing sensor/serilaizer/deserializer registers through a script.
+==========================================             ==================================================================================================================
+
+.. NOTE::
+    Command set may be extended in future
+
+
+Steps to create a new sensor driver
+-----------------------------------
+Create a folder
+################
+Create a new folder inside imaging/sensor_drv/src/ e.g. <newsensor123>
+
+Create sensor driver file
+################################
+Create a new source file implementing all the structures and callbacks mentioned in :ref:`key_data-structs`.
+
+
+##############
+createParams
+##############
+
+        =======================================         ===========================================================================================================================
+        Parameter                                       Usage
+        =======================================         ===========================================================================================================================
+        **name**                                        Pick any unique string no longer than 32 characters
+
+        **i2cInstId**                                   Specify I2C channel on which the sensor is connected. For Jacinto 7 EVM, default is 0x6
+
+        **i2cAddrSensor**                               Array of sensor address aliases. Upto 8 instances supported. Must match alias values specified in UB960 config.
+
+                                                        .. NOTE:: If the sensor is connected directly i.e. without SerDes, provide sensor's physical I2C address (7-bit) here
+
+        **i2cAddrSer**                                  Array of serializer address aliases. Upto 8 instances supported. Must match alias values specified in UB960 config.
+
+        **width**                                       Number of pixels per line in sensor output, not including H blanking.
+
+        **height**                                      Number of lines per frame in sensor output, not including V blanking or metadata.
+
+        **num_exposures**                               Number of exposure channels per frame.
+
+        **line_interleaved**                            Reserved for future use.
+
+        **pixel_container**                             width of container element.
+
+        **msb**                                         MSB of valid data. Must be set to bpp -1. E.g. MSB = 11 for 12b RAW.
+
+        **features**                                    Binary mask specifying sensor capabilities.
+
+        **fps**                                         Frame rate per second. Not used currently.
+
+        **numDataLanes**                                Number of CSI-2 data lanes. Must match sensor & deserializer settings.
+
+        **dataLanesMap**                                Mapping of sensor CSI2 lanes to CSI2 Rx. Must match sensor & deserializer settings.
+
+        **dataLanesPolarity**                           Reserved for future use.
+
+        **csi_ddr_clock**                               Reserved for future use.
+
+        **num_channels**                                Number of camera instances supported. Valid values : 1-8.
+
+        **dccId**                                       Unique numerical identfier. Used for ISP tuning.
+        =======================================         ===========================================================================================================================
+
+##############
+IssSensorFxns
+##############
+
+        =======================================         ===========================================================================================================================
+        API Name                                        Description
+        =======================================         ===========================================================================================================================
+        **probe**                                       Detects if sensor is accessible, usually by reading sensor chip ID.
+
+        **config**                                      Configures serializer and sensor.
+                                                        Argument *sensor_features_requested* maybe used to load different configuration based on application request.
+                                                        For e.g 30fps mode vs 60fps mode.
+
+        **streamOn**                                    Enables streaming on sensor and deserializer.
+
+        **streamOff**                                   Disables streaming on sensor and deserializer.
+
+        **powerOn**                                     HW dependent. Pull up/down any GPIOs, if needed.
+                                                        Configures the deserializer so that sensor is accessible over FPD Link backchannel.
+
+        **powerOff**                                    HW dependent. Pull up/down any GPIOs, if needed.
+
+        **getExpParams**                                Reserved for future use. Must be implemented as a dummy function returning 0.
+
+        **setAeParams**                                 Translates AE computed exposure time and analog gain to sensor specific settings.
+                                                        Updates sensor registers with new values.
+
+        **getDccParams**                                Reserved for future use. Must be implemented as a dummy function returning 0.
+
+        **initAewbConfig**                              Reserved for future use. Must be implemented as a dummy function returning void.
+
+        **getIspConfig**                                Reserved for future use. Must be implemented as a dummy function returning void.
+
+        **readWriteReg**                                Reserved for future use. Must be implemented as a dummy function returning 0.
+
+        **getExpPrg**                                   Called by AE algorithm to get the sensor exposure constraints.
+
+        **deinit**                                      Reserved for future use. Must be implemented as a dummy function returning void.
+        =======================================         ===========================================================================================================================
+
+.. NOTE::
+        For more details, please refer to an existing sensor driver
+
+Update makefile
+###############
+Modify sensor_drv/src/concerto.mak to add the newly added sensor file. For e.g.
+
+    CSOURCES    += newsensor123/iss_sensor_newsensor123.c
+
+
+Register the new sensor with framework
+######################################
+Modify the function *IssSensor_Init* in the file *sensor_drv/src/iss_sensors.c* to call init function of the new sensor. For e.g.
+
+     status \|= IssSensor_NewSensor123_Init();
+
+
+Build and Run
+#############
+- Do a clean build of imaging, followed by sdk build.
+- Upon execution, new sensor should be populated in the enumerated sensor list.
+- Select the sensor and run. If the sensor and SerDes settings are correct, a preview should be displayed on the connected display.
+- At this stage, sensor driver is functional. However, image quality may not be perfect.
+- Please refer to DCC Tuning Tool documentation for the steps to achieve good image quality using TI ISP.
+

@@ -1,0 +1,55 @@
+
+Changing Display Resolution in Vision Apps
+==========================================
+
+Introduction
+------------
+
+Vision Apps by default configures the display output to 1920x1080 resolution
+and therefore all demos configure the display pipeline resolution to 1920x1080.
+This developer note explains how to change the display resolution and use it in
+a demo.
+
+Required Modifications
+----------------------
+
+Display is controlled by the Main R5F in vision apps. Changing the display
+resolution requires changes in two places, one in the display controller
+initialization and one in the display pipeline.
+
+Display Initialization
+**********************
+
+The display controller is initialized as part of the vision apps initialization
+which occurs when the Main R5F firmware is loaded and the appInit API is
+called. The appInit API is implemented in the file 
+<SDK_PATH>/vision_apps/apps/basic_demos/app_tirtos/common/app_init.c. This API
+fixes the output resolution and the timing parameters for the output resolution
+to 1080p as shown below. For new output resolution, frame size, timing
+parameters and pixel clock requires to be updated as per output resolution
+requirement. Once changed, the display controller framework will take care of
+configuring it in the DSS.
+
+.. code:: bash
+
+	prm.timings.width = 1920U;
+	prm.timings.height = 1080U;
+	prm.timings.hFrontPorch = 88U;
+	prm.timings.hBackPorch = 148U;
+	prm.timings.hSyncLen = 44U;
+	prm.timings.vFrontPorch = 4U;
+	prm.timings.vBackPorch = 36U;
+	prm.timings.vSyncLen = 5U;
+	prm.timings.pixelClock = 148500000ULL;
+
+Display Pipeline
+****************
+
+The display pipeline gets configured in each vision apps demo. By default, all
+demos use 1920x1080 as input resolution for the display pipeline. For new
+resolutions, the demo needs to be changed. Most demos utilize the display
+module located at <SDK_PATH>/vision_apps/modules/src/app_display_module.c.
+This module uses the DISPLAY_WIDTH and DISPLAY_HEIGHT macros found at
+<SDK_PATH>/vision_apps/modules/include/app_display_module.h for setting the
+display width and height.  These macro values need to be updated as well as
+per the required display resolution.

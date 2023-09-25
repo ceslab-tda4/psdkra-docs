@@ -1,0 +1,249 @@
+
+
+Understanding bootloaders in Processor SDK |platform| (RTOS/Linux)
+======================================================================
+
+Introduction
+------------
+
+There are two bootloaders in Processor SDK |platform| (RTOS/Linux). They are:
+
+    #. RTOS Bootloader
+    #. Linux Bootloader
+
+This developer note describes about these two bootloaders.
+
+RTOS Bootloader
+---------------
+
+RTOS Bootloader is referred to as SBL (Secondary bootloader).
+
+- This is included in Processor SDK RTOS at ::
+
+    pdk_<device>_<version>/packages/ti/boot
+
+- This is used when all cores on the SoC run FreeRTOS
+- In this case one would see below boot files in a SD card
+
+    #. **tiboot3.bin** - this is the SBL which the ROM bootloader will boot on MCU R5F Core0
+    #. **tiboot3.bin** will boot |sysfw_bin| - this is the DMSC firmware binary
+    #. **tiboot3.bin** will boot a file called **"app"** - this file contains binaries of all other CPUs like A72, Main |rtos_cores|
+    #. **"app"** is created by running an offline tool which covert elf **.out** files to **.rprc** format and then combines these to something called "multi-core image"
+
+    .. seealso::
+
+        See this page for more info on this .rprc file and offline boot tools |sbl_doc_link|
+
+The table below provides more information about the features and differences between the SBL bootloader and the MCUSW “CAN Boot App”:
+
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Feature area                             | SBL Description                             | MCUSW “CAN Boot App”                                             | Key Diffs / Comments                                             |
++==========================================+=============================================+==================================================================+==================================================================+
+| Initial Bootloader                       | YES                                         | NO                                                               | MCUSW CAN Boot app is a “tertiary” bootloader                    |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| SoC's Supported                          | AM65xx/J7200/J721E/J721S2/J784S4            | J7200/J721E/J721S2/J784S4                                        |                                                                  |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Device types supported                   | GP, HS                                      | GP, HS                                                           | NOTE: most, but not all, features are supported for each device  |
+|                                          |                                             |                                                                  | type.  Check specific feature support listed in each release.    |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Runs on MCU R5F                          | YES                                         | YES                                                              | NOTE: the SBL is used to boot the MCUSW CAN Boot App             |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Can support startup with MCU domain only | YES                                         | YES                                                              |                                                                  |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Boot media supported                     | UART, MMCSD, OSPI                           | MMCSD, OSPI                                                      | UART boot supported with SBL only                                |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Supports booting HLOS + RTOS images      | YES                                         | YES                                                              | SBL uses “combined appimage” build to put all RTOS & HLOS images |
+|                                          |                                             |                                                                  | into a single .appimage, whereas a specific format of combined   |
+|                                          |                                             |                                                                  | images is used with the CAN boot app.                            |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Boots another app to MCU R5F             | YES                                         |                                                                  | Boot app doesn’t support booting an app to the MCU R5F (since it |
+|                                          |                                             |                                                                  | is the app already running on that processor)                    |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Early CAN response demo                  | NO                                          | YES                                                              |                                                                  |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Image Layout                             |  single appimage                            | 3-5 different appimages                                          | SBL: all images for the remote cores to be booted must all be    |
+|                                          |                                             |                                                                  | combined in to a single .appimage file that is either placed     |
+|                                          |                                             |                                                                  | on the SD card (for MMCSD boot) or is flashed to a single flash  |
+|                                          |                                             |                                                                  | addr location (for xSPI / OSPI boot). This includes all HLOS &   |
+|                                          |                                             |                                                                  | RTOS images that must be booted.                                 |
+|                                          |                                             |                                                                  |                                                                  |
+|                                          |                                             |                                                                  | MCUSW "CAN Boot App": images for remote cores to be booted are   |
+|                                          |                                             |                                                                  | split up into 3-5 different appimage files for either SD card    |
+|                                          |                                             |                                                                  | booting or flashed into 3-5 different flash addresses for        |
+|                                          |                                             |                                                                  | xSPI / OSPI booting (see details in the MCUSW CAN Boot App       |
+|                                          |                                             |                                                                  | documentation).                                                  |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+| Doc links                                | |sbl_doc_link|                              | |can_boot_app_doc_link|                                          |                                                                  |
++------------------------------------------+---------------------------------------------+------------------------------------------------------------------+------------------------------------------------------------------+
+
+
+Linux  Bootloader
+-----------------
+
+Linux bootloader uses SPL and uboot to boot various CPUs.
+
+- This is included in Processor SDK Linux at below path ::
+
+    board-support/u-boot-<version and git tag>
+
+- This is used when Linux runs on A72. Most SDK demos like deep learning demos use Linux on A72 hence this bootloader is used in many out of box demos.
+- In this case one would see below files in the SD card
+
+.. ifconfig:: CONFIG_part_variant in ('J721E')
+
+    #. **tiboot3.bin** - this is the **SPL** (not SBL) which the ROM bootloader will boot on MCU R5F Core0
+    #. **tiboot3.bin** will boot |sysfw_bin| - this is the DMSC firmware binary
+    #. **tiboot3.bin** will boot **tispl.bin** on A72 - this is the 1st stage bootloader on A72 before uboot
+    #. **tispl.bin** on A72 will boot **uboot.img** on A72 - this is uboot which will boot Linux
+    #. **uboot.img** will boot non A72 (such as C6x, C7x, R5F) binaries located at below path in rootfs partition of the SD card ::
+
+        /lib/firmware/j7-<cpu>-fw
+
+    #. **uboot.img** will read a file **uEnv.txt** which will tell which .dtbo files to apply in addition to below dtb file present in rootfs partition ::
+
+        /boot/k3-j721e-proc-board-tps65917.dtb
+
+    #. **uboot.img** will boot Linux kernel stored in rootfs partition below ::
+
+        /boot/Image
+
+    #. Linux will use information in the loaded **.dtb/dtbo** files to configure itself during boot
+
+    .. note::
+
+        - Steps 4-8 is standard Linux boot flow typical of any SoC.
+        - Steps 1-3 are specific to J7 SoC.
+
+    .. seealso::
+
+        Refer to PSDK LINUX documentation for more information on uboot
+        http://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-jacinto7/latest/exports/docs/linux/Foundational_Components_U-Boot.html#u-boot-user-s-guide
+
+.. ifconfig:: CONFIG_part_variant in ('J7200')
+
+    #. **tiboot3.bin** - this is the **SPL** (not SBL) which the ROM bootloader will boot on MCU R5F Core0
+    #. **tiboot3.bin** will boot |sysfw_bin| - this is the DMSC firmware binary
+    #. **tiboot3.bin** will boot **tispl.bin** on A72 - this is the 1st stage bootloader on A72 before uboot
+    #. **tispl.bin** on A72 will boot **uboot.img** on A72 - this is uboot which will boot Linux
+    #. **uboot.img** will boot non A72 (such as R5F) binaries located at below path in rootfs partition of the SD card ::
+
+        /lib/firmware/j7200-<cpu>-fw
+
+    #. **uboot.img** will read a file **uEnv.txt** which will tell which .dtbo files to apply in addition to below dtb file present in rootfs partition ::
+
+        /boot/k3-j7200-proc-board-tps65917.dtb
+
+    #. **uboot.img** will boot Linux kernel stored in rootfs partition below ::
+
+        /boot/Image
+
+    #. Linux will use information in the loaded **.dtb/dtbo** files to configure itself during boot
+
+    .. note::
+
+        - Steps 4-8 is standard Linux boot flow typical of any SoC.
+        - Steps 1-3 are specific to J7 SoC.
+
+    .. seealso::
+
+        Refer to PSDK LINUX documentation for more information on uboot
+        http://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-j7200/latest/exports/docs/linux/Foundational_Components_U-Boot.html#u-boot-user-s-guide
+
+.. ifconfig:: CONFIG_part_variant in ('J721S2')
+
+    #. **tiboot3.bin** - this is the **SPL** (not SBL) which the ROM bootloader will boot on MCU R5F Core0
+    #. **tiboot3.bin** will boot |sysfw_bin| - this is the SMS firmware binary
+    #. **tiboot3.bin** will boot **tispl.bin** on A72 - this is the 1st stage bootloader on A72 before uboot
+    #. **tispl.bin** on A72 will boot **uboot.img** on A72 - this is uboot which will boot Linux
+    #. **uboot.img** will boot non A72 (such as C7x, R5F) binaries located at below path in rootfs partition of the SD card ::
+
+        /lib/firmware/j721s2-<cpu>-fw
+
+    #. **uboot.img** will read a file **uEnv.txt** which will tell which .dtbo files to apply in addition to below dtb file present in rootfs partition ::
+
+        /boot/k3-j721s2-proc-board-tps65917.dtb
+
+    #. **uboot.img** will boot Linux kernel stored in rootfs partition below ::
+
+        /boot/Image
+
+    #. Linux will use information in the loaded **.dtb/dtbo** files to configure itself during boot
+
+    .. note::
+
+        - Steps 4-8 is standard Linux boot flow typical of any SoC.
+        - Steps 1-3 are specific to J7 SoC.
+
+    .. seealso::
+
+        Refer to PSDK LINUX documentation for more information on uboot
+        https://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-j721s2/latest/exports/docs/linux/Foundational_Components_U-Boot.html#u-boot-user-s-guide
+
+.. ifconfig:: CONFIG_part_variant in ('J784S4')
+
+    #. **tiboot3.bin** - this is the **SPL** (not SBL) which the ROM bootloader will boot on MCU R5F Core0
+    #. **tiboot3.bin** will boot |sysfw_bin| - this is the SMS firmware binary
+    #. **tiboot3.bin** will boot **tispl.bin** on A72 - this is the 1st stage bootloader on A72 before uboot
+    #. **tispl.bin** on A72 will boot **uboot.img** on A72 - this is uboot which will boot Linux
+    #. **uboot.img** will boot non A72 (such as C7x, R5F) binaries located at below path in rootfs partition of the SD card ::
+
+        /lib/firmware/j784s4-<cpu>-fw
+
+    #. **uboot.img** will read a file **uEnv.txt** which will tell which .dtbo files to apply in addition to below dtb file present in rootfs partition ::
+
+        /boot/k3-j784s4-proc-board-tps65917.dtb
+
+    #. **uboot.img** will boot Linux kernel stored in rootfs partition below ::
+
+        /boot/Image
+
+    #. Linux will use information in the loaded **.dtb/dtbo** files to configure itself during boot
+
+    .. note::
+
+        - Steps 4-8 is standard Linux boot flow typical of any SoC.
+        - Steps 1-3 are specific to J7 SoC.
+
+    .. seealso::
+
+        Refer to PSDK LINUX documentation for more information on uboot
+        https://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-j784s4/latest/exports/docs/linux/Foundational_Components_U-Boot.html#u-boot-user-s-guide
+
+Bootloaders Supported in Vision Apps
+------------------------------------
+
+.. ifconfig:: CONFIG_part_variant in ('J721E', 'J721S2', 'J784S4')
+
+    Vision Apps supports both Linux and QNX running on the A72.  (For more information, see |vision_apps_user_guide|).
+
+    Along with the support for each of these HLOS's, Vision Apps provides a set of scripts which allow developers to quickly build and run
+    with different bootloaders.  A summary of these bootloader support for each of these builds can be seen in the table below:
+
+    +---------------+------------------+----------------------------+------------------------------------------------------------------------------------------------------------------+
+    | HLOS          | U-boot SPL       | SBL MCUSW “CAN Boot App”   | DM                                                                                                               |
+    +===============+==================+============================+==================================================================================================================+
+    | Linux         | YES (Default)    | NO                         | Default DM with U-boot SPL is from PDK, but vision apps binary can be built using vision apps build flags        |
+    +---------------+------------------+----------------------------+------------------------------------------------------------------------------------------------------------------+
+    | QNX           | YES              | YES (Default)              | Default DM with U-boot SPL is from PDK, but vision apps binary can be built using vision apps build flags.       |
+    |               |                  |                            | For SBL MCUSW “CAN Boot App”, the boot app serves as the DM.                                                     |
+    +---------------+------------------+----------------------------+------------------------------------------------------------------------------------------------------------------+
+
+.. ifconfig:: CONFIG_part_variant in ('J7200')
+
+    Not applicable to |platform|
+
+Bootloader Memory Map
+---------------------
+
+Details about various bootloader components' memory maps are provided below.  This may be needed in the case that a custom bootloader needs to be created.
+
++---------------+------------------------------------------------+
+| Component     | Memory Map Location Link                       |
++===============+================================================+
+| R5 SPL        | |sbl_mem_map_link|                             |
++---------------+------------------------------------------------+
+| SYSFW         | :ref:`mcu1_0_app_with_sysfw`                   |
++---------------+------------------------------------------------+
+| DMSC ROM      | Please reference the Initialization Chapter    |
+|               | of the Boot Memory Maps section of the TRM     |
++---------------+------------------------------------------------+

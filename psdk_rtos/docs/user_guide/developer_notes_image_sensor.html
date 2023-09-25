@@ -1,0 +1,706 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.12. Adding new image sensor to PSDK RTOS &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.13. Enabling TI’s inline ECC for DDR" href="developer_notes_ddr_inline_ecc.html"/>
+        <link rel="prev" title="8.11. Developing HW accelerator applications with OpenVX" href="developer_notes_hwa.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.12. Adding new image sensor to PSDK RTOS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.12.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-references">8.12.2. Documentation References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#source-code-references">8.12.3. Source Code References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#key-data-structures">8.12.4. Key Data Structures</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#isssensor-createparams">8.12.4.1. IssSensor_CreateParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#isssensorfxns">8.12.4.2. IssSensorFxns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#isssensorintfparams">8.12.4.3. IssSensorIntfParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#i2cparams">8.12.4.4. I2cParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#isssensorconfig">8.12.4.5. IssSensorConfig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#isssensors-handle">8.12.4.6. IssSensors_Handle</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#application-driver-interface">8.12.5. Application - Driver Interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rpc-commands">8.12.5.1. RPC Commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#control-commands">8.12.5.2. Control Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#steps-to-create-a-new-sensor-driver">8.12.6. Steps to create a new sensor driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-folder">8.12.6.1. Create a folder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-sensor-driver-file">8.12.6.2. Create sensor driver file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#update-makefile">8.12.6.3. Update makefile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#register-the-new-sensor-with-framework">8.12.6.4. Register the new sensor with framework</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#build-and-run">8.12.6.5. Build and Run</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.12. </span>Adding new image sensor to PSDK RTOS</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="adding-new-image-sensor-to-psdk-rtos">
+<h1><span class="section-number">8.12. </span>Adding new image sensor to PSDK RTOS<a class="headerlink" href="#adding-new-image-sensor-to-psdk-rtos" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">8.12.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Imaging library is a collection of sample algorithms and image sensor drivers packaged with PSDK RTOS to enable camera based applications.
+It includes sensor driver framework which is a modular and extensible framework to</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Add new sensor drivers easily.</p></li>
+<li><p>Provide a consistent interface to applications and algorithms.</p></li>
+</ul>
+</div></blockquote>
+<p>The goal of this framework is to add new sensors with <strong>zero</strong> code modifications to the applications.
+Any application using an image sensor is expected to be agnostic to the underlying HW. The application is expected to communicate with the
+driver framework using RPC commands. The details of supported sensors and the sensor capabilities are queried at runtime.</p>
+<p>Similarly algorithms communicating with image sensor (e.g. AutoExposure) are required to send RPC commands at runtime
+without knowing which sensor is operational.
+Driver framework is responsible for mapping the camera ID to the associated physical image sensor.</p>
+<p>This mechanism allows algorithm and application code to remain unchanged as new sensors are added to the framework.</p>
+</div>
+<div class="section" id="documentation-references">
+<h2><span class="section-number">8.12.2. </span>Documentation References<a class="headerlink" href="#documentation-references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 24%" />
+<col style="width: 25%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>Documentation</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Section</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p><a href="../../../vision_apps/docs/user_guide/index.html" target="_blank">LINK</a></p></td>
+<td><p>Single Camera VPAC Demo</p></td>
+<td><p>Application / Demos &gt; Basic Demos &gt; Single Camera VPAC Application</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p><a href="../../../vision_apps/docs/user_guide/index.html" target="_blank">LINK</a></p></td>
+<td><p>Multi Camera VPAC Demo</p></td>
+<td><p>Application / Demos &gt; Basic Demos &gt; Multi Camera VPAC Application</p></td>
+</tr>
+<tr class="row-even"><td><p>imaging</p></td>
+<td><p><a href="../../../imaging/docs/user_guide/index.html" target="_blank">LINK</a></p></td>
+<td><p>Imaging drivers and algos</p></td>
+<td><p>Imaging / Modules &gt; Imaging Sensor Driver Modules</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="source-code-references">
+<h2><span class="section-number">8.12.3. </span>Source Code References<a class="headerlink" href="#source-code-references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 35%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>File / Folder</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Imaging</p></td>
+<td><p>imaging/sensor_drv</p></td>
+<td><p>Sensor driver source code</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p>vision_apps/utils/iss</p></td>
+<td><p>Common ISS Utilities to be used by all camera based applications</p></td>
+</tr>
+<tr class="row-even"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/basic_demos/app_single_cam</p></td>
+<td><p>Demo Application using a single camera instance</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision apps</p></td>
+<td><p>vision_apps/apps/basic_demos/app_multi_cam</p></td>
+<td><p>Demo Application using a multiple (upto 8) camera instances</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="key-data-structures">
+<span id="key-data-structs"></span><h2><span class="section-number">8.12.4. </span>Key Data Structures<a class="headerlink" href="#key-data-structures" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="isssensor-createparams">
+<h3><span class="section-number">8.12.4.1. </span>IssSensor_CreateParams<a class="headerlink" href="#isssensor-createparams" title="Permalink to this headline">¶</a></h3>
+<p>Create time parameters like width, height, dataformat, I2C address for the image sensor.
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h</p>
+</div>
+<div class="section" id="isssensorfxns">
+<h3><span class="section-number">8.12.4.2. </span>IssSensorFxns<a class="headerlink" href="#isssensorfxns" title="Permalink to this headline">¶</a></h3>
+<p>Set of callbacks of all routines to be implemented by the sensor driver.
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h</p>
+</div>
+<div class="section" id="isssensorintfparams">
+<h3><span class="section-number">8.12.4.3. </span>IssSensorIntfParams<a class="headerlink" href="#isssensorintfparams" title="Permalink to this headline">¶</a></h3>
+<p>Interface parameters e.g. number of CSI-2 date lanes, position, polarity etc.
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h</p>
+</div>
+<div class="section" id="i2cparams">
+<h3><span class="section-number">8.12.4.4. </span>I2cParams<a class="headerlink" href="#i2cparams" title="Permalink to this headline">¶</a></h3>
+<p>Struct containing register address, value and delay (milli seconds).
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h</p>
+</div>
+<div class="section" id="isssensorconfig">
+<h3><span class="section-number">8.12.4.5. </span>IssSensorConfig<a class="headerlink" href="#isssensorconfig" title="Permalink to this headline">¶</a></h3>
+<p>Struct containing pointers to sensor and SerDes configuration structures.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Last entry in Serializer and Deserializer config scripts must be {0xFFFF, 0x00, 0x0}</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="isssensors-handle">
+<h3><span class="section-number">8.12.4.6. </span>IssSensors_Handle<a class="headerlink" href="#isssensors-handle" title="Permalink to this headline">¶</a></h3>
+<p>Handle to the image sensor driver including all the information about the sensor
+For more details, please refer to imaging/sensor_drv/include/iss_sensor.h</p>
+</div>
+</div>
+<div class="section" id="application-driver-interface">
+<h2><span class="section-number">8.12.5. </span>Application - Driver Interface<a class="headerlink" href="#application-driver-interface" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rpc-commands">
+<h3><span class="section-number">8.12.5.1. </span>RPC Commands<a class="headerlink" href="#rpc-commands" title="Permalink to this headline">¶</a></h3>
+<p>Application communicates with the sensor driver using RPC (<em>Remote Procedure Call</em>) commands
+The commands defined currently are listed below.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>IM_SENSOR_CMD_ENUMERATE</strong></p></td>
+<td><p>Called by the application to get a list of names of all the sensors supported.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IM_SENSOR_CMD_QUERY</strong></p></td>
+<td><p>Called by the application to query the capabilities of an image sensor by name.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IM_SENSOR_CMD_PWRON</strong></p></td>
+<td><p>Called by the application to power ON the sensor. Sensor f/w invokes <em>powerOn</em> callback of the selected sensor.
+Exact implementation of this function is left to the specific sensor driver.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IM_SENSOR_CMD_PWROFF</strong></p></td>
+<td><p>Called by the application to power OFF the sensor. Sensor f/w invokes <em>powerOff</em> callback of the selected sensor.
+Exact implementation of this function is left to the specific sensor driver.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IM_SENSOR_CMD_STREAM_ON</strong></p></td>
+<td><p>Called by the application to start streaming. Sensor f/w invokes <em>streamOn</em> callback of the selected sensor.
+Exact implementation of this function is left to the specific sensor driver.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IM_SENSOR_CMD_STREAM_OFF</strong></p></td>
+<td><p>Called by the application to stop streaming. Sensor f/w invokes <em>streamOff</em> callback of the selected sensor.
+Exact implementation of this function is left to the specific sensor driver.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IM_SENSOR_CMD_CTL</strong></p></td>
+<td><p>Called by the application to  send runtime control commands.
+Next section describes the runtime controls currently supported.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IM_SENSOR_CMD_DEBUG</strong></p></td>
+<td><p>Called by the application for advanced debugging support.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="control-commands">
+<h3><span class="section-number">8.12.5.2. </span>Control Commands<a class="headerlink" href="#control-commands" title="Permalink to this headline">¶</a></h3>
+<p>IM_SENSOR_CMD_STREAM_CTL command can have an argument for control command.
+Control commands defined currently are listed below.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>IMAGE_SENSOR_CTRLCMD_GETEXPPRG</strong></p></td>
+<td><p>Typically called by the AutoExposure algorithm to know sensor’s exposure constraints, which
+can then be used for initializing AutoExposure algorithm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IMAGE_SENSOR_CTRLCMD_GETWBCFG</strong></p></td>
+<td><p>Typically called by the AutoWhiteBalnce algorithm to know sensor’s WB constraints, which
+can then be used for initializing AutoWhiteBalance algorithm. This is needed only if
+WB gains are to be applied in sensor vs ISP.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IMAGE_SENSOR_CTRLCMD_SETEXPGAIN</strong></p></td>
+<td><p>Typically called by the AutoExposure algorithm to set exposure  time and analog/digital gain.
+Sensor f/w invokes <em>setAeParams</em> callback of the selected sensor.
+Exact implementation of this function is left to the specific sensor driver.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IMAGE_SENSOR_CTRLCMD_GETEXPGAIN</strong></p></td>
+<td><p>Reserved for future use.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IMAGE_SENSOR_CTRLCMD_SETWBGAIN</strong></p></td>
+<td><p>Typically called by the AutoWhiteBalance algorithm to set color gains.
+Sensor f/w invokes <em>setAwbParams</em> callback of the selected sensor.
+Exact implementation of this function is left to the specific sensor driver.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IMAGE_SENSOR_CTRLCMD_GETWBGAIN</strong></p></td>
+<td><p>Reserved for future use.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>IMAGE_SENSOR_CTRLCMD_READ_SENSOR_REG</strong></p></td>
+<td><p>Used for reading or writing sensor/serilaizer/deserializer registers through a script.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>IMAGE_SENSOR_CTRLCMD_WRITE_SENSOR_REG</strong></p></td>
+<td><p>Used for reading or writing sensor/serilaizer/deserializer registers through a script.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Command set may be extended in future</p>
+</div>
+</div>
+</div>
+<div class="section" id="steps-to-create-a-new-sensor-driver">
+<h2><span class="section-number">8.12.6. </span>Steps to create a new sensor driver<a class="headerlink" href="#steps-to-create-a-new-sensor-driver" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-a-folder">
+<h3><span class="section-number">8.12.6.1. </span>Create a folder<a class="headerlink" href="#create-a-folder" title="Permalink to this headline">¶</a></h3>
+<p>Create a new folder inside imaging/sensor_drv/src/ e.g. &lt;newsensor123&gt;</p>
+</div>
+<div class="section" id="create-sensor-driver-file">
+<h3><span class="section-number">8.12.6.2. </span>Create sensor driver file<a class="headerlink" href="#create-sensor-driver-file" title="Permalink to this headline">¶</a></h3>
+<p>Create a new source file implementing all the structures and callbacks mentioned in <a class="reference internal" href="#key-data-structs"><span class="std std-ref">Key Data Structures</span></a>.</p>
+<div class="section" id="createparams">
+<h4><span class="section-number">8.12.6.2.1. </span>createParams<a class="headerlink" href="#createparams" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>name</strong></p></td>
+<td><p>Pick any unique string no longer than 32 characters</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>i2cInstId</strong></p></td>
+<td><p>Specify I2C channel on which the sensor is connected. For Jacinto 7 EVM, default is 0x6</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>i2cAddrSensor</strong></p></td>
+<td><p>Array of sensor address aliases. Upto 8 instances supported. Must match alias values specified in UB960 config.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the sensor is connected directly i.e. without SerDes, provide sensor’s physical I2C address (7-bit) here</p>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>i2cAddrSer</strong></p></td>
+<td><p>Array of serializer address aliases. Upto 8 instances supported. Must match alias values specified in UB960 config.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>width</strong></p></td>
+<td><p>Number of pixels per line in sensor output, not including H blanking.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>height</strong></p></td>
+<td><p>Number of lines per frame in sensor output, not including V blanking or metadata.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>num_exposures</strong></p></td>
+<td><p>Number of exposure channels per frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>line_interleaved</strong></p></td>
+<td><p>Reserved for future use.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>pixel_container</strong></p></td>
+<td><p>width of container element.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>msb</strong></p></td>
+<td><p>MSB of valid data. Must be set to bpp -1. E.g. MSB = 11 for 12b RAW.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>features</strong></p></td>
+<td><p>Binary mask specifying sensor capabilities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>fps</strong></p></td>
+<td><p>Frame rate per second. Not used currently.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>numDataLanes</strong></p></td>
+<td><p>Number of CSI-2 data lanes. Must match sensor &amp; deserializer settings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>dataLanesMap</strong></p></td>
+<td><p>Mapping of sensor CSI2 lanes to CSI2 Rx. Must match sensor &amp; deserializer settings.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>dataLanesPolarity</strong></p></td>
+<td><p>Reserved for future use.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>csi_ddr_clock</strong></p></td>
+<td><p>Reserved for future use.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>num_channels</strong></p></td>
+<td><p>Number of camera instances supported. Valid values : 1-8.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>dccId</strong></p></td>
+<td><p>Unique numerical identfier. Used for ISP tuning.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h4><span class="section-number">8.12.6.2.2. </span>IssSensorFxns<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>API Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>probe</strong></p></td>
+<td><p>Detects if sensor is accessible, usually by reading sensor chip ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>config</strong></p></td>
+<td><p>Configures serializer and sensor.
+Argument <em>sensor_features_requested</em> maybe used to load different configuration based on application request.
+For e.g 30fps mode vs 60fps mode.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>streamOn</strong></p></td>
+<td><p>Enables streaming on sensor and deserializer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>streamOff</strong></p></td>
+<td><p>Disables streaming on sensor and deserializer.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>powerOn</strong></p></td>
+<td><p>HW dependent. Pull up/down any GPIOs, if needed.
+Configures the deserializer so that sensor is accessible over FPD Link backchannel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>powerOff</strong></p></td>
+<td><p>HW dependent. Pull up/down any GPIOs, if needed.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>getExpParams</strong></p></td>
+<td><p>Reserved for future use. Must be implemented as a dummy function returning 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setAeParams</strong></p></td>
+<td><p>Translates AE computed exposure time and analog gain to sensor specific settings.
+Updates sensor registers with new values.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>getDccParams</strong></p></td>
+<td><p>Reserved for future use. Must be implemented as a dummy function returning 0.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>initAewbConfig</strong></p></td>
+<td><p>Reserved for future use. Must be implemented as a dummy function returning void.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>getIspConfig</strong></p></td>
+<td><p>Reserved for future use. Must be implemented as a dummy function returning void.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>readWriteReg</strong></p></td>
+<td><p>Reserved for future use. Must be implemented as a dummy function returning 0.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>getExpPrg</strong></p></td>
+<td><p>Called by AE algorithm to get the sensor exposure constraints.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>deinit</strong></p></td>
+<td><p>Reserved for future use. Must be implemented as a dummy function returning void.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more details, please refer to an existing sensor driver</p>
+</div>
+</div>
+</div>
+<div class="section" id="update-makefile">
+<h3><span class="section-number">8.12.6.3. </span>Update makefile<a class="headerlink" href="#update-makefile" title="Permalink to this headline">¶</a></h3>
+<p>Modify sensor_drv/src/concerto.mak to add the newly added sensor file. For e.g.</p>
+<blockquote>
+<div><p>CSOURCES    += newsensor123/iss_sensor_newsensor123.c</p>
+</div></blockquote>
+</div>
+<div class="section" id="register-the-new-sensor-with-framework">
+<h3><span class="section-number">8.12.6.4. </span>Register the new sensor with framework<a class="headerlink" href="#register-the-new-sensor-with-framework" title="Permalink to this headline">¶</a></h3>
+<p>Modify the function <em>IssSensor_Init</em> in the file <em>sensor_drv/src/iss_sensors.c</em> to call init function of the new sensor. For e.g.</p>
+<blockquote>
+<div><p>status |= IssSensor_NewSensor123_Init();</p>
+</div></blockquote>
+</div>
+<div class="section" id="build-and-run">
+<h3><span class="section-number">8.12.6.5. </span>Build and Run<a class="headerlink" href="#build-and-run" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Do a clean build of imaging, followed by sdk build.</p></li>
+<li><p>Upon execution, new sensor should be populated in the enumerated sensor list.</p></li>
+<li><p>Select the sensor and run. If the sensor and SerDes settings are correct, a preview should be displayed on the connected display.</p></li>
+<li><p>At this stage, sensor driver is functional. However, image quality may not be perfect.</p></li>
+<li><p>Please refer to DCC Tuning Tool documentation for the steps to achieve good image quality using TI ISP.</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_ddr_inline_ecc.html" class="btn btn-neutral float-right" title="8.13. Enabling TI’s inline ECC for DDR" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes_hwa.html" class="btn btn-neutral" title="8.11. Developing HW accelerator applications with OpenVX" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

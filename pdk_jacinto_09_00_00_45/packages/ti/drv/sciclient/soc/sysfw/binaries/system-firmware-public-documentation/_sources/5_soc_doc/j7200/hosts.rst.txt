@@ -1,0 +1,73 @@
+=======================
+J7200 Host Descriptions
+=======================
+
+.. _soc_doc_j7200_public_host_desc_intro:
+
+Introduction
+============
+
+This chapter provides information on the set of HostIDs permitted
+in this J7200 SoC. HostIDs uniquely identify each logically distinct high level
+software entity. A software entity identification number (HostID) can be
+assigned to an OS either native or virtualized, or a firmware/native
+application. The HostID is used to select the set of Secure Proxy channels for
+which this software entity should use to communicate with the System Firmware.
+
+System Firmware also checks that the used HostID comes from software running
+on the correct core (as implied by Host Name in the below table) and with the
+correct security level (Security Status column) to prevent HostID
+spoofing.
+
+.. _soc_doc_j7200_public_host_desc_host_list:
+
+Enumeration of Host IDs
+=======================
+
++-----------+-------------+-------------------+-----------------------------------------+
+|   Host ID | Host Name   | Security Status   | Description                             |
++===========+=============+===================+=========================================+
+|         0 | DMSC        | Secure            | Security Controller                     |
++-----------+-------------+-------------------+-----------------------------------------+
+|         3 | MCU_0_R5_0  | Non Secure        | Cortex R5 context 0 on MCU island       |
++-----------+-------------+-------------------+-----------------------------------------+
+|         4 | MCU_0_R5_1  | Secure            | Cortex R5 context 1 on MCU island(Boot) |
++-----------+-------------+-------------------+-----------------------------------------+
+|         5 | MCU_0_R5_2  | Non Secure        | Cortex R5 context 2 on MCU island       |
++-----------+-------------+-------------------+-----------------------------------------+
+|         6 | MCU_0_R5_3  | Secure            | Cortex R5 context 3 on MCU island       |
++-----------+-------------+-------------------+-----------------------------------------+
+|        10 | A72_0       | Secure            | Cortex A72 context 0 on Main island     |
++-----------+-------------+-------------------+-----------------------------------------+
+|        11 | A72_1       | Secure            | Cortex A72 context 1 on Main island     |
++-----------+-------------+-------------------+-----------------------------------------+
+|        12 | A72_2       | Non Secure        | Cortex A72 context 2 on Main island     |
++-----------+-------------+-------------------+-----------------------------------------+
+|        13 | A72_3       | Non Secure        | Cortex A72 context 3 on Main island     |
++-----------+-------------+-------------------+-----------------------------------------+
+|        14 | A72_4       | Non Secure        | Cortex A72 context 4 on Main island     |
++-----------+-------------+-------------------+-----------------------------------------+
+|        35 | MAIN_0_R5_0 | Non Secure        | Cortex R5_0 context 0 on Main island    |
++-----------+-------------+-------------------+-----------------------------------------+
+|        36 | MAIN_0_R5_1 | Secure            | Cortex R5_0 context 1 on Main island    |
++-----------+-------------+-------------------+-----------------------------------------+
+|        37 | MAIN_0_R5_2 | Non Secure        | Cortex R5_0 context 2 on Main island    |
++-----------+-------------+-------------------+-----------------------------------------+
+|        38 | MAIN_0_R5_3 | Secure            | Cortex R5_0 context 3 on Main island    |
++-----------+-------------+-------------------+-----------------------------------------+
+|       250 | DM2DMSC     | Secure            | DM to DMSC communication                |
++-----------+-------------+-------------------+-----------------------------------------+
+|       251 | DMSC2DM     | Non Secure        | DMSC to DM communication                |
++-----------+-------------+-------------------+-----------------------------------------+
+|       254 | DM          | Non Secure        | Device Management                       |
++-----------+-------------+-------------------+-----------------------------------------+
+
+.. note::
+
+   * Description provides an intended purpose
+     of the host ID, though on some systems,
+     this might be used differently, backing memory and
+     link allocations are made with the specified purpose
+     in mind
+   * Security Status provides an intended purpose for the
+     Host context

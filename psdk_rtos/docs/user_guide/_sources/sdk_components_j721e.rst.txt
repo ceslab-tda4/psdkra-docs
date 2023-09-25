@@ -1,0 +1,527 @@
+
+.. _sdk_components:
+
+
+SDK Components
+^^^^^^^^^^^^^^
+
+The following table lists all the top-level folders in the SDK package and the component
+it represents.
+
++------------------------+----------------------------------+
+| Folder                 | Component                        |
++========================+==================================+
+| app_utils              | :ref:`tiovx`                     |
++------------------------+----------------------------------+
+| c7x_mma_tidl           | :ref:`tidl`                      |
++-----------------------------------------------------------+
+| cg_xml_*               | :ref:`cg_xml`                    |
++------------------------+----------------------------------+
+| dsplib*                | :ref:`dsplib_c7x`                |
++------------------------+----------------------------------+
+| dsplib_c66x_*          | :ref:`dsplib_c66x`               |
++------------------------+----------------------------------+
+| ethfw                  | :ref:`ethfw`                     |
++------------------------+----------------------------------+
+| fftlib_*               | :ref:`fftlib`                    |
++------------------------+----------------------------------+
+| imaging                | :ref:`imaging`                   |
++------------------------+----------------------------------+
+| ivision                | :ref:`ivision`                   |
++------------------------+----------------------------------+
+| mathlib*               | :ref:`mathlib_c7x`               |
++------------------------+----------------------------------+
+| mathlib_c66x_*         | :ref:`mathlib_c66x`              |
++------------------------+----------------------------------+
+| mcusw                  | :ref:`mcusw`                     |
++------------------------+----------------------------------+
+| mmalib_*               | :ref:`mmalib`                    |
++------------------------+----------------------------------+
+| pdk_jacinto_*          | :ref:`pdk`                       |
++------------------------+----------------------------------+
+| psdk_rtos              | SDK Scripts and Documentation    |
++------------------------+----------------------------------+
+| remote_device          | :ref:`remote`                    |
++------------------------+----------------------------------+
+| sdk_builder            | :ref:`vision_apps`               |
++------------------------+----------------------------------+
+| sdl                    | :ref:`sdl`                       |
++------------------------+----------------------------------+
+| tiadalg                | :ref:`tiadalg`                   |
++------------------------+----------------------------------+
+| ti-perception-toolkit  | :ref:`ptk`                       |
++------------------------+----------------------------------+
+| tiovx                  | :ref:`tiovx`                     |
++------------------------+----------------------------------+
+| video_io               | :ref:`tiovx`                     |
++------------------------+----------------------------------+
+| vision_apps            | :ref:`vision_apps`               |
++------------------------+----------------------------------+
+| vxlib                  | :ref:`vxlib`                     |
++------------------------+----------------------------------+
+
+The following table lists all the packages that needs to downloaded separately or
+the script **setup_psdk_rtos.sh** will download these packages under /home/$USER/ti.
+Refer vision apps user guide [|vision_apps_ug_env_setup|].
+
++------------------------+----------------------------------+
+| Folder                 | Component                        |
++========================+==================================+
+| ti-cgt-arm_*           | :ref:`arm_cgt`                   |
++------------------------+----------------------------------+
+| ti-cgt-c6000_*         | :ref:`c6x_cgt`                   |
++------------------------+----------------------------------+
+| ti-cgt-c7000_*         | :ref:`c7x_cgt`                   |
++------------------------+----------------------------------+
+
+HLOS Support (A72)
+------------------
+The vision apps demos assume and support either Linux or QNX running
+on the A72.
+
+Processor SDK Linux |platform|
+**********************************
+
+This package contains Linux kernel, uboot, filesystem and other linux tools.
+
+.. IMPORTANT::
+
+   - This package is NOT included in PSDK RTOS installer and needs to be downloaded separately
+   - Either this package or QNX package MUST be downloaded to run vision apps, TI OpenVX demos.
+
++------------------------+-------------------------------------------+
+| Version                | |psdkla_version|                          |
++------------------------+-------------------------------------------+
+| Release notes          | ${PSDK_LINUX_PATH}/docs/linux/index.html  |
++------------------------+-------------------------------------------+
+| User guide             | ${PSDK_LINUX_PATH}/docs/linux/index.html  |
++------------------------+-------------------------------------------+
+
+Processor SDK QNX |platform|
+********************************
+
+This package contains the QNX SDK components that include:
+
+    - QNX resource manager for sci-client, udma, ipc and sharedmemory allocator
+    - DEVNP driver for CPSW2G and CPSW9G
+    - Test examples and sample applications
+
+.. IMPORTANT::
+
+   - This package is NOT included in PSDK RTOS installer and needs to be downloaded separately
+   - Either this package or Linux package MUST be downloaded to run vision apps, TI OpenVX demos.
+
++------------------------+-------------------------------------------+
+| Version                | |psdk_qnx_version|                        |
++------------------------+-------------------------------------------+
+| Release notes          | ${PSDK_QNX_PATH}/docs/qnx/index.html      |
++------------------------+-------------------------------------------+
+| User guide             | ${PSDK_QNX_PATH}/docs/qnx/index.html      |
++------------------------+-------------------------------------------+
+
+.. _vision_apps:
+
+Vision Apps
+-----------
+
+This package contains Camera, ADAS, vision, perception, OpenVX demos.
+
++------------------------+---------------------------------------+
+| Version                | |vision_apps_version|                 |
++------------------------+---------------------------------------+
+| Release notes          | |vision_apps_release_notes|           |
++------------------------+---------------------------------------+
+| User guide             | |vision_apps_user_guide|              |
++------------------------+---------------------------------------+
+
+.. _pdk:
+
+Platform Development Kit (PDK)
+------------------------------
+
+This package contains device drivers, bootloaders, CSL for baremetal/RTOS.
+
++------------------------+---------------------------------------+
+| Version                | |pdk_version|                         |
++------------------------+---------------------------------------+
+| Release notes          | |pdk_release_notes|                   |
++------------------------+---------------------------------------+
+| User guide             | |pdk_user_guide|                      |
++------------------------+---------------------------------------+
+
+.. _mcusw:
+
+MCU Software (MCU SW)
+---------------------
+
+This package contains integrated MCU demos, MCAL for AutoSAR.
+
++------------------------+---------------------------------------+
+| Version                | |mcusw_version|                       |
++------------------------+---------------------------------------+
+| Release notes          | |mcusw_release_notes|                 |
++------------------------+---------------------------------------+
+| User guide             | |mcusw_user_guide|                    |
++------------------------+---------------------------------------+
+
+.. _tidl:
+
+TI Deep learning Product (TIDL)
+-------------------------------
+
+This package contains TI’s Deep Learning inference solution with many
+industry wide open source run time (TFLite Runtime, ONNX Runtime and
+TVM based run time) on ARM MPU with an optimized TIDL runtime back-end
+on C7x and MMA. It also contains necessary tools for DNN compilation
+and provides many examples in both python and C to exercise tools and
+inference solution.  It also contains OpenVX kernels for TIDL and TVM.
+
++------------------------+---------------------------------------+
+| Version                | |tidl_version|                        |
++------------------------+---------------------------------------+
+| Release notes          | |tidl_release_notes|                  |
++------------------------+---------------------------------------+
+| User guide             | |tidl_user_guide|                     |
++------------------------+---------------------------------------+
+
+.. _mmalib:
+
+MMA LIB
+-------
+
+This package contains MMA compute libraries
+
++------------------------+---------------------------------------+
+| Version                | |mmalib_version|                      |
++------------------------+---------------------------------------+
+| Release notes          | |mmalib_release_notes|                |
++------------------------+---------------------------------------+
+| User guide             | |mmalib_user_guide|                   |
++------------------------+---------------------------------------+
+
+.. _fftlib:
+
+FFT LIB
+-------
+
+This package contains C7X/MMA FFT compute libraries
+
++------------------------+---------------------------------------+
+| Version                | |fftlib_version|                      |
++------------------------+---------------------------------------+
+| Release notes          | |fftlib_release_notes|                |
++------------------------+---------------------------------------+
+| User guide             | |fftlib_user_guide|                   |
++------------------------+---------------------------------------+
+
+.. _tiovx:
+
+TI OpenVX (TIOVX)
+-----------------
+
+This package contains TI's implementation of OpenVX.
+
++------------------------+---------------------------------------+
+| Version                | |tiovx_version|                       |
++------------------------+---------------------------------------+
+| Release notes          | |tiovx_release_notes|                 |
++------------------------+---------------------------------------+
+| User guide             | |tiovx_user_guide|                    |
++------------------------+---------------------------------------+
+
+.. _imaging:
+
+Imaging
+-------
+
+This package contains auto-exposure, auto-whilte balance algorithms for TI ISP.
+It also contains image sensor drivers, tuning parameters, as well as
+OpenVX kernels for VPAC and DMPAC.
+
++------------------------+---------------------------------------+
+| Version                | |imaging_version|                     |
++------------------------+---------------------------------------+
+| Release notes          | |imaging_release_notes|               |
++------------------------+---------------------------------------+
+| User guide             | |imaging_user_guide|                  |
++------------------------+---------------------------------------+
+
+.. _ethfw:
+
+Ethernet Switch Firmware (ETHFW)
+--------------------------------
+
+This package contains Ethernet Switch Firmware for R5F.
+
++------------------------+---------------------------------------+
+| Version                | |ethfw_version|                       |
++------------------------+---------------------------------------+
+| Release notes          | |ethfw_release_notes|                 |
++------------------------+---------------------------------------+
+| User guide             | |ethfw_user_guide|                    |
++------------------------+---------------------------------------+
+
+.. _remote:
+
+Remote Device
+-------------
+
+This package contains APIs and libraries for remote device control of
+display and ethernet devices.
+
++------------------------+---------------------------------------+
+| Version                | |remote_device_version|               |
++------------------------+---------------------------------------+
+| Release notes          | |remote_device_release_notes|         |
++------------------------+---------------------------------------+
+| User guide             | |remote_device_user_guide|            |
++------------------------+---------------------------------------+
+
+.. _ptk:
+
+Perception Toolkit (PTK)
+------------------------
+
+This package contains APIs and utilities for perception/fusion
+related functions and visualizations
+
++------------------------+---------------------------------------+
+| Version                | |ptk_version|                         |
++------------------------+---------------------------------------+
+| Release notes          | |ptk_release_notes|                   |
++------------------------+---------------------------------------+
+| User guide             | |ptk_user_guide|                      |
++------------------------+---------------------------------------+
+
+.. _tiadalg:
+
+TI Autonomous Driving Algorithms (TIADALG)
+------------------------------------------
+
+This package contains sample pre-processing, post processing and other algorithms
+for autonomous driving.
+
++------------------------+---------------------------------------+
+| Version                | |tiadalg_version|                     |
++------------------------+---------------------------------------+
+| Release notes          | |tiadalg_release_notes|               |
++------------------------+---------------------------------------+
+| User guide             | |tiadalg_user_guide|                  |
++------------------------+---------------------------------------+
+
+.. _vxlib:
+
+C66x VXLIB
+----------
+
+This package implements OpenVX v1.1 low level kernels for C66x.
+
++------------------------+---------------------------------------+
+| Version                | |vxlib_version|                       |
++------------------------+---------------------------------------+
+| Release notes          | |vxlib_release_notes|                 |
++------------------------+---------------------------------------+
+| User guide             | |vxlib_user_guide|                    |
++------------------------+---------------------------------------+
+
+.. _dsplib_c66x:
+
+C66x DSPLIB
+-----------
+
+This package implements common DSP functions for C66x
+
++------------------------+---------------------------------------+
+| Version                | |dsplib_version|                      |
++------------------------+---------------------------------------+
+| Release notes          | |dsplib_release_notes|                |
++------------------------+---------------------------------------+
+| User guide             | |dsplib_user_guide|                   |
++------------------------+---------------------------------------+
+
+.. _dsplib_c7x:
+
+C7x DSPLIB
+----------
+
+This package implements common DSP functions for C7x
+
++------------------------+---------------------------------------+
+| Version                | |dsplib_c7x_version|                  |
++------------------------+---------------------------------------+
+| Release notes          | |dsplib_c7x_release_notes|            |
++------------------------+---------------------------------------+
+| User guide             | |dsplib_c7x_user_guide|               |
++------------------------+---------------------------------------+
+
+
+.. _mathlib_c66x:
+
+C66x MATHLIB
+------------
+
+This package implements common optimized math.h functions for C66x
+
++------------------------+---------------------------------------+
+| Version                | |mathlib_version|                     |
++------------------------+---------------------------------------+
+| Release notes          | |mathlib_release_notes|               |
++------------------------+---------------------------------------+
+| User guide             | |mathlib_user_guide|                  |
++------------------------+---------------------------------------+
+
+.. _mathlib_c7x:
+
+C7x MATHLIB
+-----------
+
+This package implements common optimized math.h functions for C7x
+
++------------------------+---------------------------------------+
+| Version                | |mathlib_c7x_version|                 |
++------------------------+---------------------------------------+
+| Release notes          | |mathlib_c7x_release_notes|           |
++------------------------+---------------------------------------+
+| User guide             | |mathlib_c7x_user_guide|              |
++------------------------+---------------------------------------+
+
+.. _sdl:
+
+Software Diagnostics Library (SDL)
+----------------------------------
+
+This package provides interfaces to safety mechanisms and features
+for the development of software applications involving Functional
+Safety
+
++------------------------+---------------------------------------+
+| Version                | |sdl_version|                         |
++------------------------+---------------------------------------+
+| Release notes          | |sdl_release_notes|                   |
++------------------------+---------------------------------------+
+| User guide             | |sdl_user_guide|                      |
++------------------------+---------------------------------------+
+
+System firmware (SYSFW)
+-----------------------
+
+This package provides services for clock, power and resource management.
+These services are accessed via the "sciclient" interface in PDK.
+
++------------------------+---------------------------------------+
+| Version                | |sysfw_version|                       |
++------------------------+---------------------------------------+
+| User guide             | |sysfw_user_guide|                    |
++------------------------+---------------------------------------+
+
+CTools Library
+--------------
+
+CTools of Chip Tools contains a set of fundamental libraries to
+provide the debug facilities. CTools package is not included in
+PSDK RTOS installer and needs to be downloaded separately.
+
++---------------------------+---------------------------------------------------------------------------+
+| User Guide/Download Link  | http://software-dl.ti.com/emulation/esd/ctoolslib_k3/CToolsLib_K3.html    |
++---------------------------+---------------------------------------------------------------------------+
+
+RTOS
+-------
+
+.. _ivision:
+
+IVISION
+*******
+
+This package consists has extensions of the XDAIS DSP algorithm interface
+used in TIDL and TIADALG.
+
++------------------------+---------------------------------------+
+| Version                | |ivision_version|                     |
++------------------------+---------------------------------------+
+| Release notes          | |ivision_release_notes|               |
++------------------------+---------------------------------------+
+
+
+Code generation tools (CGT)
+---------------------------
+
+.. _c7x_cgt:
+
+C7x code generation tools
+*************************
+
+This package contains C7x compiler, linker, host emulation mode libraries.
+
++------------------------+-------------------------------------------+
+| Version                | |c7x_cgt_version|                         |
++------------------------+-------------------------------------------+
+| Release notes          | |c7x_cgt_release_notes|                   |
++------------------------+-------------------------------------------+
+| User guide             | |c7x_cgt_user_guide|                      |
++------------------------+-------------------------------------------+
+
+.. _c6x_cgt:
+
+C6x code generation tools
+*************************
+
+This package contains C6x compiler, linker.
+
++------------------------+---------------------------------------+
+| Version                | |c6x_cgt_version|                     |
++------------------------+---------------------------------------+
+| Release notes          | |c6x_cgt_release_notes|               |
++------------------------+---------------------------------------+
+| User guide             | |c6x_cgt_user_guide|                  |
++------------------------+---------------------------------------+
+
+.. _arm_cgt:
+
+TI ARM R5F code generation tools
+********************************
+
+This package contains TI ARM R5F compiler, linker.
+
++------------------------+---------------------------------------+
+| Version                | |tiarm_cgt_version|                   |
++------------------------+---------------------------------------+
+| Release notes          | |tiarm_cgt_release_notes|             |
++------------------------+---------------------------------------+
+| User guide             | |tiarm_cgt_user_guide|                |
++------------------------+---------------------------------------+
+
+GCC ARM code generation tools
+*****************************
+
+GCC tools are used to compile and link code on ARM |arm_core|.
+
++----------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| CGT                              | Download link                                                                                                                           |
++==================================+=========================================================================================================================================+
+| ARM64 CGT for |arm_core| RTOS    | https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-elf.tar.xz           |
++----------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| ARM64 CGT for |arm_core| Linux   | https://developer.arm.com/-/media/Files/downloads/gnu/11.3.rel1/binrel/arm-gnu-toolchain-11.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz |
++----------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| ARM32 CGT for R5F U Boot         | https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf.tar.xz   |
++----------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+
+.. IMPORTANT::
+
+   1. These packages are NOT included in PSDK RTOS installer and needs to be downloaded separately.
+   2. The script **setup_psdk_rtos.sh** downloads these packages. Refer vision apps user guide [|vision_apps_ug_env_setup|].
+
+.. _cg_xml:
+
+CGT XML Processing Scripts
+**************************
+
+This package contains Code Generation Tools XML Processing Scripts
+
++------------------------+---------------------------------------+
+| Version                | 2.61.00                               |
++------------------------+---------------------------------------+
+| Release notes          | |cg_xml_release_notes|                |
++------------------------+---------------------------------------+
+| User guide             | |cg_xml_user_guide|                   |
++------------------------+---------------------------------------+

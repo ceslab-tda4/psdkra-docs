@@ -1,0 +1,250 @@
+
+.. _psdkl-with-psdkr:
+
+Using Processor SDK Linux with Processor SDK RTOS
+=================================================
+
+Introduction
+------------
+
+Processor SDK Linux |platform| (PSDK LINUX) and Processor SDK RTOS |platform| (PSDK RTOS) work together to
+realize use-cases on the |platform| platform. In most cases using the pre-built linux filesystem, kernel, bootloader
+is sufficient to build different usecases. However sometimes it is needed to rebuild certain parts of
+PSDK LINUX to update things like bootloader, SYSFW configuration, kernel dtb/dtbo and so on.
+
+This page shows quick steps to rebuild and update below,
+
+- R5F SPL, A72 SPL, A72 uboot (tiboot3.bin, tispl.bin, u-boot.img)
+- SYSFW configuration (sysfw.itb)
+- Linux kernel .dtb's and .dtbo's ( /boot/\*.dtb, /boot/\*.dtbo)
+- Linux kernel and kernel modules ( /boot/Image, /lib/modules/\*)
+
+.. ifconfig:: CONFIG_part_variant in ('J721E')
+
+    The below instructions also include details about building for HS devices.  The prebuilt binaries included
+    with the Linux SDK are for GP devices, so the HS binaries will need to be built using the instructions below
+    in order to run on HS.  Specifically, the u-boot binaries, sysfw binary and the fitImage will need to be built
+    for HS and installed onto the SD card as shown in the sections below.
+
+.. ifconfig:: CONFIG_part_variant in ('J7200','J721S2','J784S4')
+
+    The below instructions also include details about building for HS devices.  The prebuilt binaries included
+    with the Linux SDK are for GP devices, so the HS binaries will need to be built using the instructions below
+    in order to run on HS.  Specifically, the u-boot binaries and the fitImage will need to be built
+    for HS and installed onto the SD card as shown in the sections below.
+
+More detailed instruction to build PSDK LINUX are given in PSDK LINUX user guide.
+Refer ${PSDK_LINUX_PATH}//docs/linux/index.html for more details.
+
+Setup PSDK LINUX
+----------------
+
+
+- Download the PSDK LINUX installer and install as shown below ::
+
+    chmod +x ti-processor-sdk-linux-<soc>-evm-xx_xx_xx-Linux-x86-Install.bin
+    ./ti-processor-sdk-linux-<soc>-evm-xx_xx_xx-Linux-x86-Install.bin
+
+- Edit below files to adjust some paths and variables needed to build SYSFW config, uboot, kernel, dtb's
+
+    1. Edit below in ${PSDK_LINUX_PATH}/Rules.make to point to the root filesystem and the boot partition in SD card ::
+
+        #root of the target file system for installing kernel Image, dtb's and modules
+        DESTDIR ?=/media/<user name>/rootfs
+
+        #Location of the boot partition for installing boot binaries/images
+        BOOTFS ?=/media/<user name>/BOOT
+
+    2. Update below in ${PSDK_LINUX_PATH}/Rules.make to choose the device type to build for. 
+       The Makefile will build for a General Purpose (GP) device by default.
+       Please refer to the note below for additional steps to boot a High Secure (HS) device type :: 
+
+        #SOC_TYPE : Choose between gp, hs, hs-fs
+        SOC_TYPE ?= gp
+
+- Using prebuilt images of ATF (Arm Trusted Firmware), OPTEE (Open Portable Trusted Execution Environment), and MCU1_0 (Micro Controller Unit),
+  we can now quickly build the SYSFW configuration, bootloader and kernel
+
+Build R5F SPL, A72 SPL and A72 u-boot
+-------------------------------------
+
+- R5F SPL, A72 SPL and A72 u-boot can be found below ::
+
+    ${PSDK_LINUX_PATH}/board-support/u-boot-*
+
+- Do below at ${PSDK_LINUX_PATH}/ to build R5F SPL, A72 SPL and A72 u-boot ::
+
+    make u-boot
+
+- After successful build, Install files to 'BOOT' partition in the SD card using ::
+
+    make u-boot_install
+
+.. ifconfig:: CONFIG_part_variant in ('J721E')
+
+    - **Note**: The u-boot build and install targets also trigger the makefile
+      targets for sysfw-image below to install sysfw.itb
+
+    - Using the above, the following files will be copied to the 'BOOT' partition.
+      These files will be generated at the location regardless of whether it is
+      build for gp, hs or hs-fs ::
+
+        ${PSDK_LINUX_PATH}/board-support/u-boot_build/sysfw.itb
+        ${PSDK_LINUX_PATH}/board-support/built-images/tiboot3.bin
+        ${PSDK_LINUX_PATH}/board-support/built-images/tispl.bin
+        ${PSDK_LINUX_PATH}/board-support/built-images/u-boot.img
+
+.. ifconfig:: CONFIG_part_variant in ('J7200', 'J721S2', 'J784S4')
+
+    - **Note**: The u-boot build and install targets also trigger the makefile
+      targets to build and install the combined tiboot3.bin
+
+    - Using the above, the following files will be copied to the 'BOOT' partition.
+      These files will be generated at the location regardless of whether it is
+      build for gp, hs or hs-fs ::
+
+        ${PSDK_LINUX_PATH}/board-support/built-images/tiboot3.bin
+        ${PSDK_LINUX_PATH}/board-support/built-images/tispl.bin
+        ${PSDK_LINUX_PATH}/board-support/built-images/u-boot.img
+
+Build Linux DTB and DTBO
+------------------------
+
+- The linux kernel input dts, dtso and generated dtb, dtbo are located below ::
+
+    ${PSDK_LINUX_PATH}/board-support/linux-*/arch/arm64/boot/dts/ti/
+
+- Do below at ${PSDK_LINUX_PATH}/ to regenerate the linux kernel .dtb, dtbo files ::
+
+    make linux-dtbs
+
+- Do below at ${PSDK_LINUX_PATH}/ to copy the updated .dtb, dtbo files to SD card ::
+
+    sudo make linux-dtbs_install;sync
+
+
+
+Build Linux kernel and kernel modules
+-------------------------------------
+
+- Linux kernel can be found below ::
+
+    ${PSDK_LINUX_PATH}/board-support/linux-*
+
+- Do below at ${PSDK_LINUX_PATH}/ to rebuild the linux kernel and kernel modules ::
+
+    make linux
+
+- Do below at ${PSDK_LINUX_PATH}/ to copy the updated linux kernel and kernel modules to SD card ::
+
+    sudo make linux_install;sync
+
+- HS devices require a fitImage to be installed in the SD card, that packages the signed Kernel Image and dtbs.
+  When building for HS devices (SOC_TYPE=<hs/hs-fs>), the above install command will generate a fitImage at 
+  ``${PSDK_LINUX_PATH}/board-support/built-images/`` and install the same to the SD card.
+
+Additional Steps to use HS Devices
+----------------------------------
+
+
+As described above, The SOC_TYPE variable in Rules.make defines what device type to build for. Below is a short description for each ::
+
+    SOC_TYPE=gp                     # For a GP device (default)
+    SOC_TYPE=hs                     # For a HS-SE device
+    SOC_TYPE=hs-fs                  # For a HS-FS device
+
+After setting the SOC_TYPE variable appropriately and installing all of the above components, 
+some additional steps may be needed for HS devices (Both HS-SE and HS-FS):
+
+- Set the environment variable TI_SECURE_DEV_PKG to TI security development tools package, included in the Linux SDK ::
+
+    export TI_SECURE_DEV_PKG=${PSDK_LINUX_PATH}/board-support/core-secdev-k3
+    ROOTFS=/media/$USER/rootfs
+
+- Signing the remote core firmwares: The remote core firmware binaries at /lib/firmware in the target filesystem need to be signed. For instance: ::
+
+    $TI_SECURE_DEV_PKG/scripts/secure-binary-image.sh ${ROOTFS}/lib/firmware/pdk-ipc/ipc_echo_test_mcu2_0_release_strip.xer5f ${ROOTFS}/lib/firmware/pdk-ipc/ipc_echo_test_mcu2_0_release_strip.xer5f.signed
+
+- Softlinks to point to signed remote core firmwares: u-boot will look for ``-sec`` suffixed softlinks to the signed remote core binaries ::
+
+    ln -sfn /lib/firmware/pdk-ipc/ipc_echo_test_mcu2_0_release_strip.xer5f.signed ${ROOTFS}/lib/firmware/j7-main-r5f0_0-fw-sec
+
+If using vision apps, the built firmware can be signed and installed using a single command as shown below.  For more information,
+please reference the vision apps documentation. ::
+
+    make linux_fs_install_sd HS=1
+
+
+Optional : Rebuild Using Further Customizations
+-----------------------------------------------
+
+**Using custom ATF/OPTEE/MCU1_0 images for u-boot**
+
+The ``make u-boot`` command picks up ATF, OPTEE and MCU1_0 Images from the locations shown below. 
+If using custom binaries for these, replace the original one based on the device type being used. 
+
+- For GP devices (``SOC_TYPE=gp``), these locations are used :: 
+
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/bl31.bin                                       # ATF
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/bl32.bin                                       # OPTEE
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ipc_echo_testb_mcu1_0_release_strip.xer5f      # MCU1_0 DM image
+
+
+- For HS devices (``SOC_TYPE=<hs/hs-fs>``), these binaries need to be signed as well. 
+  For instance, the bl31.bin can be signed by running the below command ::
+
+    $TI_SECURE_DEV_PKG/scripts/secure-binary-image.sh bl31.bin bl31.bin.signed
+
+  Place the custom-built and signed binaries at below locations. ::
+
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/bl31.bin.signed                                    # ATF
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/bl32.bin.signed                                    # OPTEE
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ipc_echo_testb_mcu1_0_release_strip.xer5f.signed   # MCU1_0 DM image
+
+After updating the above files at the corresponding locations, u-boot can be rebuilt and installed using the same steps.
+
+
+**SYSFW Binaries**
+
+The ``make u-boot`` command picks up the sysfw binaries from the locations shown below.
+To build with a new SYSFW binary, replace the original one based on the device type being used.
+
+- For GP devices (``SOC_TYPE=gp``), the SYSFW binaries are located at the below path ::
+
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ti-fs-firmware-*-gp.bin
+
+
+- For HS-SE devices (``SOC_TYPE=hs``), the SYSFW binaries are located at the below path ::
+
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ti-fs-firmware-*-hs-cert.bin
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ti-fs-firmware-*-hs-enc.bin
+
+- For HS-FS devices (``SOC_TYPE=hs-fs``), the SYSFW binaries are located at the below path ::
+
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ti-fs-firmware-*-hs-fs-cert.bin
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/ti-fs-firmware-*-hs-fs-enc.bin
+
+After updating the above files at the corresponding locations, sysfw-image can be rebuilt and installed using the same steps.
+
+
+**Customizing fitImage for HS Devices**
+
+A prebuilt fitImage is included in the prebuilt-images of the PSDK Linux. Install this using the command shown below ::
+
+    sudo install ${PSDK_LINUX_PATH}/board-support/prebuilt-images/fitImage /media/$(USER)/rootfs/boot/
+
+To build the Linux fitImage for HS devices using a custom fitImage configuration, modify the file shown below required ::
+
+    ${PSDK_LINUX_PATH}/board-support/prebuilt-images/fitImage.its
+
+- If the Kernel Image and dtbs do not need an update, prebuilt-images for the same are packaged at ``${PSDK_LINUX_PATH}/board-support/prebuilt-images/``.
+  To build and install a fitImage using the modified fitImage.its, run below commands from this location ::
+
+    mkimage -f fitImage.its -r fitImage
+    sudo install fitImage /media/$(USER)/rootfs/boot/
+
+- If the Kernel Image or dtbs need to be updated as well, after modifying the fitImage.its, simply run the command below
+  to build and install a fitImage using newly built Kernel Image, dtbs and the modified fitImage.its ::
+
+    sudo SOC_TYPE=hs make linux_install
+

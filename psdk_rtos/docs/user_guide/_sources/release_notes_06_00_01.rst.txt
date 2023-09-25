@@ -1,0 +1,77 @@
+
+
+Release notes - 06_00_01
+========================
+
+What's New
+----------
+
+.. NOTE::
+
+   Only regression testing is performed based on the changes. Full testing will be done in 6.01.00 release
+
+This is a patch release on top of the 6.00.00 release to address below key features and bugs.
+Refer respective component release notes for details on the changes.
+
+#. J721E Beta board support with Leo PMIC processor board
+#. Support for TI MM RTOS decoder package consisting H.264 decoder (library and source package)
+#. 4 channel 3D Surround view demo using VISS, GPU, FPDLink 2MP Cameras, HDMI Display
+#. AR233 sensor support
+#. DSS BT601 discrete sync support in DSS RTOS driver
+#. Improved stability and performance for Auto Valet Parking Demos
+#. Critical bugs fixes related to stability seen in Ethernet and Imaging demos
+#. EDP display interoperability issue and hot-plug-detect (HPD) support
+
+This release in tested on the below HW platforms,
+
+#. J721E SoC and J721E EVM
+#. eDP output from J721E EVM
+#. MMC/SD, eMMC, OSPI, UART, Ethernet from J721E EVM
+#. Infotainment daughter card, required for HDMI display demos
+#. Fusion1 with UB960 FPD link daughter card with 4x UB953-IMX390 FPD Link sensors, required for CSI2RX capture demos
+#. GESI daughter card, required for some 8 port ethernet switch demos
+
+Some of the key software features are listed below (already supported in earlier releases),
+
+#. Linux on A72 and SysBIOS on R5F, C6x, C7x CPUs with IPC (inter-processor communication) working across all CPUs
+#. RTOS based bootloader via SBL in PDK and Linux based bootloader via uboot in PSDK Linux Auto
+#. PDK with CSI2, DSS, VPAC, DMPAC, UDMA, MMC/SD, UART, IPC, Ethernet, OSPI drivers
+#. TIDL and MMALIB for CNN acceleration using C7x/MMA
+#. TI OpenVX software stack running across A72, R5F, C6x, C7x CPUs in RTOS only mode as well as Linux+RTOS mode
+#. TI OpenVX nodes for VPAC, DMPAC, CSI2 capture, display, TIDL, OpenGL and OpenVX v1.1 defined nodes
+#. Imaging library for auto-exposure, auto-whitebalance algorithms, image sensor framework
+#. 8 port ethernet switch firmware
+#. ADSA/Vision demos for CNN applications like object classification, parking spot detect, semantic segmentation, auto valet parking
+#. ADSA/Vision demos for Camera applications like 1CH/4CH IMX390 CSI2 Capture + VISS + display
+#. Gateway demos for CAN to ethernet routing
+#. Display sharing and cluster demo applications
+#. MCU SW for MCU island integration demos
+#. MCAL AutoSAR drivers (part of MCU SW package)
+#. VXLIB - OpenVX v1.1 low level kernel for C66x integrated with TIOVX
+#. Perception toolkit (PTK) for Lidar,Radar,Camera fusion (PC based only)
+#. TI Code generation tools for R5F, C6x, C7x
+#. ARM GCC Code generation tools for A72 (needs to be downloaded separately)
+
+Device Support and Validation Information
+-----------------------------------------
+
++--------------------+-------------------------------+---------------------------------+-------------------------------+
+| SoC                | Build Host (OS)               | Run Target (OS)                 | Test Plaform                  |
++====================+===============================+=================================+===============================+
+| J721e              | x86_64 (Linux Ubuntu 18.04)   | R5F, C6x, C7x running TI-RTOS   | J721e EVM with daughter cards |
+|                    |                               |                                 |                               |
+|                    |                               | A72 running Linux               |                               |
++--------------------+-------------------------------+---------------------------------+-------------------------------+
+| PC emulation mode  | x86_64 (Linux Ubuntu 18.04)   | x86_64 (Linux Ubuntu 18.04)     | x86_64 (Linux Ubuntu 18.04)   |
++--------------------+-------------------------------+---------------------------------+-------------------------------+
+
+Known Issues
+------------
+
+Refer to component release notes for known issues in each component
+
+Additional Reports
+------------------
+
+For additional reports like test report, traceability refer [|psdkra_additional_reports|]
+

@@ -1,0 +1,172 @@
+Running SDE and DOF for 2M-Pixel Input
+======================================
+
+Introduction
+------------
+
+The Stereo Depth Engine (SDE) and Dense Optical Flow (DOF) HWAs are designed to process the input resolution up to 2048x1024. However, due to the limited size of a SL2 memory block that serves both SDE and DOF, they cannot process 2M-pixel inputs at the same time. By default, SDE and DOF are assigned SL2 memory for the input sequences with smaller horizontal size and smaller search range than supported. For example, the default SL2 memory mapping allows SDE to process up to 1280 horizontal pixels with disparity search range of 128 and allows DOF to process up to 1312 horizontal pixels with vertical search range of -48 ~ +48. Note that the maximum disparity search range for SDE is 192 and the maximum vertical search range for DOF is -62 ~ +62.
+
+
+Therefore, in order for either SDE or DOF to process 2M-pixel input with larger search range, SL2 memory should be reallocated. This developer note explains how to do it.  
+
+
+DMPAC SL2 Memory Reallocation
+-----------------------------
+
+To support SL2 memory reallocation for DMPAC, the VHWA remote service handler named *APP_VHWA_SERVICE_NAME* is registered during the vision_apps initialization step. The VHWA remote service handler receives the four commands as shown in the table below. Note that these commands and related parameters are defined in <SDK_PATH>/vision_apps/utils/hwa/include/app_hwa.h.
+
+==========================  =================
+Command                     Description
+==========================  =================
+APP_DMPAC_SDE_SL2_FREE      Free SL2 memory assigned already for SDE
+APP_DMPAC_DOF_SL2_FREE      Free SL2 memory assigned already for DOF
+APP_DMPAC_SDE_SL2_REALLOC   Allocate SL2 memory for SDE according to the given SL2 memory parameters
+APP_DMPAC_DOF_SL2_REALLOC   Allocate SL2 memory for DOF according to the given SL2 memory parameters
+==========================  =================
+
+
+Before reallocating SL2 memory for SDE and DOF, existing SL2 memory should be freed up. The application should call the remote services with *APP_DMPAC_SDE_SL2_FREE* and *APP_DMPAC_DOF_SL2_FREE* commands as follows:
+
+.. code-block:: c
+
+    int32_t vhwaDmpacSl2Free()
+    {
+        int32_t status;
+
+        status = appRemoteServiceRun(APP_IPC_CPU_MCU2_1, APP_VHWA_SERVICE_NAME,
+                                     APP_DMPAC_SDE_SL2_FREE,
+                                     NULL, 0, 0);
+
+        if (status == 0)
+        {
+            status = appRemoteServiceRun(APP_IPC_CPU_MCU2_1, APP_VHWA_SERVICE_NAME,
+                                         APP_DMPAC_DOF_SL2_FREE,
+                                         NULL, 0, 0);
+        }
+
+        return status;
+    }
+
+
+Then SL2 memory should be allocated again with desired parameters. For SDE to process 2M-pixel input with 192 disparity search range, the remote service with *APP_DMPAC_SDE_SL2_REALLOC* command should be called as follows: 
+
+.. code-block:: c
+
+    int32_t vhwaDmpacSdeSl2Realloc()
+    {
+        int32_t status = 0;
+
+        App_M2mSdeSl2AllocPrms sl2AllocPrms;
+
+        // Reset parameters
+        sl2AllocPrms.maxImgWidth  = 2048;
+        sl2AllocPrms.inCcsf       = APP_FVID2_CCSF_BITS12_UNPACKED16;
+        sl2AllocPrms.searchRange  = APP_SDE_SR_192;
+        sl2AllocPrms.disBuffDepth = APP_SDE_DEFAULT_DIS_BUFF_DEPTH;
+    
+        status = appRemoteServiceRun(APP_IPC_CPU_MCU2_1, APP_VHWA_SERVICE_NAME,
+                                     APP_DMPAC_SDE_SL2_REALLOC,
+                                     &sl2AllocPrms, sizeof(sl2AllocPrms), 0);
+
+        return status;
+    }
+
+Similarly, for DOF to process 2M-pixel input with vertical search range of -62 ~ +62, the remote service with *APP_DMPAC_DOF_SL2_REALLOC* command should be called as follows: 
+
+.. code-block:: c
+
+    int32_t vhwaDmpacDofSl2Realloc()
+    {
+        int32_t status = 0;
+
+        App_M2mDofSl2AllocPrms sl2AllocPrms;
+
+        // Reset parameters
+        sl2AllocPrms.maxImgWidth   = 2048;
+        sl2AllocPrms.inCcsf        = APP_FVID2_CCSF_BITS12_UNPACKED16;
+        sl2AllocPrms.refBuffDepth  = APP_DOF_DEFAULT_REF_BUFF_DEPTH;
+        sl2AllocPrms.currBuffDepth = APP_DOF_DEFAULT_CUR_BUFF_DEPTH;
+        sl2AllocPrms.fvBuffDepth   = APP_DOF_DEFAULT_FV_BUFF_DEPTH;
+        sl2AllocPrms.topSR         = 62;
+        sl2AllocPrms.botSR         = 62;
+
+        status = appRemoteServiceRun(APP_IPC_CPU_MCU2_1, APP_VHWA_SERVICE_NAME,
+                                     APP_DMPAC_DOF_SL2_REALLOC,
+                                     &sl2AllocPrms, sizeof(sl2AllocPrms), 0);
+
+        return status;
+    } 
+
+
+SDE and DOF Demos for 2M-Pixel Input
+------------------------------------
+
+Let us take examples of <SDK_PATH>/vision_apps/apps/basic_demos/app_stereo and <SDK_PATH>/vision_apps/apps/basic_demos/app_dof to see what should be added for SDE and DOF demos to support 2M-pixel input with larger search range.
+
+SDE Demo
+*********
+
+app_init() function in <SDK_PATH>/vision_apps/apps/basic_demos/app_stereo/main.c should be modified as shown below. Note that vhwaDmpacSl2Free() and vhwaDmpacSdeSl2Realloc(), which are introduced in the previous section, are called.
+
+.. code-block:: c
+
+    static vx_status app_init(AppObj *obj)
+    {  
+
+        vx_status status = VX_SUCCESS;
+        app_grpx_init_prms_t grpx_prms;
+
+
+    #if !defined(PC)
+        // Free SDE and DOF SL2
+        vhwaDmpacSl2Free();
+        
+        // Reallocate SDE SL2
+        vhwaDmpacSdeSl2Realloc();
+    #endif
+
+        obj->context = vxCreateContext();
+        status = vxGetStatus((vx_reference)obj->context);
+        if(status == VX_SUCCESS)
+        {
+            tivxStereoLoadKernels(obj->context);
+            tivxHwaLoadKernels(obj->context);
+        }
+        ...
+
+    }
+
+DOF Demos 
+**********
+
+app_init() function in <SDK_PATH>/vision_apps/apps/basic_demos/app_dof/main.c should be modified as shown below. Note that vhwaDmpacSl2Free() and vhwaDmpacDofSl2Realloc(), which are introduced in the previous section, are called.
+
+.. code-block:: c
+
+    static vx_status app_init(AppObj *obj)
+    { 
+        app_grpx_init_prms_t grpx_prms;
+        vx_status status = VX_SUCCESS;
+
+
+    #if !defined(PC)
+        // Free SDE and DOF SL2
+        vhwaDmpacSl2Free();
+        
+        // Reallocate SDE SL2
+        vhwaDmpacDofSl2Realloc();
+    #endif
+
+
+        obj->context = vxCreateContext();
+        if(status == VX_SUCCESS)
+        {
+            status = vxGetStatus((vx_reference) obj->context);
+        }
+
+        tivxHwaLoadKernels(obj->context);
+        ...
+
+    }
+
+

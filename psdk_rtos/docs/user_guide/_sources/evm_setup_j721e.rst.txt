@@ -1,0 +1,318 @@
+
+.. _evm_setup_j721e:
+
+EVM Setup for J721E
+===================
+
+This section is intended to give a quick reference of EVM related to SDK usage.  Full EVM documentation
+can be referenced at `TDA4VM & DRA829V system-on-module <https://www.ti.com/tool/J721EXSOMXEVM>`_.
+
+.. IMPORTANT::
+
+   - The power supply current requires more than 1A @12V input
+   - DisplayPort-to-DVI or DisplayPort-to-HDMI adapters don't work with DisplayPort
+   - The SOM board has to be tightly inserted into the connector sockets.
+   - When connecting the fusion daughter card, the power cable connecting processor board
+     and fusion board should look exactly like the picture in section :ref:`j721e_fusion-daughter-card`.
+     (P.S. The same cable from TDA2P EVM has the opposite wire connection at one end)
+
+EVM Setup to run SDK demos
+--------------------------
+
+Daughter card requirements
+**************************
+
+Below table shows the daughter cards required for various features/demos
+
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+| Feature                                 | Infotainment card | Fusion 1 card | IMX390+UB953 FPDLink sensors | GESI card | LI Serial Capture Board  |
++=========================================+===================+===============+==============================+===========+==========================+
+| HDMI display                            | REQUIRED          | na            | na                           | na        | na                       |
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+| eDP (DisplayPort)display                | na                | na            | na                           | na        | na                       |
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+| CSI2RX camera input                     | na                | REQURIED      | REQURIED                     | na        | na                       |
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+| CPSW9G (ETHFW) demos                    | na                | na            | na                           | REQUIRED  | na                       |
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+| CAN demos                               | na                | na            | na                           | REQUIRED  | na                       |
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+| CSITX external loopback test            | na                | na            | na                           | na        | REQUIRED                 |
++-----------------------------------------+-------------------+---------------+------------------------------+-----------+--------------------------+
+
+UART terminal setup
+*******************
+
+- Connect USB cable to Main UART port on common processor board (see :ref:`j721e_common-processor-board`)
+
+  - 4 UART ports would be visible at the PC side
+  - Port 0 from this is used this for Linux, RTOS UART terminal from A72
+
+- **Setup UART for 115200 baud rate, 8 data bits, no party, 1 stop bit**
+
+Boot Modes
+**********
+
+Bootmodes are selected using the SW8 and SW9 switches on the common processor board.
+
+.. _j721e_no_boot_mode:
+
+No Boot Mode
+############
+
+When you want the binaries to be loaded from a debugger (CCS), the common
+processor boards has to be set in the NO boot mode.
+
+Following are the switch settings to do the same.::
+
+    SW8[1-8] = 1000 1000
+    SW9[1-8] = 0111 0000
+
+
+.. figure::  images/K3-J721E-EVM-Switch-NO-boot.png
+
+   No Boot Mode
+
+
+.. _j721e_sd_boot_mode:
+
+SD Boot Mode
+############
+
+Following are the switch settings to set the boot mode to SD for common processor board.::
+
+    SW8[1-8] = 1000 0010
+    SW9[1-8] = 0000 0000
+
+.. figure:: images/K3-J721E-EVM-Switch-SD-boot.png
+
+   MMC/SD Boot Mode
+
+
+.. _j721e_ospi_boot_mode:
+
+OSPI Boot Mode (J721E ES1.x versions only)
+##########################################
+
+Following are the switch settings to set the boot mode to OSPI for common processor board.::
+
+    SW3[1-8] = 0xxx xxxx
+    SW8[1-8] = 0000 0000
+    SW9[1-8] = 0100 0000
+
+.. figure:: images/K3-J721E-EVM-SW3-UART-boot.png
+   :scale: 75%
+
+   OSPI Boot Mode SW3
+
+.. figure:: images/K3-J721E-EVM-Switch-OSPI-boot.png
+
+   OSPI Boot Mode SW8 and SW9
+
+
+.. _j721e_xspi_boot_mode:
+
+xSPI Boot Mode (J721E ES2.x versions only)
+##########################################
+
+Following are the switch settings to set the boot mode to XSPI for common processor board.::
+
+    SW3[1-8] = 0xxx xxxx
+    SW8[1-8] = 0000 1010
+    SW9[1-8] = 0110 0000
+
+.. figure:: images/K3-J721E-EVM-SW3-UART-boot.png
+   :scale: 75%
+
+   xSPI Boot Mode SW3
+
+.. figure:: images/K3-J721S2-EVM-Switch-XSPI-boot.png
+
+   xSPI Boot Mode SW8 and SW9
+
+
+.. _j721e_uart_boot_mode:
+
+UART Boot Mode
+##############
+
+Following are the switch settings to set the boot mode to SD for common processor board.::
+
+    SW3[1-8] = 0xxx xxxx
+    SW8[1-8] = 0000 0000
+    SW9[1-8] = 0111 0000
+
+.. figure:: images/K3-J721E-EVM-SW3-UART-boot.png
+   :scale: 75%
+
+   UART Boot Mode SW3
+
+.. figure:: images/K3-J721E-EVM-Switch-UART-boot.png
+
+   UART Boot Mode SW8 and SW9
+
+
+EVM and Daughter Card information
+---------------------------------
+
+|platform| SOM
+********************
+
+The |platform| Evaluation Module consists of a SOM (System on Module), shown in the red box below, fitted to a common processor board or base EVM.
+
+.. _j721e_evm_daughter_card:
+
+.. figure:: images/K3-J7ES-SOM.png
+
+   |platform| SOM
+
+Contents of the board
+
+- |platform| SoC
+- Power controller
+- 4 GiB DDR RAM
+- OSPI NOR flash
+- Hyperflash
+
+.. _j721e_common-processor-board:
+
+Common Processor Board
+**********************
+
+Common Processor Board is the main board which has peripherals to provide
+most common functionality. It has expander ports to connect to different adapter cards.
+
+.. figure:: images/K3-Common-Proc-Board.png
+
+   |platform| Common Processor Board
+
+Contents of the board
+
+#. 4xUART to USB port for Main uarts
+
+   - Port0 from this is used this for Linux, RTOS UART terminal from A72
+
+#. 2xUART to USB port MCU domain uarts
+
+   - Port0 from this is used for DMSC UART
+   - Port1 from this is used for MCU R5F UART
+
+#. 2x Display (eDP/DP) ports
+
+   - Display0 is used by software for eDP/DP output
+
+#. Ethernet (CPSW2G) port
+#. SD card slot
+#. XDS110 on board USB JTAG connector
+#. USB ports
+#. 12V Power input
+#. Power switch
+#. MIPI JTAG connector
+
+Infotainment daughter card
+**************************
+
+Infotainment daughter card is adapter board which has additional peripherals for
+infotainment use cases. This has support for HDMI display, FPDlink display
+extra audio channels.
+
+.. figure:: images/K3-Infotainment-card.png
+
+   Infotainment daughter card
+
+Contents of the board
+
+- HDMI display connector
+- 2x FPDlink display connectors
+- 14x 3.5mm audio jacks
+- Parallel port Omnivision camera connector (direct connection, i.e no FPDLink)
+- CSI camera connector (direct connection, i.e no FPDLink)
+
+Quad Port Ethernet daughter card
+********************************
+
+Quad Port Ethernet (QPENet) board is an adapter board which offers
+additional Ethernet port capabilities to the Jacinto7 EVM.
+
+.. figure:: images/K3-QPENet-card.png
+
+   QPENet daughter card
+
+Contents of the board:
+
+- Quad-SGMII PHY
+- 4x Ethernet ports
+- EEPROM with flashed MAC addresses
+
+GESI daughter card
+******************
+
+GESI(Gateway/Ethernet Switch/Industrial) daughter card is an adapter board which
+has additional peripherals for gateway and industrial use cases.
+This has support for extra Ethernet ports and CAN ports.
+
+.. figure:: images/K3-GESI-card.png
+
+   GESI daughter card
+
+Contents of the board
+
+- 5x Ethernet ports
+- Profinet connector
+- Motor control headers
+- Additional CAN Transceivers/ headers
+
+.. _j721e_fusion-daughter-card:
+
+Fusion daughter card
+********************
+
+Fusion daughter card is adapter board to connect 4 camera sensors (IMX390+UB953 serializer)
+through de-serializer (UB960) available on the Fusion1 daughter card to CSI2RX ports of |platform| SoC.
+
+Connect the daughter card to common processor board at "CSI2 Exp" connector J25.
+
+.. figure:: images/Fusion_card_connector.png
+
+   CSI2 Exp Connector
+
+.. figure:: images/fusion1_board.png
+
+   Fusion1 Board
+
+.. figure:: images/fusion1_board_camera.png
+
+   Fusion1 Camera Setup
+
+LI Serial Capture Board Daughter card
+*************************************
+
+LI Serial Capture Board Daughter Card is used to connect the DSI-Tx data from the DSI FPC to the CSI2 Exp Connector.
+
+.. figure:: images/LI_Daughter_card.png
+
+   LI Serial Capture Board Daughter card
+
+
+CPB Board changes for CSITX External Loopback Test
+**************************************************
+
+Hardware changes are required in order to run the CSITX external loopback application on J721E EVM as DSI-Tx lines are not connected to DSI FPC connector by default.
+The default path enables the serializer, so below HW modifications are needed to enable DSI-Tx path to J53 connector
+
+.. figure:: images/cpb_schematic.png
+
+Changes:
+
+- Unmount the resistors R431 to R440
+- Mount the resistors R420 to R429
+
+Unmount resistors R431 to R440 located near DP connectors just below the SoM edge. User might need to remove the SoM board while making the mod.
+
+.. figure:: images/resistors_below_som_edge.png
+
+Once this mod is done, user needs to connect LI SERIAL CAPTURE BOARD on the CSI2 expansion connector
+and connect the CSI2 CAM1 to the DSI FPC on the CPB.
+User should compile csitx_transmit_testapp_freertos with the APP_ENABLE_LOOPBACK macro set to 1 in order to test the external loopback in <examples/csitx_transmit_test/src/csitx_transmit_test_cfg.h>.
+
+.. figure:: images/li_board.png

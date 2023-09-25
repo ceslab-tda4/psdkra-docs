@@ -1,0 +1,28 @@
+
+Latest FAQs on TDA4
+===================
+
+This `thread <https://e2e.ti.com/support/processors/f/791/t/972530>`_ on the TI public e2e `forum <https://e2e.ti.com/support/processors/f/791>`_
+will summarize the latest FAQs on TDA4 on a quarterly basis – these are usually
+the most viewed threads and augment the SDK collateral.
+
+To make the navigation easy, we have also added the domain to help you find the FAQs easily.
+
+- Most update list of FAQs can be found at this `link <https://e2e.ti.com/support/processors/f/791/t/972530/>`_.
+
+- SDK collateral is still the first place to get all the information
+
+    - `RTOS SDK <https://software-dl.ti.com/jacinto7/esd/processor-sdk-rtos-jacinto7/latest/exports/docs/psdk_rtos/docs/user_guide/index.html>`_
+    - `Linux SDK <https://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-jacinto7/latest/exports/docs/devices/J7/linux/index.html>`_
+    - `QNX SDK <https://software-dl.ti.com/jacinto7/esd/processor-sdk-qnx-jacinto7/latest/exports/docs/index.html>`_
+
+- There are other FAQs also present in the SDK collateral itself keep these links handy
+
+    - `RTOS Developer Notes <developer_notes.html>`_
+    - `Vision Apps Trouble-shooting guide <../../../vision_apps/docs/user_guide/BUILD_TROUBLE_SHOOTING.html>`_
+    - |pdk_faqs|
+    - |tidl_ts|
+    - `TIOVX FAQs <../../../tiovx/docs/user_guide/RESOURCES.html#autotoc_md15>`_
+    - `TISCI FAQ <https://software-dl.ti.com/tisci/esd/latest/6_topic_user_guides/index.html>`_
+    - `Firewall FAQ <https://software-dl.ti.com/tisci/esd/latest/6_topic_user_guides/firewall_faq.html>`_
+    - `Linux SDK How to Guide and FAQs <http://software-dl.ti.com/jacinto7/esd/processor-sdk-linux-jacinto7/latest/exports/docs/linux/How_to_Guides.html>`_

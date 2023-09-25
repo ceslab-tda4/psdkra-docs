@@ -1,0 +1,594 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.13. Enabling TI’s inline ECC for DDR &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.14. Changing Display Resolution in Vision Apps" href="developer_notes_display_resolution.html"/>
+        <link rel="prev" title="8.12. Adding new image sensor to PSDK RTOS" href="developer_notes_image_sensor.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.13. Enabling TI’s inline ECC for DDR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.13.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-arrangement-in-ddr-when-ecc-is-enabled">8.13.2. Data arrangement in DDR when ECC is enabled</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#steps-to-prepare-ddr-for-ecc-check">8.13.3. Steps to prepare DDR for ECC check</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#defining-ecc-regions">8.13.3.1. Defining ECC regions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pre-loading-ecc-region-with-a-known-pattern">8.13.3.2. Pre-loading ECC region with a known pattern</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enabling-ecc-check">8.13.3.3. Enabling ECC check</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ecc-stats-collector">8.13.4. ECC stats collector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advance-topic-ecc-cache">8.13.5. Advance topic - ECC Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ecc-recommendations">8.13.6. ECC Recommendations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reference-implementation-on-linux-u-boot">8.13.7. Reference Implementation on Linux u-boot</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#identify-critical-sections">8.13.7.1. Identify <strong>critical sections</strong></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#program-the-ecc-region-registers">8.13.7.2. Program the ECC Region registers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#revise-the-total-available-space">8.13.7.3. Revise the total available space</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-ecc-and-pre-load-the-ddr-with-known-pattern">8.13.7.4. Enable ECC and pre-load the DDR with known pattern</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-ecc-check">8.13.7.5. Enable ECC check</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.13. </span>Enabling TI’s inline ECC for DDR</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="enabling-ti-s-inline-ecc-for-ddr">
+<h1><span class="section-number">8.13. </span>Enabling TI’s inline ECC for DDR<a class="headerlink" href="#enabling-ti-s-inline-ecc-for-ddr" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">8.13.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>For continuously validating data integrity in SDRAM, TI’s proprietary inline ECC for J7 class of devices is the recommended approach which reduces the impact on overall system performance to a minimum. The ECC syndromes are interleaved alongside with data thereby avoiding the need for a dedicated RAM and accompanying infra for propagation of the syndromes. This document captures the steps involved in enabling ECC and also provides general guidelines while applying ECC to different code/data/buffer sections in the DDR. This is only a supplemental document to the section “Inline ECC for SDRAM Data” under DDRSS MSMC2DDR Bridge chapter, available as part of <a class="reference external" href="https://www.ti.com/lit/pdf/spruil1">AM752x/DRA829/TDA4xM TRM</a></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>While enabling TI’s inline ECC in the MSMC2DDR bridge the inline ECC in the DDR controller must be <strong>turned OFF</strong>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Set<span class="w"> </span>DDRSS_CTL_206<span class="o">[</span><span class="m">17</span>-16<span class="o">]</span><span class="w"> </span>ECC_ENABLE<span class="w"> </span>to<span class="w"> </span>0x00
+</pre></div>
+</div>
+<p>Please refer to the TRM for more details.</p>
+</div>
+</div>
+<div class="section" id="data-arrangement-in-ddr-when-ecc-is-enabled">
+<h2><span class="section-number">8.13.2. </span>Data arrangement in DDR when ECC is enabled<a class="headerlink" href="#data-arrangement-in-ddr-when-ecc-is-enabled" title="Permalink to this headline">¶</a></h2>
+<p>8-bit single error correction double error detection (SECDED) ECC is calculated over 64-bit data quanta. For every 512-byte data block 64 bytes of ECC is stored inline. Thus 1/9th of the total SDRAM space is used for ECC storage and the rest 8/9th is available for system use. From system point of view that 8/9th of the SDRAM data space are seen as consecutive byte addresses. Even if there are non-ECC protected regions the previously described 1/9th-8/9th rule still applies and consecutive byte addresses are seen from system point of view.</p>
+</div>
+<div class="section" id="steps-to-prepare-ddr-for-ecc-check">
+<h2><span class="section-number">8.13.3. </span>Steps to prepare DDR for ECC check<a class="headerlink" href="#steps-to-prepare-ddr-for-ecc-check" title="Permalink to this headline">¶</a></h2>
+<p>There are 3 steps to enable ECC check to a section of DDR</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Defining ECC regions</p></li>
+<li><p>Pre-loading regions with a known pattern</p></li>
+<li><p>Enabling ECC check</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="defining-ecc-regions">
+<h3><span class="section-number">8.13.3.1. </span>Defining ECC regions<a class="headerlink" href="#defining-ecc-regions" title="Permalink to this headline">¶</a></h3>
+<p>Address ranges can be specified by programming the region registers, there are 3 sets of region registers for entire DDR. User can either group multiple sections and enable only one region or can have multiple regions as required.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>DDRSS_ECC_R0_STR_ADDR_REG
+DDRSS_ECC_R0_END_ADDR_REG
+DDRSS_ECC_R1_STR_ADDR_REG
+DDRSS_ECC_R1_END_ADDR_REG
+DDRSS_ECC_R2_STR_ADDR_REG
+DDRSS_ECC_R2_END_ADDR_REG
+</pre></div>
+</div>
+</div>
+<div class="section" id="pre-loading-ecc-region-with-a-known-pattern">
+<h3><span class="section-number">8.13.3.2. </span>Pre-loading ECC region with a known pattern<a class="headerlink" href="#pre-loading-ecc-region-with-a-known-pattern" title="Permalink to this headline">¶</a></h3>
+<p>Before enabling <strong>ECC check</strong> the region to be protected must be initialized with a known pattern. User can either choose to do a CPU memset, which will be slow and affect boot time or use DMA to initialize which would be faster. The size of region to be protected also affects the boot time. This needs to be done before enabling <strong>ECC check</strong>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Set<span class="w"> </span>DDRSS_ECC_CTRL_REG<span class="o">[</span><span class="m">0</span><span class="o">]</span><span class="w"> </span><span class="nv">ECC_EN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0x1<span class="w"> </span>/*<span class="w"> </span>This<span class="w"> </span>will<span class="w"> </span>reassemble<span class="w"> </span>the<span class="w"> </span>data,<span class="w"> </span>ECC<span class="w"> </span>check<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>turned<span class="w"> </span>ON<span class="w"> </span>yet<span class="w"> </span>*/
+Set<span class="w"> </span>DDRSS_ECC_CTRL_REG<span class="o">[</span><span class="m">1</span><span class="o">]</span><span class="w"> </span><span class="nv">RMW_EN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0x1<span class="w"> </span>/*<span class="w"> </span>This<span class="w"> </span>will<span class="w"> </span>compute<span class="w"> </span>the<span class="w"> </span>syndromes<span class="w"> </span>on<span class="w"> </span>ECC<span class="w"> </span>regions<span class="w"> </span>pre-loaded<span class="w"> </span>with<span class="w"> </span>a<span class="w"> </span>known<span class="w"> </span>pattern<span class="w"> </span>*/
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If ECC regions are not preloaded with a known pattern and ECC check gets enabled then multiple single/double bit errors will be logged.
+It is highly recommended that ECC regions are initialized <strong>before</strong> enabling ECC check</p>
+</div>
+</div>
+<div class="section" id="enabling-ecc-check">
+<h3><span class="section-number">8.13.3.3. </span>Enabling ECC check<a class="headerlink" href="#enabling-ecc-check" title="Permalink to this headline">¶</a></h3>
+<p>Once data is pre-loaded ECC check can be enabled which will start monitoring the specified ECC regions for errors. For 1-bit errors the MSMC2DDR bridge corrects the error and returns to the requestor, however the actual data in the memory is untouched. An issue will be logged in the ECC stats collector which system software can read and take corrective actions.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Set<span class="w"> </span>DDRSS_ECC_CTRL_REG<span class="o">[</span><span class="m">2</span><span class="o">]</span><span class="w"> </span><span class="nv">ECC_CK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0x1<span class="w"> </span>/*<span class="w"> </span>This<span class="w"> </span>will<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ECC<span class="w"> </span>checking<span class="w"> </span>*/
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="ecc-stats-collector">
+<h2><span class="section-number">8.13.4. </span>ECC stats collector<a class="headerlink" href="#ecc-stats-collector" title="Permalink to this headline">¶</a></h2>
+<p>For 1-bit errors the correction is applied on-the-fly and the address location is recorded in a register. The number of 1-bit errors are also counted and recorded in a register. There is also an option of specifying a threshold for 1-bit errors which when met or exceeded MSMC2DDR bridge can be programmed to send a high priority error interrupt to the user.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>DDRSS_ECC_1B_ERR_ADR_LOG_REG<span class="w">   </span>/*<span class="w"> </span>Reports<span class="w"> </span>address<span class="w"> </span>location<span class="w"> </span>of<span class="w"> </span><span class="m">1</span>-bit<span class="w"> </span>error<span class="w"> </span>*/
+DDRSS_ECC_1B_ERR_CNT_REG<span class="w">       </span>/*<span class="w"> </span>Records<span class="w"> </span>the<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span><span class="m">1</span>-bit<span class="w"> </span>errors<span class="w"> </span>*/
+DDRSS_ECC_1B_ERR_THRSH_REG<span class="w">     </span>/*<span class="w"> </span>Register<span class="w"> </span>to<span class="w"> </span>specify<span class="w"> </span>the<span class="w"> </span>threshold<span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="m">1</span>-bit<span class="w"> </span>errors<span class="w"> </span>*/
+</pre></div>
+</div>
+<p>For 2-bit errors there is no correction applied and the MSMC2DDR bridge registers the address location and issues a high priority error interrupt to the user to take corrective actions.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>DDRSS_ECC_2B_ERR_ADR_LOG_REG<span class="w">   </span>/*<span class="w"> </span>Reports<span class="w"> </span>address<span class="w"> </span>location<span class="w"> </span>of<span class="w"> </span><span class="m">2</span>-bit<span class="w"> </span>errors<span class="w"> </span>*/
+</pre></div>
+</div>
+<p>Refer to <strong>ECC Statistics</strong> section under MSMC2DDR Bridge chapter in the TRM for more details</p>
+</div>
+<div class="section" id="advance-topic-ecc-cache">
+<h2><span class="section-number">8.13.5. </span>Advance topic - ECC Cache<a class="headerlink" href="#advance-topic-ecc-cache" title="Permalink to this headline">¶</a></h2>
+<p>The MSMC2DDR bridge implements a 64byte wide, 128 line deep, read allocate, fully associative cache to allocate ECC syndromes. User can program and change the allocation policy by reserving cache lines to specific RouteID. Example allocation could be as shown</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cache<span class="w"> </span>line<span class="w"> </span><span class="m">0</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">0</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">0</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">0</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">3</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">0</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">4</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">1</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">5</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">1</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">6</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">1</span>
+cache<span class="w"> </span>line<span class="w"> </span><span class="m">7</span><span class="w"> </span>-<span class="w"> </span>RouteID<span class="w"> </span><span class="m">1</span>
+...
+</pre></div>
+</div>
+<p>Write to <strong>DDRSS_ECC_RID_INDX_REG</strong> and <strong>DDRSS_ECC_RID_VAL_REG</strong> registers back to back for multiple line allocations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ECC cache performance is studied extensively and it is recommended to leave it as default settings for optimal performance.
+If a need arises for manual allocation, it is recommended NOT to allocate more than 4 cache lines per RouteID and also leave about 16 cache lines unassigned which can be used by rest of the SoC
+Please refer to the <strong>Route ID</strong> tables under System Interconnect chapter in TRM.</p>
+</div>
+</div>
+<div class="section" id="ecc-recommendations">
+<h2><span class="section-number">8.13.6. </span>ECC Recommendations<a class="headerlink" href="#ecc-recommendations" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Use TI’s inline ECC in MSMC2DDR bridge instead of ECC implementation in DDRSS as its more optimal.</p></li>
+<li><p>Check system memory map to identify critical sections which requires ECC and non-critical sections which do not require ECC.</p></li>
+<li><p>Define ECC regions to cover only <strong>critical sections</strong> such as code/data/const etc. and NOT image buffers which are several Mega Bytes in size.</p></li>
+<li><p>Set aside 1/9th of the total available memory for storing ECC syndromes. These syndromes are interleaved with data as explained above</p></li>
+<li><p>Enable ECC check in u-boot right after DDR init. ECC regions should be initialized with a known pattern. Use DMA to initialize the memory which will help reduce boot time.</p></li>
+<li><p>Stick to default ECC cache line allocation policy. If a need arises allocate not more than 4 cache lines per RouteID. Always leave a few cache lines un-alloted for rest of SoC traffic.</p></li>
+</ul>
+</div>
+<div class="section" id="reference-implementation-on-linux-u-boot">
+<h2><span class="section-number">8.13.7. </span>Reference Implementation on Linux u-boot<a class="headerlink" href="#reference-implementation-on-linux-u-boot" title="Permalink to this headline">¶</a></h2>
+<p>This section provides reference code to program ECC in MSMC2DDR bridge. User will have to modify as per their use-case requirements.</p>
+<div class="section" id="identify-critical-sections">
+<h3><span class="section-number">8.13.7.1. </span>Identify <strong>critical sections</strong><a class="headerlink" href="#identify-critical-sections" title="Permalink to this headline">¶</a></h3>
+<p>From system_memory_map.html available at <strong>vision_apps/apps/basic_demos/app_tirtos/tirtos_linux/system_memory_map.html</strong></p>
+<p>Address range from <strong>0xA000_0000</strong> to <strong>0xABFF_FFFF</strong> is identified as ECC region</p>
+<div class="figure align-default">
+<img alt="_images/ddr_ecc_critical_sections.png" src="_images/ddr_ecc_critical_sections.png" />
+</div>
+</div>
+<div class="section" id="program-the-ecc-region-registers">
+<h3><span class="section-number">8.13.7.2. </span>Program the ECC Region registers<a class="headerlink" href="#program-the-ecc-region-registers" title="Permalink to this headline">¶</a></h3>
+<p>As the ECC region identified is contiguous we can use just one set of region registers</p>
+<p>In the file <strong>&lt;PSDK_LINUX_PATH&gt;/board-support/u-boot-&lt;commit-id&gt;/drivers/ram/k3-j721e/k3-j721e-ddrss.c</strong> enable ECC regions as below,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#define DDRSS_ECC_R0_STR_ADDR_REG  (0x02980130U)</span>
+<span class="c1">#define DDRSS_ECC_R0_END_ADDR_REG  (0x02980134U)</span>
+<span class="c1">#define DDRSS_ECC_R1_STR_ADDR_REG  (0x02980138U)</span>
+<span class="c1">#define DDRSS_ECC_R1_END_ADDR_REG  (0x0298013CU)</span>
+<span class="c1">#define DDRSS_ECC_R2_STR_ADDR_REG  (0x02980140U)</span>
+<span class="c1">#define DDRSS_ECC_R2_END_ADDR_REG  (0x02980144U)</span>
+
+static<span class="w"> </span>void<span class="w"> </span>set_ecc_range_r0<span class="o">(</span>unsigned<span class="w"> </span>int<span class="w"> </span>start_address,<span class="w"> </span>unsigned<span class="w"> </span>int<span class="w"> </span>size<span class="o">)</span>
+<span class="o">{</span>
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_R0_STR_ADDR_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>start_address<span class="o">)</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_R0_END_ADDR_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>start_address<span class="w"> </span>+<span class="w"> </span>size<span class="w"> </span>-<span class="w"> </span><span class="m">1</span><span class="o">)</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="o">}</span>
+
+static<span class="w"> </span>void<span class="w"> </span>set_ecc_range_r1<span class="o">(</span>unsigned<span class="w"> </span>int<span class="w"> </span>start_address,<span class="w"> </span>unsigned<span class="w"> </span>int<span class="w"> </span>size<span class="o">)</span>
+<span class="o">{</span>
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_R1_STR_ADDR_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>start_address<span class="o">)</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_R1_END_ADDR_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>start_address<span class="w"> </span>+<span class="w"> </span>size<span class="w"> </span>-<span class="w"> </span><span class="m">1</span><span class="o">)</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="o">}</span>
+
+static<span class="w"> </span>void<span class="w"> </span>set_ecc_range_r2<span class="o">(</span>unsigned<span class="w"> </span>int<span class="w"> </span>start_address,<span class="w"> </span>unsigned<span class="w"> </span>int<span class="w"> </span>size<span class="o">)</span>
+<span class="o">{</span>
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_R2_STR_ADDR_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>start_address<span class="o">)</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_R2_END_ADDR_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span>start_address<span class="w"> </span>+<span class="w"> </span>size<span class="w"> </span>-<span class="w"> </span><span class="m">1</span><span class="o">)</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="m">16</span><span class="p">;</span>
+<span class="o">}</span>
+
+...
+
+<span class="c1">#define DDR_BASE (0x80000000U)</span>
+
+static<span class="w"> </span>void<span class="w"> </span>j721e_lpddr4_ecc_init<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span>unsigned<span class="w"> </span>int<span class="w"> </span><span class="nv">ecc_region_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0xA0000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Obtained<span class="w"> </span>from<span class="w"> </span>system_memory_map.html<span class="w"> </span>*/
+<span class="w">    </span>unsigned<span class="w"> </span>int<span class="w"> </span><span class="nv">ecc_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0xAC000000<span class="w"> </span>-<span class="w"> </span>0xA0000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Protect<span class="w"> </span>only<span class="w"> </span>critical<span class="w"> </span>section<span class="w"> </span>identified<span class="w"> </span>*/
+
+<span class="w">    </span>/*<span class="w"> </span>While<span class="w"> </span>programming<span class="w"> </span>the<span class="w"> </span>region<span class="w"> </span>address,<span class="w"> </span>subtract<span class="w"> </span>the<span class="w"> </span>DDR_BASE<span class="w"> </span>*/
+<span class="w">    </span>set_ecc_range_r0<span class="o">((</span>unsigned<span class="w"> </span>int<span class="o">)</span>ecc_region_start<span class="w"> </span>-<span class="w"> </span><span class="o">(</span>unsigned<span class="w"> </span>int<span class="o">)</span>DDR_BASE,<span class="w"> </span>ecc_range<span class="o">)</span><span class="p">;</span>
+<span class="w">    </span>...
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<ul class="simple">
+<li><p>Subtract the DDR base before programming the region start address</p></li>
+<li><p>Length of ECC region should be in bytes</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="revise-the-total-available-space">
+<h3><span class="section-number">8.13.7.3. </span>Revise the total available space<a class="headerlink" href="#revise-the-total-available-space" title="Permalink to this headline">¶</a></h3>
+<p>In the file <strong>&lt;PSDK_LINUX_PATH&gt;/board-support/u-boot-&lt;commit-id&gt;/board/ti/j721e/evm.c</strong> update the available size to 1/9th the total space.
+Here we reduce it by 512MB which is more than 1/9th of total space considering 4GB DDR space.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>int<span class="w"> </span>dram_init_banksize<span class="o">(</span>void<span class="o">)</span>
+<span class="o">{</span>
+<span class="w">    </span>/*<span class="w"> </span>Bank<span class="w"> </span><span class="m">0</span><span class="w"> </span>declares<span class="w"> </span>the<span class="w"> </span>memory<span class="w"> </span>available<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>DDR<span class="w"> </span>low<span class="w"> </span>region<span class="w"> </span>*/
+<span class="w">    </span>gd-&gt;bd-&gt;bi_dram<span class="o">[</span><span class="m">0</span><span class="o">]</span>.start<span class="w"> </span><span class="o">=</span><span class="w"> </span>CONFIG_SYS_SDRAM_BASE<span class="p">;</span>
+<span class="w">    </span>gd-&gt;bd-&gt;bi_dram<span class="o">[</span><span class="m">0</span><span class="o">]</span>.size<span class="w"> </span><span class="o">=</span><span class="w"> </span>0x80000000<span class="p">;</span>
+<span class="w">    </span>gd-&gt;ram_size<span class="w"> </span><span class="o">=</span><span class="w"> </span>0x80000000<span class="p">;</span>
+
+<span class="c1">#ifdef CONFIG_PHYS_64BIT</span>
+<span class="w">    </span>/*<span class="w"> </span>Bank<span class="w"> </span><span class="m">1</span><span class="w"> </span>declares<span class="w"> </span>the<span class="w"> </span>memory<span class="w"> </span>available<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>DDR<span class="w"> </span>high<span class="w"> </span>region<span class="w"> </span>*/
+<span class="w">    </span>gd-&gt;bd-&gt;bi_dram<span class="o">[</span><span class="m">1</span><span class="o">]</span>.start<span class="w"> </span><span class="o">=</span><span class="w"> </span>CONFIG_SYS_SDRAM_BASE1<span class="p">;</span>
+<span class="w">    </span>gd-&gt;bd-&gt;bi_dram<span class="o">[</span><span class="m">1</span><span class="o">]</span>.size<span class="w"> </span><span class="o">=</span><span class="w"> </span>0x80000000<span class="w"> </span>-<span class="w"> </span>0x20000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Reduce<span class="w"> </span>size<span class="w"> </span>by<span class="w"> </span>512MB<span class="w"> </span>*/
+<span class="w">    </span>gd-&gt;ram_size<span class="w"> </span><span class="o">=</span><span class="w"> </span>0x100000000<span class="w"> </span>-<span class="w"> </span>0x20000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Reduce<span class="w"> </span>size<span class="w"> </span>by<span class="w"> </span>512MB<span class="w"> </span>*/
+<span class="c1">#endif</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enable-ecc-and-pre-load-the-ddr-with-known-pattern">
+<h3><span class="section-number">8.13.7.4. </span>Enable ECC and pre-load the DDR with known pattern<a class="headerlink" href="#enable-ecc-and-pre-load-the-ddr-with-known-pattern" title="Permalink to this headline">¶</a></h3>
+<p>Enable the ECC to reassemble the contents of DDR and initialize with a known patten. In this implementation CPU copy is used but using DMA to initialize will help reduce boot time.</p>
+<p>In the file <strong>&lt;PSDK_LINUX_PATH&gt;/board-support/u-boot-&lt;commit-id&gt;/drivers/ram/k3-j721e/k3-j721e-ddrss.c</strong> enable ECC as below,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#define DDRSS_ECC_CTRL_REG (0x02980120U)</span>
+
+static<span class="w"> </span>void<span class="w"> </span>enable_ecc<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span>/*<span class="w"> </span>bit0<span class="w"> </span>-<span class="w"> </span>ECC_EN<span class="w">   </span>-<span class="w"> </span><span class="m">1</span><span class="w"> </span>*/
+<span class="w">    </span>/*<span class="w"> </span>bit1<span class="w"> </span>-<span class="w"> </span>RMW_EN<span class="w">   </span>-<span class="w"> </span><span class="m">1</span><span class="w"> </span>*/
+<span class="w">    </span>/*<span class="w"> </span>bit2<span class="w"> </span>-<span class="w"> </span>ECC_CK<span class="w">   </span>-<span class="w"> </span><span class="m">0</span><span class="w"> </span>*/
+<span class="w">    </span>/*<span class="w"> </span>bit4<span class="w"> </span>-<span class="w"> </span>WR_ALLOC<span class="w"> </span>-<span class="w"> </span><span class="m">1</span><span class="w"> </span>*/
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_CTRL_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0x00000013<span class="p">;</span>
+<span class="o">}</span>
+
+/*<span class="w"> </span>Routine<span class="w"> </span>to<span class="w"> </span>fill<span class="w"> </span>memory<span class="w"> </span>with<span class="w"> </span>provided<span class="w"> </span><span class="m">32</span>-bit<span class="w"> </span>pattern<span class="w"> </span>*/
+static<span class="w"> </span>void<span class="w"> </span>clear_mem_sect<span class="o">(</span>unsigned<span class="w"> </span>int<span class="w"> </span>*pAddr,<span class="w"> </span>unsigned<span class="w"> </span>int<span class="w"> </span>size,<span class="w"> </span>unsigned<span class="w"> </span>int<span class="w"> </span>word<span class="o">)</span>
+<span class="o">{</span>
+<span class="w">    </span>int<span class="w"> </span>i<span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>This<span class="w"> </span>CPU<span class="w"> </span>copy<span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>slow,<span class="w"> </span>use<span class="w"> </span>DMA<span class="w"> </span>to<span class="w"> </span>perform<span class="w"> </span>the<span class="w"> </span>same<span class="w"> </span>task<span class="w"> </span><span class="k">for</span><span class="w"> </span>faster<span class="w"> </span>boot<span class="w"> </span>*/
+<span class="w">    </span><span class="k">for</span><span class="o">(</span><span class="nv">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span><span class="w"> </span>i<span class="w"> </span>&lt;<span class="w"> </span><span class="o">(</span>size<span class="w"> </span>/<span class="w"> </span><span class="m">4</span><span class="o">)</span><span class="p">;</span><span class="w"> </span>i++<span class="o">)</span>
+<span class="w">    </span><span class="o">{</span>
+<span class="w">        </span>pAddr<span class="o">[</span>i<span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>word<span class="p">;</span>
+<span class="w">    </span><span class="o">}</span>
+<span class="o">}</span>
+
+...
+
+static<span class="w"> </span>void<span class="w"> </span>j721e_lpddr4_ecc_init<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span>unsigned<span class="w"> </span>int<span class="w"> </span><span class="nv">ecc_region_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0xA0000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Obtained<span class="w"> </span>from<span class="w"> </span>system_memory_map.html<span class="w"> </span>*/
+<span class="w">    </span>unsigned<span class="w"> </span>int<span class="w"> </span><span class="nv">ecc_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0xAC000000<span class="w"> </span>-<span class="w"> </span>0xA0000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Protect<span class="w"> </span>only<span class="w"> </span>critical<span class="w"> </span>section<span class="w"> </span>identified<span class="w"> </span>*/
+
+<span class="w">    </span>/*<span class="w"> </span>While<span class="w"> </span>programming<span class="w"> </span>the<span class="w"> </span>region<span class="w"> </span>address,<span class="w"> </span>subtract<span class="w"> </span>the<span class="w"> </span>DDR_BASE<span class="w"> </span>*/
+<span class="w">    </span>set_ecc_range_r0<span class="o">((</span>unsigned<span class="w"> </span>int<span class="o">)</span>ecc_region_start<span class="w"> </span>-<span class="w"> </span><span class="o">(</span>unsigned<span class="w"> </span>int<span class="o">)</span>DDR_BASE,<span class="w"> </span>ecc_range<span class="o">)</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Enable<span class="w"> </span>ECC<span class="w"> </span>*/
+<span class="w">    </span>enable_ecc<span class="o">()</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Pre-load<span class="w"> </span>ECC<span class="w"> </span>region<span class="w"> </span>with<span class="w"> </span>known<span class="w"> </span>pattern,<span class="w"> </span>say<span class="w"> </span>0x00000000<span class="w"> </span>*/
+<span class="w">    </span>clear_mem_sect<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>ecc_region_start,<span class="w"> </span>ecc_range,<span class="w"> </span>0x00000000<span class="o">)</span><span class="p">;</span>
+
+<span class="w">    </span>...
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enable-ecc-check">
+<h3><span class="section-number">8.13.7.5. </span>Enable ECC check<a class="headerlink" href="#enable-ecc-check" title="Permalink to this headline">¶</a></h3>
+<p>Once ECC region is enabled and pre-loaded with known pattern clear the 1 bit count register and enable ECC.</p>
+<p>In the file <strong>&lt;PSDK_LINUX_PATH&gt;/board-support/u-boot-&lt;commit-id&gt;/drivers/ram/k3-j721e/k3-j721e-ddrss.c</strong> enable ECC check as below,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>static<span class="w"> </span>void<span class="w"> </span>enable_ecc_check<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span>/*<span class="w"> </span>bit0<span class="w"> </span>-<span class="w"> </span>ECC_EN<span class="w">   </span>-<span class="w"> </span><span class="m">1</span><span class="w">  </span>*/
+<span class="w">    </span>/*<span class="w"> </span>bit1<span class="w"> </span>-<span class="w"> </span>RMW_EN<span class="w">   </span>-<span class="w"> </span><span class="m">1</span><span class="w">  </span>*/
+<span class="w">    </span>/*<span class="w"> </span>bit2<span class="w"> </span>-<span class="w"> </span>ECC_CK<span class="w">   </span>-<span class="w"> </span><span class="m">1</span><span class="w">  </span>*/
+<span class="w">    </span>/*<span class="w"> </span>bit4<span class="w"> </span>-<span class="w"> </span>WR_ALLOC<span class="w"> </span>-<span class="w"> </span><span class="m">1</span><span class="w">  </span>*/
+
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_CTRL_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0x00000017<span class="p">;</span>
+<span class="o">}</span>
+
+<span class="c1">#define DDRSS_ECC_1B_ERR_CNT_REG (0x02980150U)</span>
+
+static<span class="w"> </span>void<span class="w"> </span>clr_ecc_1bit_cnt<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span>/*<span class="w"> </span>Writing<span class="w"> </span>a<span class="w"> </span><span class="m">1</span><span class="w"> </span>clears<span class="w"> </span>the<span class="w"> </span>register<span class="w"> </span>*/
+<span class="w">    </span>*<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>DDRSS_ECC_1B_ERR_CNT_REG<span class="o">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">;</span>
+<span class="o">}</span>
+
+...
+
+static<span class="w"> </span>void<span class="w"> </span>j721e_lpddr4_ecc_init<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">    </span>unsigned<span class="w"> </span>int<span class="w"> </span><span class="nv">ecc_region_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0xA0000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Obtained<span class="w"> </span>from<span class="w"> </span>system_memory_map.html<span class="w"> </span>*/
+<span class="w">    </span>unsigned<span class="w"> </span>int<span class="w"> </span><span class="nv">ecc_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>0xAC000000<span class="w"> </span>-<span class="w"> </span>0xA0000000<span class="p">;</span><span class="w"> </span>/*<span class="w"> </span>Protect<span class="w"> </span>only<span class="w"> </span>critical<span class="w"> </span>section<span class="w"> </span>identified<span class="w"> </span>*/
+
+<span class="w">    </span>/*<span class="w"> </span>While<span class="w"> </span>programming<span class="w"> </span>the<span class="w"> </span>region<span class="w"> </span>address,<span class="w"> </span>subtract<span class="w"> </span>the<span class="w"> </span>DDR_BASE<span class="w"> </span>*/
+<span class="w">    </span>set_ecc_range_r0<span class="o">((</span>unsigned<span class="w"> </span>int<span class="o">)</span>ecc_region_start<span class="w"> </span>-<span class="w"> </span><span class="o">(</span>unsigned<span class="w"> </span>int<span class="o">)</span>DDR_BASE,<span class="w"> </span>ecc_range<span class="o">)</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Enable<span class="w"> </span>ECC<span class="w"> </span>*/
+<span class="w">    </span>enable_ecc<span class="o">()</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Pre-load<span class="w"> </span>ECC<span class="w"> </span>region<span class="w"> </span>with<span class="w"> </span>known<span class="w"> </span>pattern,<span class="w"> </span>say<span class="w"> </span>0x00000000<span class="w"> </span>*/
+<span class="w">    </span>clear_mem_sect<span class="o">((</span>unsigned<span class="w"> </span>int<span class="w"> </span>*<span class="o">)</span>ecc_region_start,<span class="w"> </span>ecc_range,<span class="w"> </span>0x00000000<span class="o">)</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Clear<span class="w"> </span>the<span class="w"> </span><span class="m">1</span><span class="w"> </span>bit<span class="w"> </span>err<span class="w"> </span>log<span class="w"> </span>register<span class="w"> </span>*/
+<span class="w">    </span>clr_ecc_1bit_cnt<span class="o">()</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Enable<span class="w"> </span>ECC<span class="w"> </span>checking<span class="w"> </span>*/
+<span class="w">    </span>enable_ecc_check<span class="o">()</span><span class="p">;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>All this must be done just after DDR start</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>static<span class="w"> </span>int<span class="w"> </span>j721e_ddrss_probe<span class="o">(</span>struct<span class="w"> </span>udevice<span class="w"> </span>*dev<span class="o">)</span>
+<span class="o">{</span>
+<span class="w">    </span>...
+
+<span class="w">    </span>j721e_lpddr4_start<span class="o">()</span><span class="p">;</span>
+
+<span class="w">    </span>/*<span class="w"> </span>Enable<span class="w"> </span>ECC<span class="w"> </span>checking<span class="w"> </span>right<span class="w"> </span>after<span class="w"> </span>DDR<span class="w"> </span>start<span class="w"> </span>*/
+<span class="w">    </span>j721e_lpddr4_ecc_init<span class="o">()</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>ret<span class="p">;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_display_resolution.html" class="btn btn-neutral float-right" title="8.14. Changing Display Resolution in Vision Apps" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes_image_sensor.html" class="btn btn-neutral" title="8.12. Adding new image sensor to PSDK RTOS" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

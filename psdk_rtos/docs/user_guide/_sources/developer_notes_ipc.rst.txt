@@ -1,0 +1,527 @@
+Developing IPC applications
+===========================
+
+Introduction
+------------
+
+The Jacinto 7 SoC has multiple different CPUs on an SoC. (e.g. |rtos_cores|, and A72). Software running on these CPUs needs to
+communicate with each other to realize a use-case. The means of collaboration is referred
+to as inter-processor communication or IPC. An IPC library is provivded on each CPU and OS to enable communication among the
+higher level application components on each core.
+
+The overall IPC software stack on different CPU/OS is shown in table below:
+
+============   ================
+IPC SW layer   Description
+============   ================
+Application    Application which sends/receives IPC messages
+RPMSG CHAR     *[ONLY in Linux]* User space API used by application to sends/receives IPC messages
+RPMSG          SW protocol and interface used to exchange messages between endpoints on a destination CPU
+VRING          Shared memory based SW queue which temporarily holds messages as they are exchanges between two CPUs
+HW Mailbox     Hardware mechnism used for interrupt notification between two CPUs
+============   ================
+
+The main SW components for IPC are,
+
+#. *PDK IPC LLD driver* for RTOS, this consists of RPMSG, VRING and HW Mailbox driver.
+
+#. *Linux kernel IPC driver suite* for Linux, this consists of RPMSG CHAR, RPMSG, VRING and HW Mailbox driver.
+
+The PDK IPC library and the Linux kernel IPC driver suite enables communication among all the cores
+present in J7 SoC. The PDK IPC library is linked with RTOS applications and supports message based
+communication with other cores running RTOS (like R5FSS cores and DSP Cores). It is
+also capable of communicating with A72 cores running Linux using the same APIs.
+
+The Linux IPC driver runs on A72 cores as a part of the kernel and can communicate with R5FSS and DSP cores.
+
+
+
+RPMSG and VRING
+---------------
+
+RPMSG is the common messaging framework that is used by Linux as well as RTOS. RPMSG is an endpoint
+based protocol where a server CPU can run a service that listens to incoming messages at a dedicated endpoint,
+while all other CPUs can send requests to that (server CPU, service endpoint) tuple. You can think of an analogy
+to UDP/IP layers in networking, where the CPU name is analogous to the IP address, and endpoint is similar to the UDP
+port number.
+
+When sending a message to a server, a client CPU / task also provides a reply end point so that the server can send its reply
+to the client CPU.
+
+Multiple logical IPC communication channels can be opened between the same set of CPUs, by using multiple end-points.
+
+While RPMSG is the API or protocol as seen by an application, internally the IPC driver uses VRING to actually pass messages among
+different (RPMSG CPU, endpoint) tuples. The relationship between RMSG end points and VRING is shown in below figure.
+
+.. figure:: images/RPMSG_VRING.png
+
+    RPMSG and VRING
+
+VRING is a shared memory segment, between a pair of CPUs, which holds the messages passed between the two CPUs.
+The sequence of events as a message is passed from a sender to receiver and back again is shown in below figure.
+
+.. figure:: images/RPMSG_VRING_DATA_FLOW.png
+
+    RPMSG and VRING message exchange data flow
+
+The sequence of steps is described below,
+
+#. A application sends a message to a given destination (CPU, endpoint)
+
+#. The message is first copied from the application to VRING used between the two CPUs.
+   After this the IPC driver posts the VRING ID in the HW mailbox.
+
+#. This triggers a interrupt on the destination CPU. In the ISR of destination CPU, it extracts the VRING ID and then based on the VRING ID, checks for any messages in that VRING
+
+#. If a message is received, it extracts the message from the VRING and puts it in the destination RPMSG endpoint queue.
+   It then triggers the application blocked on this RPMSG endpoint
+
+#. The application then handles the received message and replies back to the sender CPU using the same RPMSG and VRING mechanism in the reverse direction.
+
+RPMSG CHAR
+----------
+
+- RPMSG CHAR is a user space API which provides access to the RPMSG kernel driver in Linux.
+
+- RPMSG CHAR provides linux applications a file IO interface to read and write messages to different CPUs
+
+- Applications on RTOS which need to talk to linux need to "announce" its end point to linux. This create a device "/dev/rpmsgX" on linux.
+
+- Linux user space applications can use this device to read and write messages to the associated end point on the RTOS side.
+
+- Usual linux user space APIs like "select", can be used to wait on multiple end points from multiple CPUs.
+
+- A utility library, "ti_rpmsg_char" is provided to simplify discovery and intialization of announced RPMSG endpoints from different CPUs
+
+Hardware Mailbox
+----------------
+
+Mailbox features
+****************
+
+- Hardware mailbox is primarily used to provide an interrupt event notification with a small 32-bit payload.
+
+  - VRING uses hardware mailbox to trigger interrupts on destination CPU.
+- Each mailbox consists of 16 uni-directional HW queuse interfacing with max 4 communication users or CPUs.
+
+- Each mailbox Queue can hold up to 4 word-sized messages at a time.
+
+- Below mailbox status and interrupt event notification is available per communication user
+
+  - New Message status event for Rx (triggered as long as a mailbox has a message) for each mailbox
+  - Not Full status event for Tx (triggered as long as a mailbox has empy fifo )
+  - Status register per mailbox for “Mailbox Full” and “Number of unread messages”
+
+- J7 platforms have 12 HW mailbox instances. i.e 12x 16 HW mailbox queues
+
+Below figure shows a logical block diagram of a hardware mailbox,
+
+.. figure:: images/HW_MAILBOX_QUEUES.png
+
+   Hardware mailbox
+
+Typical usage of mailbox IP
+***************************
+
+- A mailbox is associated with a “sender” user and a “receiver” user
+
+- Sender does below sequence of steps,
+
+  - Check if there is room in the mailbox FIFO (read MAILBOX_FIFOSTATUS_m)
+
+  - If not full, write the message to the mailbox and return to caller (write MAILBOX_message_m)
+
+  - If full,
+
+    - Store the message in a software queue backing the h/w mailbox FIFO
+
+    - Enable the NotFull event (set corresponding bit in MAILBOX_IRQENABLE_SET_u) for that mailbox
+  - Upon interrupt,
+
+    - Clear the interrupt trigger source within the IP (clear corresponding bit in MAILBOX_IRQSTATUS_CLR_u)
+
+    - Remove the message from software queue and write to the mailbox (write as many empty slots as there are available)
+
+- Receiver does below sequence of steps,
+
+  - Enable the corresponding mailbox ‘NewMsg’ event in the corresponding user interrupt configuration register
+
+  - Upon interrupt,
+
+    - Read one or more mailbox messages until empty into a software backed queue
+
+    - Clear the interrupt source
+
+  - Process the received messages
+
+Mailbox and VRING
+*****************
+
+- Mailbox essentially acts as a very small HW queue which holds the VRING ID
+- VRING is SW queue in shared memory and holds the actual message passed between two CPUs.
+  When a interrupt is received the mailbox message tells which VRING to dequeue messages from.
+
+  - VRING ID = 0 tells to look at the VRING from sender to receiver
+  - VRING ID = 1 tells to look at the VRING from recevier to sender
+
+.. figure:: images/HW_MAILBOX_AND_VRING.png
+
+    Mailbox and VRING
+
+Hardware spinlock
+-----------------
+
+Sometimes its needed to have mutually exclusive access between two CPUs to a critical section.
+Typically on a OS running on the same CPU or CPU cluster, one uses a SW semaphore or mutex function for mutual exclusion.
+However this function will have no effect when mutual exclusion is needed between two CPUs each running a different instance of an OS, say Linux and RTOS.
+In such cases, HW spinlock can be used.
+
+There are 256 HW spinlocks within a single instance of HW spinlock in Jacinto 7 SoC.
+
+J7 platforms have 1 instance of HW spinlock.
+
+.. NOTE:: Hardware spinlock is not used by IPC driver as such and can be used by applications directly.
+
+Sample code showing usage of HW spinlock can be found in SDK as shown below
+
+==========================  ==================================================================================  =====================================================================================================
+SDK Component               File / Folder                                                                       Description
+==========================  ==================================================================================  =====================================================================================================
+vision_apps                 vision_apps/utils/ipc/src/app_ipc_linux_hw_spinlock.c                               HW spinlock usage on Linux
+vision_apps                 vision_apps/utils/ipc/src/app_ipc_rtos.c [appIpcHwLockAcquire/appIpcHwLockRelease]  HW spinlock usage on RTOS
+==========================  ==================================================================================  =====================================================================================================
+
+.. NOTE::
+
+   - When using HW spinlock the CPU "spins" waiting to the lock to be released, hence one should use HW spinlock for very short periods
+   - Care should be taken to make sure a CPU does not exit without releasing the lock
+   - SW timeouts can be used when taking a lock to make sure CPU does not spin indefinitely
+   - It is also recommended to take a local OS lock (POSIX semaphore, pthread_mutex, RTOS Semaphore) before taking the HW lock to make sure
+     tasks/threads/processes on the same CPU do not spin on the same HW spinlock
+
+Performance and Latency
+-----------------------
+
+Latency
+*******
+- Latency
+
+  - Latency is a function of sender CPU and receiver CPU speeds
+
+  - Interrupt service latency on receiving CPU
+
+  - Memory access latencies on sender and receiver CPUs
+
+- Mailbox Latency
+
+  - Mailbox is a HW peripheral mapped as MMR in the SoC memory map; there will be some latency for CPU to read/write those MMRs.
+
+- There are two memcpy's involved
+
+  - Sender application to VRING
+
+  - VRING to recevier RPMSG endpoint local queue
+
+  - size of memcpy is equal to message payload size (max 512 B)
+
+    - To reduce latencies and / or to send larger buffer it is recommended to pass
+      a pointer/handle/offset to a larger shared memory from ION heap
+
+- See |pdk_ipc_data_sheet| for measured performance on Jaincto 7 SoCs.
+
+Performance, DO's and DONT's
+****************************
+- Mailbox h/w queue depth is 4 elements
+
+- Sender can send back to back 4 messages after which sender will need to wait for the receiver to have “popped” at least one message from the mailbox.
+
+- Wait is a SW wait - not a CPU/bus stall. SW can use interrupt to resume from wait or poll for queue to have one free element.
+
+- In PDK IPC driver for RTOS, the mailbox is popped by receiver in ISR context itself. So mailbox by itself does not have any performance bottlenecks.
+
+- If the receiving CPU is bottlenecked so that ISR cannot execute then sender will need to wait before posting a new message in the mailbox.
+
+- IPC driver extends the HW queue with a SW queue in shared memory (VRING).
+
+   - The SW queue length by default in RPmessage is 256 deep.
+
+   - VRING can transfer one message of 512 bytes max.
+
+   - For larger data, it is recommended to use shared memory using ION heaps, and transfer the pointer for faster transfer.
+
+Additional Considerations
+-------------------------
+
+Security
+********
+
+- IPC driver does not handle security by itself.
+- If message security is important applications should encrypt and decrypt messages passed over IPC.
+
+Message errors
+**************
+- IPC driver does not do any error checks on messages like CRC or checksums
+- If message integrity is important applications should do CRC or checksums on messages passed over IPC
+- For shared memory used by IPC (VRING), ECC can be enabled at system level to make sure messages and data structures used by IPC do not get corrupted due to HW errors in the memory.
+
+Safety
+******
+- IPC RTOS SW is currently developed using TI baseline quality process, however there is roadmap to adopt TI functional safety (FSQ) process to cover systematic faults in SW.
+
+- Further for FFI (Freedom from interfernce), below additional instructions need to be followed by a system integrator,
+
+  - RPMSG endpoint queues are local to a CPU, so by using MMU/MPU and firewalls one can ensure that no other CPU or non-CPU master like DMA can access or corrupt another CPUs RPMSG endpoint queues.
+
+  - There is a separate shared memory VRING between a pair of CPUs. Setup MMU/MPU to only access VRING that a given CPU needs.
+
+    - This will avoid a CPU inadvertantly corrupting another CPUs VRING region
+
+  - Firewall VRING shared memory to make sure a non-CPU master like DMA does not inadvertanly corrupt the shared VRING memory.
+
+  - Each mailbox instance has its own firewall so for FFI between ASIL and QM OSes (say Linux is QM and RTOS is ASIL), it is recommended to partition the mailboxes such that all communication with
+    QM OS is on one set of mailboxes and all IPC with ASIL OSes is on another set of mailboxes.
+
+- Firewall, MPU/MMU setup has to be done from outside IPC driver.
+
+  - VRING, RPMSG endpoint memory is provided by user to IPC driver, so user can control the MPU/MMU and firewall setup to protect these memories.
+
+
+
+Documentation References
+------------------------
+
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+PDK             |pdk_api_guide|                        IPC LLD driver API for RTOS                                                      IPC Driver
+PDK             |pdk_ipc_data_sheet|                   IPC latency and performance                                                      IPC
+=============   ====================================== ================================================================================ =========
+
+Source Code References
+----------------------
+
+==========================  ============================================================================== =====================================================================================================
+SDK Component               File / Folder                                                                  Description
+==========================  ============================================================================== =====================================================================================================
+PDK                         pdk/packages/ti/drv/ipc/ipc.h                                                  IPC driver interface on RTOS
+PDK                         pdk/packages/ti/drv/ipc/examples                                               RTOS <-> RTOS, Linux kernel <-> RTOS unit level IPC examples
+Linux target filesystem     usr/include/ti_rpmsg_char.h                                                    RPMSG CHAR helper functions
+vision_apps                 vision_apps/apps/basic_demos/app_ipc/                                          Linux user space (RPMSG CHAR) <-> RTOS unit level IPC examples
+vision_apps                 vision_apps/utils/ipc                                                          IPC initialization code on RTOS and the HLOS
+vision_apps                 vision_apps/utils/remote_service                                               Simple client-server model usage of IPC between Linux user space (RPMSG CHAR) <-> RTOS, RTOS <-> RTOS
+vision_apps                 vision_apps/platform/<soc>/rtos/common_<hlos>/app_ipc_rsctable.h               IPC Resource table. This is required for the HLOS to talk with RTOS
+==========================  ============================================================================== =====================================================================================================
+
+
+Writing IPC applications
+------------------------
+
+Writing IPC Applications on RTOS (PDK IPC driver)
+*************************************************
+
+IPC setup code
+##############
+
+Initialise the IPC stack before starting any communication with other cores. This can usually be done by ::
+
+    uint32_t selfProcId = IPC_MCU2_1;
+    uint32_t remoteProcList[] =
+    {
+        IPC_MPU1_0, IPC_MCU1_0, IPC_MCU1_1, IPC_MCU2_0, IPC_MCU3_0, IPC_MCU3_1, IPC_C66X_1, IPC_C66X_2, IPC_C7X_1
+    };
+    uint32_t numRemoteProcs = sizeof(remoteProcList)/sizeof(uint32_t);
+
+    Ipc_init(NULL);
+    Ipc_mpSetConfig(selfProcId, numRemoteProcs, &remoteProcList[0]);
+
+.. note::
+
+    It is required to call ``Ipc_mpSetConfig()`` with a list of all cores (except ``selfProcId``) that are required to participate in the communication.
+
+If it is required to communicate with Linux running on A72 cores, the resource table must also be loaded ::
+
+    Ipc_loadResourceTable((void*)&ti_ipc_remoteproc_ResourceTable);
+
+.. note::
+
+    See the example resource tables (using exactly one ``trace`` entry and one ``vdev`` entry) in ``apps\/basic_demos\/app_tirtos\/tirtos_linux\/ipc_rsctable.h``
+
+After the IPC stack is setup, the core needs to initialise the **virtio** or VRING layer. The **virtio** framework can be initialised as ::
+
+    vqParam.vqObjBaseAddr = (void*)&sysVqBuf[0];
+    vqParam.vqBufSize     = numRemoteProcs * Ipc_getVqObjMemoryRequiredPerCore();
+    vqParam.vringBaseAddr = (void*)VRING_BASE_ADDRESS;
+    vqParam.vringBufSize  = IPC_VRING_BUFFER_SIZE;
+    vqParam.timeoutCnt    = 100;
+    Ipc_initVirtIO(&vqParam);
+
+.. note::
+
+    ``Ipc_initVirtIO()`` will internally call ``Ipc_isRemoteReady()`` and will initialise the virtio layers for only the currently online cores.
+    If core is not online, it skips **virtio** pairing with that core. This can happen when the RTOS cores are booted early, and Linux **remoteproc**
+    and **virtio** drivers are initialised later.
+
+    There are two possible ways to work around this problem:
+
+    1. Wait for all Linux cores to be ready before calling ``Ipc_initVirtIO()`` ::
+
+        for(i = 0; i < numRemoteProcs; i++)
+            while(!Ipc_isRemoteReady(remoteProcList[i]))
+                Task_sleep(1);
+
+        vqParam.vqObjBaseAddr = (void*)&sysVqBuf[0];
+        vqParam.vqBufSize     = numRemoteProcs * Ipc_getVqObjMemoryRequiredPerCore();
+        vqParam.vringBaseAddr = (void*)VRING_BASE_ADDRESS;
+        vqParam.vringBufSize  = IPC_VRING_BUFFER_SIZE;
+        vqParam.timeoutCnt    = 100;
+        Ipc_initVirtIO(&vqParam);
+
+    2. Poll for Linux cores to be ready and pair **virtio** with Linux cores late ::
+
+        ...
+        for(i = 0; i < numRemoteProcs; i++) {
+            Task_Params_init(&params);
+            params.arg0 = (UArg)remoteProcList[i];
+            params.arg1 = (UArg)lateInitFlag[i];
+            Task_create(rpmsg_vdevMonitorFxn, &params, NULL);
+        }
+        ...
+
+        void rpmsg_vdevMonitorFxn(UArg arg0, UArg arg1)
+        {
+            int32_t status;
+
+            /* Is this a late init core? */
+            if((uint32_t) arg1 == FALSE)
+            {
+                return;
+            }
+
+            /* Wait for remote core to be ready ... */
+            while(!Ipc_isRemoteReady((uint32_t) arg0))
+            {
+                Task_sleep(1);
+            }
+
+            /* Create the VRing now ... */
+            Ipc_lateVirtioCreate((uint32_t) arg0);
+            ...
+
+.. note::
+
+    When Linux boots the RTOS cores, Linux **virtio** driver is brought up in advance, and option 1 above can be used.
+
+The next step is to initialise RPMSG stack. This can be done by ::
+
+    RPMessageParams_init(&cntrlParam);
+
+    cntrlParam.buf         = pCntrlBuf;
+    cntrlParam.bufSize     = rpmsgDataSize;
+    cntrlParam.stackBuffer = &pTaskBuf[index++ * IPC_TASK_STACKSIZE];
+    cntrlParam.stackSize   = IPC_TASK_STACKSIZE;
+    RPMessage_init(&cntrlParam);
+
+.. note::
+
+    For the cores that required late **virtio** pairing, the RPMSG stack pairing should also be done in ``rpmsg_vdevMonitorFxn()`` ::
+
+            ...
+            Ipc_lateVirtioCreate((uint32_t) arg0);
+
+            RPMessage_lateInit((uint32_t) arg0);
+            ...
+
+IPC server (listening to service requests)
+##########################################
+
+After the setup is complete, the server needs to open an endpoint and announce the presence of a service to all other cores. ::
+
+    RPMessageParams_init(&params);
+    params.requestedEndpt = ENDPOINT;
+    params.buf = buf;
+    params.bufSize = bufSize;
+
+    handle = RPMessage_create(&params, &myEndPt);
+    RPMessage_announce(RPMESSAGE_ALL, myEndPt, "rpmsg_chrdev");
+
+.. note::
+
+    The ``ENDPOINT`` is chosen so that it is unique for a given core. It can be duplicated on a different core, however.
+    Also, you can run multiple ``rpmsg_chrdev`` services (each having a different user-defined service function) on a given core
+    by assigning different endpoint numbers to each of them.
+
+.. note::
+
+    The announcement is done to all the cores with which **virtio** pairing has been done. If a late **virtio** pairing is done with
+    any core, the services must be re-announced to them in ``rpmsg_vdevMonitorFxn()`` ::
+
+        ...
+        RPMessage_lateInit((uint32_t) arg0);
+
+        RPMessage_announce((uint32_t) arg0, RecvEndPt, "rpmsg_chrdev");
+        ...
+
+After the service endpoint is opened, the server can run a loop which listens to incoming messages to the endpoint and calls the service function.
+The sevice function is responsible for sending back any response to the sender, after the sevice has been completed. ::
+
+    while(TRUE)
+    {
+        RPMessage_recv(handle, (Ptr)msg, &msg_len, &remoteEndPt, &remoteProcId,
+                    IPC_RPMESSAGE_TIMEOUT_FOREVER);
+
+        ...
+        /* do something with message */
+
+        service_func(msg, msg_len, remoteEndPt, remoteProcId, resp, &resp_len);
+
+        ...
+
+        RPMessage_send(handle, remoteProcId, remoteEndPt, myEndPt, resp, resp_len);
+    }
+
+IPC client (sending sevice requests)
+####################################
+
+The client application also needs to run a setup code similar to a server application. After the setup is complete, the client needs to find out
+the remote endpoint for a service on a given core ::
+
+    RPMessage_getRemoteEndPt(dstProc, "rpmsg_chrdev", &remoteProcId, &remoteEndPt, BIOS_WAIT_FOREVER);
+
+Once the remote endpoint is identified, the client application can start a loop to send messages and wait for responses ::
+
+    while(TRUE)
+    {
+        RPMessage_send(handle, dstProc, remoteEndPt, myEndPt, (Ptr)msg, msg_len);
+
+        /* wait a for a response message: */
+        RPMessage_recv(handle, (Ptr)resp, &resp_len, &remoteEndPt,
+                &remoteProcId, IPC_RPMESSAGE_TIMEOUT_FOREVER);
+
+Writing IPC Applications on Linux
+*********************************
+
+In linux, the rpmsg char driver is initialised by kernel and it creates a userspace ``/dev`` entry for each remote ``rpmsg_chrdev`` service.
+The developer can take advantage of the "ti_rpmsg_char" library to easily connect to a remote endpoint and start communicating. ::
+
+    rpmsg_char_dev_t *rcdev;
+    char dev_name = NULL; /* remote-service-name, defaults to rpmsg_chrdev internally */
+    int rproc_id = R5F_MAIN0_0; /* relevant remote-proc id */
+    int flags = 0;
+
+    rpmsg_char_init(NULL);
+
+    rcdev = rpmsg_char_open(rproc_id, dev_name, REMOTE_SERVICE_ENDPOINT,
+    "local-endpoint-name", 0);
+
+After these steps, the application has an ``fd`` that can be used for reading and writing messages ::
+
+    while(1) {
+        write(rcdev->fd, msg, msg_len);
+        read(rcdev->fd, resp, resp_len);
+    }
+
+    rpmsg_char_close(rcdev);
+    rpmsg_char_exit();
+
+
+

@@ -1,0 +1,172 @@
+
+.. _out_of_box_j721e:
+
+|dev_platform| Out of the Box Demos
+===================================
+
+.. note:: As of this release, all out of box demos are from vision_apps on Linux.
+          For QNX HLOS, or Gateway Demos, one must download and build the source package.
+
+Step 1: Download Prebuilt PSDK RTOS
+-----------------------------------
+
+- Download and Untar the prebuilt files tar ball **ti-processor-sdk-rtos-j721e-evm-<version>-prebuilt.tar.gz**
+
+.. code:: bash
+
+    cd {path/to/file}
+    tar xf ti-processor-sdk-rtos-j721e-evm-<version>-prebuilt.tar.gz
+
+.. note::
+
+    This contains the prebuilt linux filesystem & linux boot file tarballs, scripts to format SD card & to install the file system to sd card.
+
+    This also contains all prebuilt demo executables, their configuration files, and enough input test images to run tiovx tests. Most camera-based
+    demos can run with everything in this package, as-is.
+
+    If you would like to run stereo demos or TIDL demos (both of which are dependent on reading input data from the sd card), then you will need
+    to download extra packages in the next step.
+
+Step 2: Download Demo Data Sets (Optional)
+------------------------------------------
+
+- For running stereo demos or TIDL demos you will need to also download the following data sets:
+
+  - **psdk_rtos_ti_data_set_xx_xx_xx.tar.gz**       (this has the test data common to all SOCs for the same release number)
+  - **psdk_rtos_ti_data_set_xx_xx_xx_j721e.tar.gz** (this has the SOC-specific tidl model data)
+
+.. note::
+
+    There is no need to extract these tar balls, as the prebuilt package comes with a script which can load them on the SD card (mentioned in later step).
+
+Step 3: Prepare SD card
+-----------------------
+
+.. warning::
+
+    ALL contents of SD card will be lost when doing these steps.
+
+- Insert SD card onto your PC SD card slot and format SD card in two partitions,
+
+    #. FAT32 partition: for boot loader, 64MB size recommended
+    #. ext4 partition: for root filesystem, rest of SD card, atleast 16GB SD card recommended.
+
+- You can use one of two options to format your SD card
+
+    - Option 1: You can use the utility script **mk-linux-card.sh** to make the partitions
+
+        #. Use the command "**df -h**" to identify the device used by SD card
+        #. Unmount the SD card before running the script
+
+            -Example, if your SD card is on device /dev/sdb having two partitions, do below to unmount them
+
+            .. code:: bash
+
+                umount /dev/sdb1
+                umount /dev/sdb2
+
+        #. Run the script as below to partition it, answer "y" to all questions asked when running the script
+
+         .. warning::
+
+            Make sure to give the correct device name to the following script, example /dev/sda is typically local harddisk, if you give this by mistake,
+            your whole hard disk will be wiped off !!!
+
+         .. code:: bash
+
+            sudo ./mk-linux-card.sh /dev/sdb
+
+
+    - Option 2: You can use "gparted" utility (sudo apt install gparted) to use a GUI based interface to create the partitions.
+
+        - Make sure you set the FAT32 partition flags as "boot", "lba"
+        - Name the FAT32 partition as "BOOT" and the ext4 partition as "rootfs"
+
+- After formatting, remove and insert the SD card for the freshly formatted partitions to get auto mounted on the host PC.
+
+
+Step 4: Install Filesystem and Boot Files
+-----------------------------------------
+
+
+- Copy/untar filesystem, boot files, and patches to SD card by executing the script **install_to_sd_card.sh** from within the extracted prebuilt folder, as shown below
+
+.. code:: bash
+
+    ./install_to_sd_card.sh
+
+- If you have downloaded the extra data sets, you can load them one-by-one by executing the script **install_data_set_to_sd_card.sh**, as shown below
+
+.. code:: bash
+
+    ./install_data_set_to_sd_card.sh <path/to/psdk_rtos_ti_data_set_xx_xx_xx.tar.gz>             # only needed for TIDL, DOF, Stereo demos
+    ./install_data_set_to_sd_card.sh <path/to/psdk_rtos_ti_data_set_xx_xx_xx_j721e.tar.gz>       # only needed for TIDL demos
+
+
+- Eject and remove SD card from PC and insert in EVM
+
+
+Step 5: Run on EVM
+------------------
+
+- Setup the EVM as shown on this page :ref:`evm_setup_j721e`
+
+    - Connect UART/USB cable and setup UART terminal
+    - Connect daughter card for camera, display as required
+    - Connect power supply
+    - Connect DP display
+    - Select SD card boot mode on EVM
+    - Insert SD card
+
+- Power on the EVM
+
+- You should see bootloader prints on the UART terminal and then bootloader will boot linux kernel and you should see login prompt as below
+
+.. code:: bash
+
+    j7-evm login:
+
+- On the EVM, Login using below user id, no password
+
+.. code:: bash
+
+    root
+
+- On the EVM, do below steps to init the environment for the demos
+
+.. code:: bash
+
+    cd /opt/vision_apps
+    source ./vision_apps_init.sh
+
+- Now run one of the below scripts/applications to run the demos
+
+.. code:: bash
+
+    ./run_app_tidl.sh                     - Image classification demo (needs display)
+    ./run_app_tidl_cam.sh                 - Camera based Image classification demo (needs display, Fusion1 board, 1x IMX390 camera)
+    ./run_app_tidl_seg.sh                 - Semantic segmentation demo (needs display)
+    ./run_app_tidl_od.sh                  - Object Detection demo (needs display)
+    ./run_app_tidl_avp.sh                 - Auto valet parking demo (needs display)
+    ./run_app_tidl_avp2.sh                - Auto valet parking demo (needs display)
+    ./run_app_tidl_avp3.sh                - Auto valet parking demo (needs display)
+    ./run_app_tidl_avp4.sh                - Auto valet parking demo (needs display, Fusion1 board, 4x IMX390 camera)
+    ./run_app_dof.sh                      - Dense optical flow demo (needs display)
+    ./run_app_stereo.sh                   - Stereo disparity demo (needs display)
+    ./run_app_c7x.sh                      - C7x sample kernel demo
+    ./run_app_srv.sh                      - 3D SRV 4 camera demo (needs display, Fusion1 board, 4x IMX390 camera)
+    ./run_app_single_cam.sh               - Single camera + VISS + Display demo (needs display, Fusion1 board, 1x IMX390 or compatible cameras)
+    ./run_app_multi_cam.sh                - Multi (upto 8x) camera + VISS + Display demo (needs display, Fusion1 board, IMX390 or compatible cameras)
+    ./vx_app_arm_opengl_mosaic.out        - OpenGL + OpenVX test
+    ./vx_app_arm_ipc.out                  - inter processor communication test
+    ./vx_app_arm_mem.out                  - memory allocation test
+    ./vx_app_tutorial.out                 - TI OpenVX tutorial
+    ./vx_app_conformance.out              - TI OpenVX conformance tests
+
+- Once the demo runs, you should see output on the display
+
+.. note::
+
+    Display will be eDP.
+
+- Type 'x' to exit the demo and run another demo.

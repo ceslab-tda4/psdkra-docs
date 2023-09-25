@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.15. Enabled block-based memory access in OpenVX kernels &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.16. Running SDE and DOF for 2M-Pixel Input" href="developer_notes_dmpac.html"/>
+        <link rel="prev" title="8.14. Changing Display Resolution in Vision Apps" href="developer_notes_display_resolution.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ipc.html">8.4. Developing IPC applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.15. Enabled block-based memory access in OpenVX kernels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.15.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-callback-enablement">8.15.2. Create callback enablement</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#block-size-calculation">8.15.2.1. Block size calculation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#l2-memory-allocation">8.15.2.2. L2 memory allocation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#udma-handle-creation">8.15.2.3. UDMA Handle Creation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#process-callback-enablement">8.15.3. Process callback enablement</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#udma-parameters-setup">8.15.3.1. UDMA parameters setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pipelining-loop">8.15.3.2. Pipelining loop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#udma-parameters-teardown">8.15.3.3. UDMA parameters teardown</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#delete-callback-enablement">8.15.4. Delete callback enablement</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#l2-memory-freeing">8.15.4.1. L2 memory freeing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#udma-handle-delete">8.15.4.2. UDMA Handle Delete</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.15. </span>Enabled block-based memory access in OpenVX kernels</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="enabled-block-based-memory-access-in-openvx-kernels">
+<h1><span class="section-number">8.15. </span>Enabled block-based memory access in OpenVX kernels<a class="headerlink" href="#enabled-block-based-memory-access-in-openvx-kernels" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">8.15.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>In order to provide more efficiency to an OpenVX kernel, a block-based memory
+access scheme can be integrated to the OpenVX kernel using UDMA.  This allows
+kernel to process on a block of the memory at a time.  By incorporating the
+UDMA, the kernel can take advantage of locality by transferring the blocks of
+input data into L2 memory from DDR as well as transferring the outputs from L2
+back to DDR.  By using UDMA, this transfer can occur in parallel with the
+compute.  An example implementation has been provided in the sample application
+located at vision_apps/apps/basic_demos/app_c7x_kernel/.  This developer note
+walks through this example in order to show how UDMA can be integrated into
+other OpenVX kernels.  The developer note is outlined by the standard callbacks
+used by OpenVX kernels (create, process, delete) and the corresponding changes
+that need to be made within each of these callbacks to enable UDMA.</p>
+</div>
+<div class="section" id="create-callback-enablement">
+<h2><span class="section-number">8.15.2. </span>Create callback enablement<a class="headerlink" href="#create-callback-enablement" title="Permalink to this headline">¶</a></h2>
+<p>Within the create callback, there are three steps required to enable DMA.
+These are listed and described below.</p>
+<div class="section" id="block-size-calculation">
+<h3><span class="section-number">8.15.2.1. </span>Block size calculation<a class="headerlink" href="#block-size-calculation" title="Permalink to this headline">¶</a></h3>
+<p>The block width and height must first be calculated in order to determine the
+parameters used for the L2 memory calculation and the UDMA handle.  In the
+sample kernel, there are 2 input images of type U8 and one output image of size
+U8 and these images all have the same size.  Therefore, the block widths and
+heights for these images will also be the same.  In this example kernel, the
+available L2 memory is first queried to determine how much L2 memory could be
+used for the DMA blocks.  The block width is then set to the width of the image
+being used.  The height is then determined iteratively by with a height of 1
+then multiplying the height successively by 2 through a loop.  The loop
+terminates when either the total size required exceeds the available L2 or the
+height can longer be divided evenly into the total height of the image.</p>
+</div>
+<div class="section" id="l2-memory-allocation">
+<h3><span class="section-number">8.15.2.2. </span>L2 memory allocation<a class="headerlink" href="#l2-memory-allocation" title="Permalink to this headline">¶</a></h3>
+<p>After determining the block size to use, the total amount of L2 memory can be
+calculated. As mentioned above, in the sample kernel, there are 2 inputs images
+of type U8 and one output image of type U8.  Also, we will double buffer the
+blocks in L2 so that the DMA transaction can be occurring in parallel with the
+compute.  Therefore, the required size from L2 will be 3 times the block width
+times the block height times 2 for double buffering. The pointer to the L2
+memory will be stored in the kernel instance structure. The L2 memory region is
+first reset prior to allocation as the L2 memory used for the kernel is
+scratch memory.  This memory can be allocated from L2 by utilizing the included
+API’s for memory allocation and specifying TIVX_MEM_INTERNAL_L2 as the memory
+region for this to be allocated from.  A sample call from the kernel example is
+shown below.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">kernelParams</span><span class="o">-&gt;</span><span class="n">pL2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">tivxMemAlloc</span><span class="p">(</span><span class="n">kernelParams</span><span class="o">-&gt;</span><span class="n">req_size</span><span class="p">,</span><span class="w"> </span><span class="n">TIVX_MEM_INTERNAL_L2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="udma-handle-creation">
+<h3><span class="section-number">8.15.2.3. </span>UDMA Handle Creation<a class="headerlink" href="#udma-handle-creation" title="Permalink to this headline">¶</a></h3>
+<p>The final step of the create callback is to create the UDMA Handle, which is
+stored in the kernel instance structure.  An API is provided to create this
+handle by specifying transfer type and the UDMA channel. There are 16 total
+ND copy channels that can be opened on the C7x and the upper 8 of these
+channels use the DRU. Therefore, in the sample kernel, these upper 8 channels
+are used for the UDMA channels.  Additionally, the transfer type for the target
+kernels should use the DATA_COPY_DMA field.  The DATA_COPY_CPU is used for PC
+emulation mode.  An example of this call is shown below.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">dma_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">kernelParams</span><span class="o">-&gt;</span><span class="n">dmaObjSrc0</span><span class="p">,</span><span class="w"> </span><span class="n">DATA_COPY_DMA</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="process-callback-enablement">
+<h2><span class="section-number">8.15.3. </span>Process callback enablement<a class="headerlink" href="#process-callback-enablement" title="Permalink to this headline">¶</a></h2>
+<p>Next, inside the process callback, there are three broad steps required to
+enable block based compute.  These steps are described below.</p>
+<div class="section" id="udma-parameters-setup">
+<h3><span class="section-number">8.15.3.1. </span>UDMA parameters setup<a class="headerlink" href="#udma-parameters-setup" title="Permalink to this headline">¶</a></h3>
+<p>The first step within the process callback is to setup the UDMA parameters
+for each of the images.</p>
+<p>Within the sample kernel, a separate helper function is used for the input
+images vs the output image as the DMA parameters for input vs output images
+will be are slightly different.  For instance, the src_addr for input images
+will point to the location of the image in DDR and the destination will point
+to the location of the image in L2 while the reverse is true of the destination
+image parameters. A call to the helper function for setting up the input DMA
+parameters is below.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add_img_dma_setup_input_image</span><span class="p">(</span><span class="n">prms</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prms</span><span class="o">-&gt;</span><span class="n">dmaObjSrc0</span><span class="p">,</span><span class="w"> </span><span class="n">pSrc0L2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">src_desc0</span><span class="p">,</span><span class="w"> </span><span class="n">src_desc0_target_ptr</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>After setting up all of the DMA parameters, these parameters are applied to the
+UDMA driver handle.  The helper function used for this can be seen below.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">dma_init</span><span class="p">(</span><span class="n">dmaObj</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pipelining-loop">
+<h3><span class="section-number">8.15.3.2. </span>Pipelining loop<a class="headerlink" href="#pipelining-loop" title="Permalink to this headline">¶</a></h3>
+<p>The next step in the process callback is to trigger the UDMA transfer in
+parallel with the kernel compute.  During the create phase, two buffers were
+set for each input and output which allows the UDMA transfer to occur in
+parallel with the compute.</p>
+<p>In the sample kernel, a pipelining loop has been set up inside the
+add_img_pipeline_blocks function call.  The below image helps to visualize the
+operation of this pipeline.</p>
+<blockquote>
+<div><div class="figure align-default" id="id1">
+<img alt="_images/dma_image.png" src="_images/dma_image.png" />
+<p class="caption"><span class="caption-number">Fig. 8.9 </span><span class="caption-text">Pipeline Stages</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div></blockquote>
+<p>During the pipeup stage, the input data is brought into L2 from DDR via the
+UDMA transfer.  As it continues to pipeup, the kernel will perform compute for
+first block that has been brought in to L2.  The loop will then reach steady
+state as the DMA transfers the output block from L2 into DDR.</p>
+<p>During steady state, the pipeline continues to perform the UDMA transfers in
+parallel with the compute.  The number of steady state cycles for this is equal
+to the number of blocks contained within the entire image size.</p>
+<p>The pipedown phase finishes with completing computing for the last block and
+transferring the last block from L2 to DDR.</p>
+</div>
+<div class="section" id="udma-parameters-teardown">
+<h3><span class="section-number">8.15.3.3. </span>UDMA parameters teardown<a class="headerlink" href="#udma-parameters-teardown" title="Permalink to this headline">¶</a></h3>
+<p>UDMA parameters teardown placeholder</p>
+<p>The function below is used for tearing down the DMA handle parameters for all
+of the images within the sample kernel</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add_img_dma_teardown</span><span class="p">(</span><span class="n">prms</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Within this function, all of the UDMA handles corresponding to the input and
+output images are deleted by using a helper function.  An example of this
+call is seen below</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">dma_deinit</span><span class="p">(</span><span class="o">&amp;</span><span class="n">prms</span><span class="o">-&gt;</span><span class="n">dmaObjSrc0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="delete-callback-enablement">
+<h2><span class="section-number">8.15.4. </span>Delete callback enablement<a class="headerlink" href="#delete-callback-enablement" title="Permalink to this headline">¶</a></h2>
+<p>Finally, within the delete callback, there are two steps required to free
+resources that were allocated during the create callback.  These steps are
+listed and described below.</p>
+<div class="section" id="l2-memory-freeing">
+<h3><span class="section-number">8.15.4.1. </span>L2 memory freeing<a class="headerlink" href="#l2-memory-freeing" title="Permalink to this headline">¶</a></h3>
+<p>The L2 memory allocated during the create callback must now be freed in the
+delete callback using the standard tivxMemFree API.  This can be done by using
+a similar call to the one below from the sample kernel to free the memory from
+the pointer stored the kernel instance structure.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">tivxMemFree</span><span class="p">(</span><span class="n">kernelParams</span><span class="o">-&gt;</span><span class="n">pL2</span><span class="p">,</span><span class="w"> </span><span class="n">kernelParams</span><span class="o">-&gt;</span><span class="n">req_size</span><span class="p">,</span><span class="w"> </span><span class="n">TIVX_MEM_INTERNAL_L2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="udma-handle-delete">
+<h3><span class="section-number">8.15.4.2. </span>UDMA Handle Delete<a class="headerlink" href="#udma-handle-delete" title="Permalink to this headline">¶</a></h3>
+<p>The final step of the delete callback is to delete the UDMA Handle.  The sample
+kernel has a sample function used to delete this handle.  An example of how
+this is used in the sample kernel is shown below.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">dma_delete</span><span class="p">(</span><span class="o">&amp;</span><span class="n">prms</span><span class="o">-&gt;</span><span class="n">dmaObjSrc0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_dmpac.html" class="btn btn-neutral float-right" title="8.16. Running SDE and DOF for 2M-Pixel Input" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes_display_resolution.html" class="btn btn-neutral" title="8.14. Changing Display Resolution in Vision Apps" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

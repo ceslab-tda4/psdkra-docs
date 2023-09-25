@@ -1,0 +1,98 @@
+
+.. _datasheet_sdk_j721e:
+
+Data Sheet
+^^^^^^^^^^
+
+Datasheet section contains performance information about various modules within **Processor SDK RTOS** |platform|.
+
+.. IMPORTANT::
+
+   - Some datasheet information is not available here and users must request access to the **ADDON** package for **Processor SDK RTOS** |platform| in order to get this information.
+   - Users can request access to the **ADDON** package from here [|mysecure_request|]
+   - Once access is granted, users can download the the **ADDON** package from here [|mysecure_download|]
+   - Once the **ADDON** package is installed, the datasheet can be found here **${PSDK_RTOS_ADDON_PATH}/psdk_rtos/docs/datasheet/index.html**
+
+.. NOTE::
+
+   All performance measurements provided in this document are PRELIMINARY and have not necessarily been fully optimized yet.
+
+
+Common parameters used for performance benchmarking
+===================================================
+
+Any additional parameters or overrides to common parameters, will be specified in respective sections.
+
+========== ===============================================================
+Parameter  Value
+========== ===============================================================
+SoC        J721e
+Board      J721e EVM with infotainment card, Fusion1 card and/or GESI card
+A72        2 GHZ (L1P, L1D, L2 cache ON)
+R5F        1 GHZ (L1P, L1D cache ON)
+C6x        1.25 GHZ (32K L1P, 32K L1D, 64K L2 cache)
+C7x        1 GHZ (32K L1P, 32K L1D, 64K L2 cache)
+MSMC cache 0 bytes
+DDR        4266 MT/s
+VPAC       650 MHZ
+DMPAC      520 MHZ
+Others     Cache Enabled, Release Build, Code/Data sections in DDR
+========== ===============================================================
+
+Vision Apps (ADAS, Vision, DL demos)
+====================================
+
+For performance details, see vision apps datasheet here [|vision_apps_data_sheet|]. **See specific demo page to see peformance numbers for that demo.**
+
+Platform Development Kit (PDK)
+==============================
+
+For performance details, see PDK datasheet here [|pdk_data_sheet|]
+
+MCU Software (MCU SW)
+=====================
+
+MCUSW datasheet only available through **ADDON** package (refer to instructions at top of this page).
+
+Ethernet Firmware (EthFW)
+=========================
+
+EthFW datasheet only available through **ADDON** package (refer to instructions at top of this page).
+
+TI Deep learning Product (TIDL)
+===============================
+
+TIDL datasheet only available through **ADDON** package (refer to instructions at top of this page).
+
+TI OpenVX (TIOVX)
+=================
+
+For performance details, see TI OpenVX datasheet here [|tiovx_data_sheet|]
+
+TI Autonomous Driving Algorithms (TIADALG)
+==========================================
+
+TIADALG datasheet only available through **ADDON** package (refer to instructions at top of this page).
+
+C7x DSPLIB
+==========
+
+For performance details, see DSPLIB datasheet here [|dsplib_data_sheet|]
+
+
+C7x MATHLIB
+===========
+
+For performance details, see MATHLIB datasheet here [|mathlib_data_sheet|]
+
+
+C7x FFT LIB
+===========
+
+For performance details, see FFT LIB datasheet here [|fftlib_data_sheet|]
+
+AUTOSAR Benchmark
+=================
+
+AUTOSAR Benchmark only available through **ADDON** package (refer to instructions at top of this page).
+

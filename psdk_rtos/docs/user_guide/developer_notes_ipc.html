@@ -1,0 +1,904 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>8.4. Developing IPC applications &mdash; Processor SDK RTOS J721E</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Processor SDK RTOS J721E" href="index.html"/>
+        <link rel="up" title="8. Developer Notes" href="developer_notes.html"/>
+        <link rel="next" title="8.5. Developing Ethernet based applications with Linux + RTOS" href="developer_notes_ethfw.html"/>
+        <link rel="prev" title="8.3. MCU1_0 Application Development with SYSFW" href="developer_notes_mcu1_0_sysfw.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+  <header id="tiHeader">
+    <div class="top">
+      <ul>
+        <li id="top_logo">
+          <a href="http://www.ti.com">
+            <img src="_static/img/ti_logo.png"/>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="nav"></div>
+  </header>
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Processor SDK RTOS J721E
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                09_00_00
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_j721e.html">2. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk_components_j721e.html">3. SDK Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="release_notes.html">4. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evm_setup_j721e.html">5. EVM Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ccs_setup_j721e.html">6. CCS Setup for J721E</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasheet_sdk_j721e.html">7. Data Sheet</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="developer_notes.html">8. Developer Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_concerto.html">8.1. Understanding concerto makefile system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_bootloaders.html">8.2. Understanding bootloaders in Processor SDK J721E (RTOS/Linux)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_mcu1_0_sysfw.html">8.3. MCU1_0 Application Development with SYSFW</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">8.4. Developing IPC applications</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction">8.4.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rpmsg-and-vring">8.4.2. RPMSG and VRING</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rpmsg-char">8.4.3. RPMSG CHAR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-mailbox">8.4.4. Hardware Mailbox</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mailbox-features">8.4.4.1. Mailbox features</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#typical-usage-of-mailbox-ip">8.4.4.2. Typical usage of mailbox IP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mailbox-and-vring">8.4.4.3. Mailbox and VRING</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hardware-spinlock">8.4.5. Hardware spinlock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-and-latency">8.4.6. Performance and Latency</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#latency">8.4.6.1. Latency</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performance-do-s-and-dont-s">8.4.6.2. Performance, DO’s and DONT’s</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-considerations">8.4.7. Additional Considerations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#security">8.4.7.1. Security</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-errors">8.4.7.2. Message errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#safety">8.4.7.3. Safety</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-references">8.4.8. Documentation References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#source-code-references">8.4.9. Source Code References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-ipc-applications">8.4.10. Writing IPC applications</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#writing-ipc-applications-on-rtos-pdk-ipc-driver">8.4.10.1. Writing IPC Applications on RTOS (PDK IPC driver)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#writing-ipc-applications-on-linux">8.4.10.2. Writing IPC Applications on Linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ethfw.html">8.5. Developing Ethernet based applications with Linux + RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_cptracer.html">8.6. System Traffic Profiling using CPTracer on J7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_security_build.html">8.7. Developing with High Security Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_psdkla.html">8.8. Using Processor SDK Linux with Processor SDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_memory_map.html">8.9. Understanding and updating SDK memory map for J721E</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tidl.html">8.10. Developing deep learning applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_hwa.html">8.11. Developing HW accelerator applications with OpenVX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_image_sensor.html">8.12. Adding new image sensor to PSDK RTOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_ddr_inline_ecc.html">8.13. Enabling TI’s inline ECC for DDR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_display_resolution.html">8.14. Changing Display Resolution in Vision Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dma_kernel.html">8.15. Enabled block-based memory access in OpenVX kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_dmpac.html">8.16. Running SDE and DOF for 2M-Pixel Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_migration_guide.html">8.17. SDK 8.6 -&gt; SDK 9.0 Migration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_notes_tda4_latest_faqs.html">8.18. Latest FAQs on TDA4</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="documentation_tarball.html">9. Documentation Tarball</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Processor SDK RTOS J721E</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="developer_notes.html"><span class="section-number">8. </span>Developer Notes</a> &raquo;</li>
+      
+    <li><span class="section-number">8.4. </span>Developing IPC applications</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="developing-ipc-applications">
+<h1><span class="section-number">8.4. </span>Developing IPC applications<a class="headerlink" href="#developing-ipc-applications" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2><span class="section-number">8.4.1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The Jacinto 7 SoC has multiple different CPUs on an SoC. (e.g. R5F, C6x, C7x, and A72). Software running on these CPUs needs to
+communicate with each other to realize a use-case. The means of collaboration is referred
+to as inter-processor communication or IPC. An IPC library is provivded on each CPU and OS to enable communication among the
+higher level application components on each core.</p>
+<p>The overall IPC software stack on different CPU/OS is shown in table below:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 89%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>IPC SW layer</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Application</p></td>
+<td><p>Application which sends/receives IPC messages</p></td>
+</tr>
+<tr class="row-odd"><td><p>RPMSG CHAR</p></td>
+<td><p><em>[ONLY in Linux]</em> User space API used by application to sends/receives IPC messages</p></td>
+</tr>
+<tr class="row-even"><td><p>RPMSG</p></td>
+<td><p>SW protocol and interface used to exchange messages between endpoints on a destination CPU</p></td>
+</tr>
+<tr class="row-odd"><td><p>VRING</p></td>
+<td><p>Shared memory based SW queue which temporarily holds messages as they are exchanges between two CPUs</p></td>
+</tr>
+<tr class="row-even"><td><p>HW Mailbox</p></td>
+<td><p>Hardware mechnism used for interrupt notification between two CPUs</p></td>
+</tr>
+</tbody>
+</table>
+<p>The main SW components for IPC are,</p>
+<ol class="arabic simple">
+<li><p><em>PDK IPC LLD driver</em> for RTOS, this consists of RPMSG, VRING and HW Mailbox driver.</p></li>
+<li><p><em>Linux kernel IPC driver suite</em> for Linux, this consists of RPMSG CHAR, RPMSG, VRING and HW Mailbox driver.</p></li>
+</ol>
+<p>The PDK IPC library and the Linux kernel IPC driver suite enables communication among all the cores
+present in J7 SoC. The PDK IPC library is linked with RTOS applications and supports message based
+communication with other cores running RTOS (like R5FSS cores and DSP Cores). It is
+also capable of communicating with A72 cores running Linux using the same APIs.</p>
+<p>The Linux IPC driver runs on A72 cores as a part of the kernel and can communicate with R5FSS and DSP cores.</p>
+</div>
+<div class="section" id="rpmsg-and-vring">
+<h2><span class="section-number">8.4.2. </span>RPMSG and VRING<a class="headerlink" href="#rpmsg-and-vring" title="Permalink to this headline">¶</a></h2>
+<p>RPMSG is the common messaging framework that is used by Linux as well as RTOS. RPMSG is an endpoint
+based protocol where a server CPU can run a service that listens to incoming messages at a dedicated endpoint,
+while all other CPUs can send requests to that (server CPU, service endpoint) tuple. You can think of an analogy
+to UDP/IP layers in networking, where the CPU name is analogous to the IP address, and endpoint is similar to the UDP
+port number.</p>
+<p>When sending a message to a server, a client CPU / task also provides a reply end point so that the server can send its reply
+to the client CPU.</p>
+<p>Multiple logical IPC communication channels can be opened between the same set of CPUs, by using multiple end-points.</p>
+<p>While RPMSG is the API or protocol as seen by an application, internally the IPC driver uses VRING to actually pass messages among
+different (RPMSG CPU, endpoint) tuples. The relationship between RMSG end points and VRING is shown in below figure.</p>
+<div class="figure align-default" id="id1">
+<img alt="_images/RPMSG_VRING.png" src="_images/RPMSG_VRING.png" />
+<p class="caption"><span class="caption-number">Fig. 8.5 </span><span class="caption-text">RPMSG and VRING</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>VRING is a shared memory segment, between a pair of CPUs, which holds the messages passed between the two CPUs.
+The sequence of events as a message is passed from a sender to receiver and back again is shown in below figure.</p>
+<div class="figure align-default" id="id2">
+<img alt="_images/RPMSG_VRING_DATA_FLOW.png" src="_images/RPMSG_VRING_DATA_FLOW.png" />
+<p class="caption"><span class="caption-number">Fig. 8.6 </span><span class="caption-text">RPMSG and VRING message exchange data flow</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>The sequence of steps is described below,</p>
+<ol class="arabic simple">
+<li><p>A application sends a message to a given destination (CPU, endpoint)</p></li>
+<li><p>The message is first copied from the application to VRING used between the two CPUs.
+After this the IPC driver posts the VRING ID in the HW mailbox.</p></li>
+<li><p>This triggers a interrupt on the destination CPU. In the ISR of destination CPU, it extracts the VRING ID and then based on the VRING ID, checks for any messages in that VRING</p></li>
+<li><p>If a message is received, it extracts the message from the VRING and puts it in the destination RPMSG endpoint queue.
+It then triggers the application blocked on this RPMSG endpoint</p></li>
+<li><p>The application then handles the received message and replies back to the sender CPU using the same RPMSG and VRING mechanism in the reverse direction.</p></li>
+</ol>
+</div>
+<div class="section" id="rpmsg-char">
+<h2><span class="section-number">8.4.3. </span>RPMSG CHAR<a class="headerlink" href="#rpmsg-char" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>RPMSG CHAR is a user space API which provides access to the RPMSG kernel driver in Linux.</p></li>
+<li><p>RPMSG CHAR provides linux applications a file IO interface to read and write messages to different CPUs</p></li>
+<li><p>Applications on RTOS which need to talk to linux need to “announce” its end point to linux. This create a device “/dev/rpmsgX” on linux.</p></li>
+<li><p>Linux user space applications can use this device to read and write messages to the associated end point on the RTOS side.</p></li>
+<li><p>Usual linux user space APIs like “select”, can be used to wait on multiple end points from multiple CPUs.</p></li>
+<li><p>A utility library, “ti_rpmsg_char” is provided to simplify discovery and intialization of announced RPMSG endpoints from different CPUs</p></li>
+</ul>
+</div>
+<div class="section" id="hardware-mailbox">
+<h2><span class="section-number">8.4.4. </span>Hardware Mailbox<a class="headerlink" href="#hardware-mailbox" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mailbox-features">
+<h3><span class="section-number">8.4.4.1. </span>Mailbox features<a class="headerlink" href="#mailbox-features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Hardware mailbox is primarily used to provide an interrupt event notification with a small 32-bit payload.</p>
+<ul>
+<li><p>VRING uses hardware mailbox to trigger interrupts on destination CPU.</p></li>
+</ul>
+</li>
+<li><p>Each mailbox consists of 16 uni-directional HW queuse interfacing with max 4 communication users or CPUs.</p></li>
+<li><p>Each mailbox Queue can hold up to 4 word-sized messages at a time.</p></li>
+<li><p>Below mailbox status and interrupt event notification is available per communication user</p>
+<ul>
+<li><p>New Message status event for Rx (triggered as long as a mailbox has a message) for each mailbox</p></li>
+<li><p>Not Full status event for Tx (triggered as long as a mailbox has empy fifo )</p></li>
+<li><p>Status register per mailbox for “Mailbox Full” and “Number of unread messages”</p></li>
+</ul>
+</li>
+<li><p>J7 platforms have 12 HW mailbox instances. i.e 12x 16 HW mailbox queues</p></li>
+</ul>
+<p>Below figure shows a logical block diagram of a hardware mailbox,</p>
+<div class="figure align-default" id="id3">
+<img alt="_images/HW_MAILBOX_QUEUES.png" src="_images/HW_MAILBOX_QUEUES.png" />
+<p class="caption"><span class="caption-number">Fig. 8.7 </span><span class="caption-text">Hardware mailbox</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="typical-usage-of-mailbox-ip">
+<h3><span class="section-number">8.4.4.2. </span>Typical usage of mailbox IP<a class="headerlink" href="#typical-usage-of-mailbox-ip" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>A mailbox is associated with a “sender” user and a “receiver” user</p></li>
+<li><p>Sender does below sequence of steps,</p>
+<ul>
+<li><p>Check if there is room in the mailbox FIFO (read MAILBOX_FIFOSTATUS_m)</p></li>
+<li><p>If not full, write the message to the mailbox and return to caller (write MAILBOX_message_m)</p></li>
+<li><p>If full,</p>
+<ul>
+<li><p>Store the message in a software queue backing the h/w mailbox FIFO</p></li>
+<li><p>Enable the NotFull event (set corresponding bit in MAILBOX_IRQENABLE_SET_u) for that mailbox</p></li>
+</ul>
+</li>
+<li><p>Upon interrupt,</p>
+<ul>
+<li><p>Clear the interrupt trigger source within the IP (clear corresponding bit in MAILBOX_IRQSTATUS_CLR_u)</p></li>
+<li><p>Remove the message from software queue and write to the mailbox (write as many empty slots as there are available)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Receiver does below sequence of steps,</p>
+<ul>
+<li><p>Enable the corresponding mailbox ‘NewMsg’ event in the corresponding user interrupt configuration register</p></li>
+<li><p>Upon interrupt,</p>
+<ul>
+<li><p>Read one or more mailbox messages until empty into a software backed queue</p></li>
+<li><p>Clear the interrupt source</p></li>
+</ul>
+</li>
+<li><p>Process the received messages</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="mailbox-and-vring">
+<h3><span class="section-number">8.4.4.3. </span>Mailbox and VRING<a class="headerlink" href="#mailbox-and-vring" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Mailbox essentially acts as a very small HW queue which holds the VRING ID</p></li>
+<li><p>VRING is SW queue in shared memory and holds the actual message passed between two CPUs.
+When a interrupt is received the mailbox message tells which VRING to dequeue messages from.</p>
+<ul>
+<li><p>VRING ID = 0 tells to look at the VRING from sender to receiver</p></li>
+<li><p>VRING ID = 1 tells to look at the VRING from recevier to sender</p></li>
+</ul>
+</li>
+</ul>
+<div class="figure align-default" id="id4">
+<img alt="_images/HW_MAILBOX_AND_VRING.png" src="_images/HW_MAILBOX_AND_VRING.png" />
+<p class="caption"><span class="caption-number">Fig. 8.8 </span><span class="caption-text">Mailbox and VRING</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="hardware-spinlock">
+<h2><span class="section-number">8.4.5. </span>Hardware spinlock<a class="headerlink" href="#hardware-spinlock" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes its needed to have mutually exclusive access between two CPUs to a critical section.
+Typically on a OS running on the same CPU or CPU cluster, one uses a SW semaphore or mutex function for mutual exclusion.
+However this function will have no effect when mutual exclusion is needed between two CPUs each running a different instance of an OS, say Linux and RTOS.
+In such cases, HW spinlock can be used.</p>
+<p>There are 256 HW spinlocks within a single instance of HW spinlock in Jacinto 7 SoC.</p>
+<p>J7 platforms have 1 instance of HW spinlock.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Hardware spinlock is not used by IPC driver as such and can be used by applications directly.</p>
+</div>
+<p>Sample code showing usage of HW spinlock can be found in SDK as shown below</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 39%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>File / Folder</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vision_apps</p></td>
+<td><p>vision_apps/utils/ipc/src/app_ipc_linux_hw_spinlock.c</p></td>
+<td><p>HW spinlock usage on Linux</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision_apps</p></td>
+<td><p>vision_apps/utils/ipc/src/app_ipc_rtos.c [appIpcHwLockAcquire/appIpcHwLockRelease]</p></td>
+<td><p>HW spinlock usage on RTOS</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>When using HW spinlock the CPU “spins” waiting to the lock to be released, hence one should use HW spinlock for very short periods</p></li>
+<li><p>Care should be taken to make sure a CPU does not exit without releasing the lock</p></li>
+<li><p>SW timeouts can be used when taking a lock to make sure CPU does not spin indefinitely</p></li>
+<li><p>It is also recommended to take a local OS lock (POSIX semaphore, pthread_mutex, RTOS Semaphore) before taking the HW lock to make sure
+tasks/threads/processes on the same CPU do not spin on the same HW spinlock</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="performance-and-latency">
+<h2><span class="section-number">8.4.6. </span>Performance and Latency<a class="headerlink" href="#performance-and-latency" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="latency">
+<h3><span class="section-number">8.4.6.1. </span>Latency<a class="headerlink" href="#latency" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Latency</p>
+<ul>
+<li><p>Latency is a function of sender CPU and receiver CPU speeds</p></li>
+<li><p>Interrupt service latency on receiving CPU</p></li>
+<li><p>Memory access latencies on sender and receiver CPUs</p></li>
+</ul>
+</li>
+<li><p>Mailbox Latency</p>
+<ul>
+<li><p>Mailbox is a HW peripheral mapped as MMR in the SoC memory map; there will be some latency for CPU to read/write those MMRs.</p></li>
+</ul>
+</li>
+<li><p>There are two memcpy’s involved</p>
+<ul>
+<li><p>Sender application to VRING</p></li>
+<li><p>VRING to recevier RPMSG endpoint local queue</p></li>
+<li><p>size of memcpy is equal to message payload size (max 512 B)</p>
+<ul>
+<li><p>To reduce latencies and / or to send larger buffer it is recommended to pass
+a pointer/handle/offset to a larger shared memory from ION heap</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>See <a href="../../../pdk_jacinto_09_00_00_45/docs/datasheet/jacinto/datasheet_j721e.html#ipc" target="_blank">PDK IPC Performance</a> for measured performance on Jaincto 7 SoCs.</p></li>
+</ul>
+</div>
+<div class="section" id="performance-do-s-and-dont-s">
+<h3><span class="section-number">8.4.6.2. </span>Performance, DO’s and DONT’s<a class="headerlink" href="#performance-do-s-and-dont-s" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Mailbox h/w queue depth is 4 elements</p></li>
+<li><p>Sender can send back to back 4 messages after which sender will need to wait for the receiver to have “popped” at least one message from the mailbox.</p></li>
+<li><p>Wait is a SW wait - not a CPU/bus stall. SW can use interrupt to resume from wait or poll for queue to have one free element.</p></li>
+<li><p>In PDK IPC driver for RTOS, the mailbox is popped by receiver in ISR context itself. So mailbox by itself does not have any performance bottlenecks.</p></li>
+<li><p>If the receiving CPU is bottlenecked so that ISR cannot execute then sender will need to wait before posting a new message in the mailbox.</p></li>
+<li><p>IPC driver extends the HW queue with a SW queue in shared memory (VRING).</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The SW queue length by default in RPmessage is 256 deep.</p></li>
+<li><p>VRING can transfer one message of 512 bytes max.</p></li>
+<li><p>For larger data, it is recommended to use shared memory using ION heaps, and transfer the pointer for faster transfer.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="additional-considerations">
+<h2><span class="section-number">8.4.7. </span>Additional Considerations<a class="headerlink" href="#additional-considerations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="security">
+<h3><span class="section-number">8.4.7.1. </span>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>IPC driver does not handle security by itself.</p></li>
+<li><p>If message security is important applications should encrypt and decrypt messages passed over IPC.</p></li>
+</ul>
+</div>
+<div class="section" id="message-errors">
+<h3><span class="section-number">8.4.7.2. </span>Message errors<a class="headerlink" href="#message-errors" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>IPC driver does not do any error checks on messages like CRC or checksums</p></li>
+<li><p>If message integrity is important applications should do CRC or checksums on messages passed over IPC</p></li>
+<li><p>For shared memory used by IPC (VRING), ECC can be enabled at system level to make sure messages and data structures used by IPC do not get corrupted due to HW errors in the memory.</p></li>
+</ul>
+</div>
+<div class="section" id="safety">
+<h3><span class="section-number">8.4.7.3. </span>Safety<a class="headerlink" href="#safety" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>IPC RTOS SW is currently developed using TI baseline quality process, however there is roadmap to adopt TI functional safety (FSQ) process to cover systematic faults in SW.</p></li>
+<li><p>Further for FFI (Freedom from interfernce), below additional instructions need to be followed by a system integrator,</p>
+<ul>
+<li><p>RPMSG endpoint queues are local to a CPU, so by using MMU/MPU and firewalls one can ensure that no other CPU or non-CPU master like DMA can access or corrupt another CPUs RPMSG endpoint queues.</p></li>
+<li><p>There is a separate shared memory VRING between a pair of CPUs. Setup MMU/MPU to only access VRING that a given CPU needs.</p>
+<ul>
+<li><p>This will avoid a CPU inadvertantly corrupting another CPUs VRING region</p></li>
+</ul>
+</li>
+<li><p>Firewall VRING shared memory to make sure a non-CPU master like DMA does not inadvertanly corrupt the shared VRING memory.</p></li>
+<li><p>Each mailbox instance has its own firewall so for FFI between ASIL and QM OSes (say Linux is QM and RTOS is ASIL), it is recommended to partition the mailboxes such that all communication with
+QM OS is on one set of mailboxes and all IPC with ASIL OSes is on another set of mailboxes.</p></li>
+</ul>
+</li>
+<li><p>Firewall, MPU/MMU setup has to be done from outside IPC driver.</p>
+<ul>
+<li><p>VRING, RPMSG endpoint memory is provided by user to IPC driver, so user can control the MPU/MMU and firewall setup to protect these memories.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="documentation-references">
+<h2><span class="section-number">8.4.8. </span>Documentation References<a class="headerlink" href="#documentation-references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 27%" />
+<col style="width: 57%" />
+<col style="width: 7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>Documentation</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Section</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PDK</p></td>
+<td><p><a href="../../../pdk_jacinto_09_00_00_45/docs/apiguide/j721e/html/index.html" target="_blank">LINK</a></p></td>
+<td><p>IPC LLD driver API for RTOS</p></td>
+<td><p>IPC Driver</p></td>
+</tr>
+<tr class="row-odd"><td><p>PDK</p></td>
+<td><p><a href="../../../pdk_jacinto_09_00_00_45/docs/datasheet/jacinto/datasheet_j721e.html#ipc" target="_blank">PDK IPC Performance</a></p></td>
+<td><p>IPC latency and performance</p></td>
+<td><p>IPC</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="source-code-references">
+<h2><span class="section-number">8.4.9. </span>Source Code References<a class="headerlink" href="#source-code-references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 38%" />
+<col style="width: 49%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Component</p></th>
+<th class="head"><p>File / Folder</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PDK</p></td>
+<td><p>pdk/packages/ti/drv/ipc/ipc.h</p></td>
+<td><p>IPC driver interface on RTOS</p></td>
+</tr>
+<tr class="row-odd"><td><p>PDK</p></td>
+<td><p>pdk/packages/ti/drv/ipc/examples</p></td>
+<td><p>RTOS &lt;-&gt; RTOS, Linux kernel &lt;-&gt; RTOS unit level IPC examples</p></td>
+</tr>
+<tr class="row-even"><td><p>Linux target filesystem</p></td>
+<td><p>usr/include/ti_rpmsg_char.h</p></td>
+<td><p>RPMSG CHAR helper functions</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision_apps</p></td>
+<td><p>vision_apps/apps/basic_demos/app_ipc/</p></td>
+<td><p>Linux user space (RPMSG CHAR) &lt;-&gt; RTOS unit level IPC examples</p></td>
+</tr>
+<tr class="row-even"><td><p>vision_apps</p></td>
+<td><p>vision_apps/utils/ipc</p></td>
+<td><p>IPC initialization code on RTOS and the HLOS</p></td>
+</tr>
+<tr class="row-odd"><td><p>vision_apps</p></td>
+<td><p>vision_apps/utils/remote_service</p></td>
+<td><p>Simple client-server model usage of IPC between Linux user space (RPMSG CHAR) &lt;-&gt; RTOS, RTOS &lt;-&gt; RTOS</p></td>
+</tr>
+<tr class="row-even"><td><p>vision_apps</p></td>
+<td><p>vision_apps/platform/&lt;soc&gt;/rtos/common_&lt;hlos&gt;/app_ipc_rsctable.h</p></td>
+<td><p>IPC Resource table. This is required for the HLOS to talk with RTOS</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="writing-ipc-applications">
+<h2><span class="section-number">8.4.10. </span>Writing IPC applications<a class="headerlink" href="#writing-ipc-applications" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="writing-ipc-applications-on-rtos-pdk-ipc-driver">
+<h3><span class="section-number">8.4.10.1. </span>Writing IPC Applications on RTOS (PDK IPC driver)<a class="headerlink" href="#writing-ipc-applications-on-rtos-pdk-ipc-driver" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="ipc-setup-code">
+<h4><span class="section-number">8.4.10.1.1. </span>IPC setup code<a class="headerlink" href="#ipc-setup-code" title="Permalink to this headline">¶</a></h4>
+<p>Initialise the IPC stack before starting any communication with other cores. This can usually be done by</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">selfProcId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IPC_MCU2_1</span><span class="p">;</span>
+<span class="kt">uint32_t</span><span class="w"> </span><span class="n">remoteProcList</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">IPC_MPU1_0</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_MCU1_0</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_MCU1_1</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_MCU2_0</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_MCU3_0</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_MCU3_1</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_C66X_1</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_C66X_2</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_C7X_1</span>
+<span class="p">};</span>
+<span class="kt">uint32_t</span><span class="w"> </span><span class="n">numRemoteProcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">remoteProcList</span><span class="p">)</span><span class="o">/</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">);</span>
+
+<span class="n">Ipc_init</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="n">Ipc_mpSetConfig</span><span class="p">(</span><span class="n">selfProcId</span><span class="p">,</span><span class="w"> </span><span class="n">numRemoteProcs</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remoteProcList</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is required to call <code class="docutils literal notranslate"><span class="pre">Ipc_mpSetConfig()</span></code> with a list of all cores (except <code class="docutils literal notranslate"><span class="pre">selfProcId</span></code>) that are required to participate in the communication.</p>
+</div>
+<p>If it is required to communicate with Linux running on A72 cores, the resource table must also be loaded</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Ipc_loadResourceTable</span><span class="p">((</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">ti_ipc_remoteproc_ResourceTable</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See the example resource tables (using exactly one <code class="docutils literal notranslate"><span class="pre">trace</span></code> entry and one <code class="docutils literal notranslate"><span class="pre">vdev</span></code> entry) in <code class="docutils literal notranslate"><span class="pre">apps\/basic_demos\/app_tirtos\/tirtos_linux\/ipc_rsctable.h</span></code></p>
+</div>
+<p>After the IPC stack is setup, the core needs to initialise the <strong>virtio</strong> or VRING layer. The <strong>virtio</strong> framework can be initialised as</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">vqParam</span><span class="p">.</span><span class="n">vqObjBaseAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">sysVqBuf</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vqBufSize</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">numRemoteProcs</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Ipc_getVqObjMemoryRequiredPerCore</span><span class="p">();</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vringBaseAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">VRING_BASE_ADDRESS</span><span class="p">;</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vringBufSize</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">IPC_VRING_BUFFER_SIZE</span><span class="p">;</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">timeoutCnt</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="n">Ipc_initVirtIO</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vqParam</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">Ipc_initVirtIO()</span></code> will internally call <code class="docutils literal notranslate"><span class="pre">Ipc_isRemoteReady()</span></code> and will initialise the virtio layers for only the currently online cores.
+If core is not online, it skips <strong>virtio</strong> pairing with that core. This can happen when the RTOS cores are booted early, and Linux <strong>remoteproc</strong>
+and <strong>virtio</strong> drivers are initialised later.</p>
+<p>There are two possible ways to work around this problem:</p>
+<ol class="arabic">
+<li><p>Wait for all Linux cores to be ready before calling <code class="docutils literal notranslate"><span class="pre">Ipc_initVirtIO()</span></code></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numRemoteProcs</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">Ipc_isRemoteReady</span><span class="p">(</span><span class="n">remoteProcList</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+<span class="w">        </span><span class="n">Task_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vqObjBaseAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">sysVqBuf</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vqBufSize</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">numRemoteProcs</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Ipc_getVqObjMemoryRequiredPerCore</span><span class="p">();</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vringBaseAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">VRING_BASE_ADDRESS</span><span class="p">;</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">vringBufSize</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">IPC_VRING_BUFFER_SIZE</span><span class="p">;</span>
+<span class="n">vqParam</span><span class="p">.</span><span class="n">timeoutCnt</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="n">Ipc_initVirtIO</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vqParam</span><span class="p">);</span>
+</pre></div>
+</div>
+</li>
+<li><p>Poll for Linux cores to be ready and pair <strong>virtio</strong> with Linux cores late</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numRemoteProcs</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Task_Params_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">params</span><span class="p">);</span>
+<span class="w">    </span><span class="n">params</span><span class="p">.</span><span class="n">arg0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">UArg</span><span class="p">)</span><span class="n">remoteProcList</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="n">params</span><span class="p">.</span><span class="n">arg1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">UArg</span><span class="p">)</span><span class="n">lateInitFlag</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="n">Task_create</span><span class="p">(</span><span class="n">rpmsg_vdevMonitorFxn</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">...</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">rpmsg_vdevMonitorFxn</span><span class="p">(</span><span class="n">UArg</span><span class="w"> </span><span class="n">arg0</span><span class="p">,</span><span class="w"> </span><span class="n">UArg</span><span class="w"> </span><span class="n">arg1</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int32_t</span><span class="w"> </span><span class="n">status</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Is this a late init core? */</span>
+<span class="w">    </span><span class="k">if</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FALSE</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* Wait for remote core to be ready ... */</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">Ipc_isRemoteReady</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg0</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Task_sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* Create the VRing now ... */</span>
+<span class="w">    </span><span class="n">Ipc_lateVirtioCreate</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">...</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When Linux boots the RTOS cores, Linux <strong>virtio</strong> driver is brought up in advance, and option 1 above can be used.</p>
+</div>
+<p>The next step is to initialise RPMSG stack. This can be done by</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">RPMessageParams_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cntrlParam</span><span class="p">);</span>
+
+<span class="n">cntrlParam</span><span class="p">.</span><span class="n">buf</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">pCntrlBuf</span><span class="p">;</span>
+<span class="n">cntrlParam</span><span class="p">.</span><span class="n">bufSize</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">rpmsgDataSize</span><span class="p">;</span>
+<span class="n">cntrlParam</span><span class="p">.</span><span class="n">stackBuffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pTaskBuf</span><span class="p">[</span><span class="n">index</span><span class="o">++</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">IPC_TASK_STACKSIZE</span><span class="p">];</span>
+<span class="n">cntrlParam</span><span class="p">.</span><span class="n">stackSize</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">IPC_TASK_STACKSIZE</span><span class="p">;</span>
+<span class="n">RPMessage_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cntrlParam</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the cores that required late <strong>virtio</strong> pairing, the RPMSG stack pairing should also be done in <code class="docutils literal notranslate"><span class="pre">rpmsg_vdevMonitorFxn()</span></code></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="n">Ipc_lateVirtioCreate</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg0</span><span class="p">);</span>
+
+<span class="n">RPMessage_lateInit</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg0</span><span class="p">);</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="ipc-server-listening-to-service-requests">
+<h4><span class="section-number">8.4.10.1.2. </span>IPC server (listening to service requests)<a class="headerlink" href="#ipc-server-listening-to-service-requests" title="Permalink to this headline">¶</a></h4>
+<p>After the setup is complete, the server needs to open an endpoint and announce the presence of a service to all other cores.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">RPMessageParams_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">params</span><span class="p">);</span>
+<span class="n">params</span><span class="p">.</span><span class="n">requestedEndpt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ENDPOINT</span><span class="p">;</span>
+<span class="n">params</span><span class="p">.</span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buf</span><span class="p">;</span>
+<span class="n">params</span><span class="p">.</span><span class="n">bufSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufSize</span><span class="p">;</span>
+
+<span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RPMessage_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">myEndPt</span><span class="p">);</span>
+<span class="n">RPMessage_announce</span><span class="p">(</span><span class="n">RPMESSAGE_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">myEndPt</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rpmsg_chrdev&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ENDPOINT</span></code> is chosen so that it is unique for a given core. It can be duplicated on a different core, however.
+Also, you can run multiple <code class="docutils literal notranslate"><span class="pre">rpmsg_chrdev</span></code> services (each having a different user-defined service function) on a given core
+by assigning different endpoint numbers to each of them.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The announcement is done to all the cores with which <strong>virtio</strong> pairing has been done. If a late <strong>virtio</strong> pairing is done with
+any core, the services must be re-announced to them in <code class="docutils literal notranslate"><span class="pre">rpmsg_vdevMonitorFxn()</span></code></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="n">RPMessage_lateInit</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg0</span><span class="p">);</span>
+
+<span class="n">RPMessage_announce</span><span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="w"> </span><span class="n">arg0</span><span class="p">,</span><span class="w"> </span><span class="n">RecvEndPt</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rpmsg_chrdev&quot;</span><span class="p">);</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+</div>
+<p>After the service endpoint is opened, the server can run a loop which listens to incoming messages to the endpoint and calls the service function.
+The sevice function is responsible for sending back any response to the sender, after the sevice has been completed.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="p">(</span><span class="n">TRUE</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">RPMessage_recv</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">Ptr</span><span class="p">)</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">msg_len</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remoteEndPt</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remoteProcId</span><span class="p">,</span>
+<span class="w">                </span><span class="n">IPC_RPMESSAGE_TIMEOUT_FOREVER</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="cm">/* do something with message */</span>
+
+<span class="w">    </span><span class="n">service_func</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">msg_len</span><span class="p">,</span><span class="w"> </span><span class="n">remoteEndPt</span><span class="p">,</span><span class="w"> </span><span class="n">remoteProcId</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">resp_len</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">...</span>
+
+<span class="w">    </span><span class="n">RPMessage_send</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">remoteProcId</span><span class="p">,</span><span class="w"> </span><span class="n">remoteEndPt</span><span class="p">,</span><span class="w"> </span><span class="n">myEndPt</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="n">resp_len</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ipc-client-sending-sevice-requests">
+<h4><span class="section-number">8.4.10.1.3. </span>IPC client (sending sevice requests)<a class="headerlink" href="#ipc-client-sending-sevice-requests" title="Permalink to this headline">¶</a></h4>
+<p>The client application also needs to run a setup code similar to a server application. After the setup is complete, the client needs to find out
+the remote endpoint for a service on a given core</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">RPMessage_getRemoteEndPt</span><span class="p">(</span><span class="n">dstProc</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rpmsg_chrdev&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remoteProcId</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remoteEndPt</span><span class="p">,</span><span class="w"> </span><span class="n">BIOS_WAIT_FOREVER</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once the remote endpoint is identified, the client application can start a loop to send messages and wait for responses</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="p">(</span><span class="n">TRUE</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">RPMessage_send</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">dstProc</span><span class="p">,</span><span class="w"> </span><span class="n">remoteEndPt</span><span class="p">,</span><span class="w"> </span><span class="n">myEndPt</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">Ptr</span><span class="p">)</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">msg_len</span><span class="p">);</span>
+
+<span class="w">    </span><span class="cm">/* wait a for a response message: */</span>
+<span class="w">    </span><span class="n">RPMessage_recv</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">Ptr</span><span class="p">)</span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">resp_len</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remoteEndPt</span><span class="p">,</span>
+<span class="w">            </span><span class="o">&amp;</span><span class="n">remoteProcId</span><span class="p">,</span><span class="w"> </span><span class="n">IPC_RPMESSAGE_TIMEOUT_FOREVER</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="writing-ipc-applications-on-linux">
+<h3><span class="section-number">8.4.10.2. </span>Writing IPC Applications on Linux<a class="headerlink" href="#writing-ipc-applications-on-linux" title="Permalink to this headline">¶</a></h3>
+<p>In linux, the rpmsg char driver is initialised by kernel and it creates a userspace <code class="docutils literal notranslate"><span class="pre">/dev</span></code> entry for each remote <code class="docutils literal notranslate"><span class="pre">rpmsg_chrdev</span></code> service.
+The developer can take advantage of the “ti_rpmsg_char” library to easily connect to a remote endpoint and start communicating.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">rpmsg_char_dev_t</span><span class="w"> </span><span class="o">*</span><span class="n">rcdev</span><span class="p">;</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">dev_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"> </span><span class="cm">/* remote-service-name, defaults to rpmsg_chrdev internally */</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">rproc_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">R5F_MAIN0_0</span><span class="p">;</span><span class="w"> </span><span class="cm">/* relevant remote-proc id */</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="n">rpmsg_char_init</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="n">rcdev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rpmsg_char_open</span><span class="p">(</span><span class="n">rproc_id</span><span class="p">,</span><span class="w"> </span><span class="n">dev_name</span><span class="p">,</span><span class="w"> </span><span class="n">REMOTE_SERVICE_ENDPOINT</span><span class="p">,</span>
+<span class="s">&quot;local-endpoint-name&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>After these steps, the application has an <code class="docutils literal notranslate"><span class="pre">fd</span></code> that can be used for reading and writing messages</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">write</span><span class="p">(</span><span class="n">rcdev</span><span class="o">-&gt;</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">msg_len</span><span class="p">);</span>
+<span class="w">    </span><span class="n">read</span><span class="p">(</span><span class="n">rcdev</span><span class="o">-&gt;</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">resp</span><span class="p">,</span><span class="w"> </span><span class="n">resp_len</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">rpmsg_char_close</span><span class="p">(</span><span class="n">rcdev</span><span class="p">);</span>
+<span class="n">rpmsg_char_exit</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="developer_notes_ethfw.html" class="btn btn-neutral float-right" title="8.5. Developing Ethernet based applications with Linux + RTOS" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer_notes_mcu1_0_sysfw.html" class="btn btn-neutral" title="8.3. MCU1_0 Application Development with SYSFW" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <a href="http://www.ti.com/corp/docs/legal/copyright.shtml">&copy; Copyright 1995-2022</a>, Texas Instruments Incorporated. All rights reserved. <br>
+      <a href="http://www.ti.com/corp/docs/legal/trademark/trademrk.htm">Trademarks</a> | <a href="http://www.ti.com/corp/docs/legal/privacy.shtml">Privacy policy</a> | <a href="http://www.ti.com/corp/docs/legal/termsofuse.shtml">Terms of use</a> | <a href="http://www.ti.com/lsds/ti/legal/termsofsale.page">Terms of sale</a>
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+    <script src="http://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript" charset="utf-8"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+        });
+
+      var menuHeight = window.innerHeight;
+
+      var contentOffset = $(".wy-nav-content-wrap").offset();
+      var contentHeight = $(".wy-nav-content-wrap").height();
+      var contentBottom = contentOffset.top + contentHeight;
+
+      function setNavbarTop() {
+          var scrollTop = $(window).scrollTop();
+          var maxTop = scrollTop + menuHeight;
+
+          // If past the header
+          if (scrollTop > contentOffset.top && maxTop < contentBottom) {
+            stickyTop = scrollTop - contentOffset.top;
+          } else if (maxTop > contentBottom) {
+            stickyTop = scrollTop - contentOffset.top - (maxTop - contentBottom);
+          } else {
+            stickyTop = 0;
+          }
+
+          $(".wy-nav-side").css("top", stickyTop);
+      }
+
+      $(document).ready(function() {
+        setNavbarTop();
+        $(window).scroll(function () {
+          setNavbarTop();
+        });
+      });
+  </script>
+   
+
+</body>
+</html>

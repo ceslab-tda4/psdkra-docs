@@ -1,0 +1,44 @@
+
+System Traffic Profiling using CPTracer on J7
+==============================================
+
+Introduction
+------------
+
+Common platform tracers (CP tracers) are bus probes which capture transaction statistics and logging across
+multiple interfaces on all Keystone devices. The CP tracers available in Keystone 3 are version 2 of the IP
+and provide 3 types of transaction data: throughput statistics, latency statistics, and transaction logging.
+The transaction data from the CP tracers can be captured on an on-chip embedded trace buffer (ETB) or exported
+to the pins to a supported debug probe. CP tracers provide a means to measure performance, identify bottle-necks,
+and pin-point transactions of interest across SoC interfaces.
+
+There are a two ways to use CP tracers: **CCS** and **CToolsLib**.
+
+**System Traffic Profiling Using Code Composer Studio (CCS)**
+
+- Traffic Profiling is available during a debug session on supported Keystone 3 devices via the SoC Analysis menu.
+- Enabling CP tracers via the Traffic Profiling application will provide a completely non-intrusive means of capturing 
+  transaction data without modifying your application code or test bench.
+- Traffic Profiling supports capture to the ETB and debug probes that support pin trace.
+
+**System Traffic Profiling Using CToolsLib**
+
+- CToolsLib is a C software library that provides the APIs necessary to enable CP tracers and capture the trace data
+  for post-processing.
+- Enabling CP tracers within application code will provide fine-grained control of when to capture transaction data.
+- CToolslib only supports capture to the ETB.
+
+.. NOTE::
+
+   - It is HIGHLY recommended to use the CCS based traffic profiling for debug.
+
+Documentation References
+------------------------
+
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+Using CCS       |cptracer_ccs_user_guide|              System traffic profiling using CCS                                               Main Page
+Using ctools    |ctoolslib_user_guide|                 System traffic profiling using CToolsLib                                         Main Page
+=============   ====================================== ================================================================================ =========
+

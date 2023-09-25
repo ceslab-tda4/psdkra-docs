@@ -1,0 +1,173 @@
+
+Developing deep learning applications
+=====================================
+
+.. contents::
+    :local:
+    :depth: 2
+
+Introduction
+------------
+
+TI Jacinto 7 SoCs supports below methods to deploy Deep learning Applications on the device
+
+   - TensorFlow Lite based heterogeneous execution on cortex-A** + C7x-MMA
+   - ONNX Runtime based heterogeneous execution on cortex-A** + C7x-MMA
+   - TVM/Neo-AI-DLR based heterogeneous execution on cortex-A** + C7x-MMA
+   - OpenVX API in A72 to execute complete CNN model on C7x-MMA
+
+
+OpenVX API in A72 to execute complete CNN model on C7x-MMA
+**********************************************************
+TI Deep Learning Product is a deep learning inference engine to accelerate your deep learning networks on TI Jacinto 7 SoCs.
+TIDL runs on C7x/MMA. TI OpenVX allows to access TIDL from A72. Hence to use TIDL in system
+scenario one need to understand the TIDL Product and also how to use it from within OpenVX.
+
+This developer note describes the high level steps one should follow to know more about TIDL and how to run custom
+networks on TI SoC using TIDL.
+
+.. NOTE::
+
+   - It is HIGHLY recommended to follow the steps listed below to run your networks on EVM.
+   - DO NOT skip the steps listed in `Steps to run your custom network with TIDL Runtime`_.
+     Each step verifies a certain aspect of the custom network and would help better
+     identify and isolate issues in network execution.
+
+TFLite Runtime based Heterogeneous Execution on A72+C7x-MMA
+***********************************************************
+The Processor SDK implements heterogeneous execution of CNN models on A72 and C7x-MMA using the
+`TensorFlow Lite <https://www.tensorflow.org/lite/guide/inference/>`__ runtime. This heterogeneous execution enables:
+
+   - TensorFlow Lite as the top level inference API for user applications
+   - Offloading subgraphs to C7x/MMA for accelerated execution with TIDL
+   - Executing layers on the ARM A72 core for layers that are not supported by TIDL
+
+Please refer section |tidl_osr_tflrt_tidl| for detailed instruction on usage.
+
+ONNX Runtime based Heterogeneous Execution on A72+C7x-MMA
+***********************************************************
+The Processor SDK implements heterogeneous execution of CNN models on A72 and C7x-MMA using the
+`ONNX <https://www.onnxruntime.ai//>`__ runtime. This heterogeneous execution enables:
+
+   - ONNX Runtime as the top level inference API for user applications
+   - Offloading subgraphs to C7x/MMA for accelerated execution with TIDL
+   - Executing layers on the ARM A72 core for layers that are not supported by TIDL
+
+Please refer section |tidl_osr_onnxrt_tidl| for detailed instruction on usage.
+
+TVM/Neo-AI-DLR based Heterogeneous Execution on A72+C7x-MMA
+***********************************************************
+The Processor SDK implements heterogeneous execution of CNN models on A72 and C7x-MMA using the
+`TVM <https://tvm.apache.org/>`__ runtime and `Neo-AI-DLR <https://github.com/neo-ai/neo-ai-dlr>`__
+runtime. This heterogeneous execution enables:
+
+   - TVM/Neo-AI-DLR as the top level inference API for user applications
+   - Offloading subgraphs to C7x/MMA for accelerated execution with TIDL
+   - Generating code and running on the ARM A72 core for layers that are not supported by TIDL
+
+Please refer section |tidl_osr_tvm_tidl| for detailed instruction on usage.
+
+Documentation References
+------------------------
+
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+TIDL            |tidl_user_guide|                      TIDL Product on C7x                                                              Main Page
+TIDL            |tidl_osr_tflrt_tidl|                  TensorFlow Lite Runtime                                                          Open Source Runtime > TensorFlow Lite Runtime
+TIDL            |tidl_osr_onnxrt_tidl|                 ONNX Runtime                                                                     Open Source Runtime > ONNX Runtime
+TIDL            |tidl_osr_tvm_tidl|                    TVM/Neo-AI DLR                                                                   Open Source Runtime > TVM/Neo-AI DLR
+TI OpenVX       |tiovx_user_guide|                     TIDL OpenVX Node API on A72                                                      TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxTIDLNode
+vision apps     |vision_apps_user_guide|               Deep Learning Applications                                                       Application / Demos > DL Demos
+vision apps     |vision_apps_user_guide|               Pre/post processing sample OpenVX nodes                                          APIs > TI defined OpenVX Kernels for Vision Apps > TIVX Kernels for Image Pre/Post Processing
+=============   ====================================== ================================================================================ =========
+
+Source Code References
+----------------------
+
+=============   ===================================================================================================== ==============================================
+SDK Component   File / Folder                                                                                         Decription
+=============   ===================================================================================================== ==============================================
+TIDL            c7x-mma-tidl/ti_dl/inc/itidl_ti.h                                                                     TIDL Product interface on C7x
+TIDL            c7x-mma-tidl/arm-tidl/rt/out/PC/x86_64/LINUX/release/PC_dsp_test_dl_algo_host_rt.out                  Standalone TIDL Runtime Host emulation executable
+TIDL            c7x-mma-tidl/arm-tidl/rt/out/J721E/A72/LINUX/release/TI_DEVICE_armv8_test_dl_algo_host_rt.out         TIDL A72 executable for running model on C7x-MMA using openVX
+TIDL            c7x-mma-tidl/ti_dl/demos/readme.txt                                                                   TFLite Runtime Demo doing file based image classification
+TIDL            c7x-mma-tidl/ti_dl/demos/readme.txt                                                                   ONNX Runtime Demo doing file based image classification
+TIDL            c7x-mma-tidl/ti_dl/demos/readme.txt                                                                   NEO-AI-DLR Demo doing file based image classification
+TI OpenVX       c7x-mma-tidl/arm-tidl/tiovx_kernels/tidl                                                              TIDL OpenVX Node implementation on C7x and A72
+TI OpenVX       c7x-mma-tidl/arm-tidl/tiovx_kernels/include/TI/j7_tidl.h                                              TIDL OpenVX Node interface on A72
+vision apps     vision_apps/apps/dl_demos/app_tidl                                                                    TIDL OpenVX Demo doing file based image classification
+vision apps     vision_apps/apps/dl_demos/app_tidl_cam                                                                TIDL OpenVX Demo doing camera based image classification
+vision apps     vision_apps/apps/dl_demos/app_tidl_od                                                                 TIDL OpenVX Demo doing file based object detection
+vision apps     vision_apps/apps/dl_demos/app_tidl_seg                                                                TIDL OpenVX Demo doing file based semantic segmentation
+vision apps     vision_apps/apps/dl_demos/app_tidl_vl                                                                 TIDL OpenVX Demo doing file based visual localization
+vision apps     vision_apps/apps/dl_demos/app_tidl_avp*                                                               TIDL OpenVX Demo doing Auto valet parking applications
+vision apps     vision_apps/kernels/img_proc                                                                          Pre/post processing sample OpenVX nodes
+=============   ===================================================================================================== ==============================================
+
+Steps to run your custom network with TIDL Runtime
+--------------------------------------------------
+
+Step 1: Import your network to TIDL Runtime network format
+**********************************************************
+
+- See TIDL Product user guide [|tidl_user_guide|], section **TIDL Runtime > TIDL-RT Getting Started**
+
+.. IMPORTANT::
+
+   Make sure your network only uses the TIDL runtime supported layers. See TIDL product user guide [|tidl_user_guide|], section **TIDL Runtime > TIDL-RT Supported layers**
+
+- Proceed to next step, after network import is successful.
+
+Step 2: Run the imported TIDL network in PC HOST emulation mode
+***************************************************************
+
+- Run the newly imported network on PC to confirm that TIDL runtime can execute this network.
+- See TIDL user guide [|tidl_user_guide|], section **TIDL Runtime > TIDL-RT Inference**
+- Proceed to next step, after network execution on PC is successful.
+
+.. NOTE::
+
+   - Typically one can use the pre-built executable and no need to build the executable from source.
+   - It is enough to run test the network with 1-2 frames at this step
+   - Here the actual execution speed will be slow since its running in a emulated manner on PC
+
+Step 3: Run the imported TIDL network on EVM with OpenVX (non-pipelined mode)
+*****************************************************************************
+
+- Run the newly imported network on EVM with OpenVX. Here one can feed more number of frames.
+  Use Linux to feed a large number of frames and/or visualize the output on display
+- Choose and customize the demos as per your need,
+
+    - **vision_apps/apps/dl_demos/app_tidl** for image classification
+    - **vision_apps/apps/dl_demos/app_tidl_od** for object detection
+    - **vision_apps/apps/dl_demos/app_tidl_seg** for semantic segmentation
+    - **vision_apps/apps/dl_demos/app_tidl_cam** for camera based image classification
+
+.. IMPORTANT::
+
+   By default the demos are customized to run with a pre-trained network and specific pre/post processing requirements.
+   You will need to modify these demos to run and visualize your DL network as required.
+
+.. NOTE::
+
+   - In these demos, pre-processing, inference, post processing, visualization are all run on different cores.
+   - By default they run in a pipeline execution manner but can be made to run back-to-back
+     by NOT defining APP_ENABLE_PIPELINE_FLOW macro in respective demo's **vision_apps/apps/dl_demos/app_tidl_XXX/main.c** file.
+   - However this is not the most optimal from system execution point of view, since
+     in final system many of these steps can be pipelined at frame boundary to allow overall higher system FPS.
+
+Step 4: Run the imported TIDL network on EVM with OpenVX (pipelined mode)
+*****************************************************************************
+
+- At this stage you may want to run your network with rest of system processing like
+  camera or display or other networks.
+- Now you can make your own application according to your system requirements.
+- To get maximum performance in system, one must pipeline TIDL network execution with
+  other processing like camera, pre-processing, post-processing, visualization, display
+
+.. NOTE::
+   - Start with single network, single task demo applications such as app_tidl_od, app_tidl_seg or app_tidl_cam, modify to run your DL network.
+   - Refer to other Auto Valet Parking Demos to perform more tasks such as running multiple networks, multiple cameras, multiple tasks etc.
+
+

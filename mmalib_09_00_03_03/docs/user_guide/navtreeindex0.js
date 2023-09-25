@@ -1,0 +1,27 @@
+var NAVTREEINDEX0 =
+{
+"BUILD_INSTRUCTIONS.html":[2],
+"BUILD_INSTRUCTIONS.html#build_instructions":[2,0],
+"TI_DISCLAIMER.html":[3],
+"group__MMALIB__CNN.html":[1,1],
+"group__MMALIB__CNN__convolve__col__smallNo__ixX__ixX__oxX.html":[1,1,0],
+"group__MMALIB__CNN__convolve__col__smallNo__ixX__ixX__oxX__reorderWeights.html":[1,1,0,0],
+"group__MMALIB__CNN__convolve__row__ixX__ixX__oxX.html":[1,1,1],
+"group__MMALIB__CNN__deconvolve__row__ixX__ixX__oxX.html":[1,1,2],
+"group__MMALIB__CNN__fullyConnected__ixX__ixX__oxX.html":[1,1,3],
+"group__MMALIB__CNN__pixelShuffle__row__ixX__ixX__oxX.html":[1,1,4],
+"group__MMALIB__CNN__tensor__convert__ixX__oxX.html":[1,1,5],
+"group__MMALIB__COMMON.html":[1,0],
+"group__MMALIB__DSP.html":[1,2],
+"group__MMALIB__DSP__firSmall__ixX__ixX__oxX.html":[1,2,0],
+"group__MMALIB__DSP__fir__ixX__ixX__oxX.html":[1,2,1],
+"group__MMALIB__LINALG.html":[1,3],
+"group__MMALIB__LINALG__matrixMatrixMultiplyAccumulate__ixX__ixX__ixX__oxX.html":[1,3,0],
+"group__MMALIB__LINALG__matrixMatrixMultiply__ixX__ixX__oxX.html":[1,3,1],
+"group__MMALIB__LINALG__matrixTranspose__ixX__oxX.html":[1,3,2],
+"group__MMALIB__LINALG__pointwiseMatrixMatrixMultiply__ixX__ixX__oxX.html":[1,3,3],
+"index.html":[],
+"index.html":[0],
+"modules.html":[1],
+"pages.html":[]
+};

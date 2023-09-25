@@ -1,0 +1,56 @@
+
+Release Notes
+^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   release_notes_09_00_00_j7200
+   release_notes_09_00_00_j721s2
+   release_notes_09_00_00_j784s4
+   release_notes_09_00_00_j721e
+   release_notes_08_06_00_j7200
+   release_notes_08_06_00_j721s2
+   release_notes_08_06_00_j784s4
+   release_notes_08_06_00_j721e
+   release_notes_08_05_00_j7200
+   release_notes_08_05_00_j721s2
+   release_notes_08_05_00_j784s4
+   release_notes_08_05_00_j721e
+   release_notes_08_04_04_j7200
+   release_notes_08_04_03_j721s2
+   release_notes_08_04_03_j784s4
+   release_notes_08_04_00_j7200
+   release_notes_08_04_00_j721e
+   release_notes_08_04_00_j721s2
+   release_notes_08_02_02_j784s4_ea2
+   release_notes_08_02_01_j784s4_ea1
+   release_notes_08_02_01_j784s4_eea
+   release_notes_08_02_00_am65xx
+   release_notes_08_02_00_j7200
+   release_notes_08_02_00_j721e
+   release_notes_08_00_04_ea4_j721s2
+   release_notes_08_01_00_am65xx
+   release_notes_08_01_00_j7200
+   release_notes_08_01_00_j721e
+   release_notes_08_00_03_ea3_j721s2
+   release_notes_08_00_03_ea2_j721s2
+   release_notes_08_00_03_ea1_j721s2
+   release_notes_08_00_00_am65xx
+   release_notes_08_00_00_j7200
+   release_notes_08_00_00_j721e
+   release_notes_07_03_00_am65xx
+   release_notes_07_03_00_j7200
+   release_notes_07_03_00_j721e
+   release_notes_07_02_00_j7200
+   release_notes_07_02_00_j721e
+   release_notes_07_01_01_j7200
+   release_notes_07_01_00_j721e
+   release_notes_07_01_00_j7200
+   release_notes_07_01_00_am65xx
+   release_notes_07_00_00
+   release_notes_07_00_00_am65xx
+   release_notes_06_02_00
+   release_notes_06_01_01
+   release_notes_06_01_00
+   release_notes_06_00_01

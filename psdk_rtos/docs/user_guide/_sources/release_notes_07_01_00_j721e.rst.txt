@@ -1,0 +1,297 @@
+
+Release notes - 07_01_00
+========================
+
+Features
+--------
+
+.. NOTE::
+
+   New features vs previous release are marked in **bold**
+
+
+Hardware support
+^^^^^^^^^^^^^^^^
+
+#. |dev_platform| Alpha and Beta EVM support with Leo **and Hera** PMIC processor board
+#. Fusion1 RevC daughter card with UB960 FPDLink deserializer
+#. IMX390 2MP CSI2 image sensor + UB953 FPDLink serializer
+#. AR0233 2.5MP CSI2 image sensor + UB953 FPDLink serializer
+#. AR0820 8MP CSI2 image sensor + UB953 FPDLink serializer
+#. GESI(Gateway/Ethernet Switch/Industrial) daughter card (for additional ethernet and CAN ports)
+#. Infotainment daughter card (for HDMI output)
+
+Software features
+^^^^^^^^^^^^^^^^^
+
+.. IMPORTANT::
+
+   Below is a summary of key features. Refer individual :ref:`sdk_components` release notes for more details
+
+Vision Apps (ADAS, Vision, DL demos)
+""""""""""""""""""""""""""""""""""""
+
+- OpenVX based demos for ADAS, Vision, deep learning applications
+
+  - TI-RTOS on C7x, C6x, R5F and Linux on A72
+  - Integrates all major PSDK RTOS and PSDK LINUX SW components like TIDL, MMALIB, PDK, OpenVX, ETHFW, OpenGL, video codec, C6x algorithms, imaging/sensors, IPC, Linux, TI-RTOS, SPL/uboot.
+  - Integrates all major HW components like CSI2 camera, eDP/HDMI display, UART, I2C, ethernet, SD card
+
+- Deep Learning demos
+
+  - Image Classification demo
+
+    - File based
+    - Camera based
+
+  - Standalone Semantic Segmentation application
+
+  - Standalone Object Detection application
+
+  - Auto valet parking (AVP) demo
+
+    - semantic segmentation, Parking spot detect and Vehicle detect algorithms
+    - 1 channel, 3 algo mode (AVP1 demo)
+    - 3 channel, 3 algo mode - combined network for parking spot and vehicle detect (AVP2 demo)
+    - 3 channel, 5 algo mode - combined network for parking spot and vehicle detect + Three task network for Semantic Segmentation, Motion Segmentation and Depth Estimation (AVP3 demo)
+
+  - **DKAZE-based Visual Localization application**
+
+  - Debug support for the ability to debug intermediate layer information from TIDL node
+
+- Surround view demos
+
+  - 3D surround view using GPU on 4x 2MP 30fps live camera input
+  - 3D surround view calibration application
+
+- 3D Surround view + AVP2 demo running simultaneously
+
+  - 3D surround view using GPU on 4x2MP 30fps live camera input
+  - 3 channel, 3 algo mode - combined network for parking spot and vehicle detect (AVP2 demo)
+
+- ADAS/Vision demos
+
+  - Dense optical flow (DOF) demo
+  - Stereo disparity engine demo
+  - Single and multi camera to display (CSI2RX + VISS + LDC + MSC + Display) demo
+  - Multi camera to encoder (CSI2RX + VISS + LDC + MSC + Encoder) demo
+  - Block based processing example kernel on C66x using UDMA/DRU
+  - C7x algorithm offload demo
+
+- Perception Toolkit (PTK) Demos
+
+  - Camera based SFM and occupancy grid mapping using Dense optical flow HW engine
+  - Radar and lidar occupancy grid mapping
+  - Camera SFM, radar, lidar fusion for occupancy grid mapping
+
+- OpenVX target nodes
+
+  - image pre-processing (YUV 2 RGB) nodes for DL demos
+  - image post-processing and visualization nodes for deep learning, DOF, Stereo demos
+  - lidar, radar, camera SFM nodes for PTK demos
+  - OpenGL nodes for surround view
+
+- Profiling, logging and other utility APIs
+
+- All included MCU tasks are split between MCU2_0 (ETHFW, VPAC HWA) and MCU2_1 (DMPAC HWA), leaving MCU3_0 and MCU3_1 free on main island
+
+Gateway Demos
+"""""""""""""
+- CAN-Ethernet gateway demo to showcase routing between CAN-to-CAN, CAN-to-Ethernet, Ethernet-to-Ethernet and Ethernet-to-CAN using IEEE 1722 protocol
+
+Platform Development Kit (PDK)
+""""""""""""""""""""""""""""""
+
+- RTOS device drivers running on |rtos_cores|, A72
+- Supported drivers and modules
+
+  - Board diagnostic library
+  - ENET CPSW (2G and |cpsw_port_num|\ G), CPTS, SGMII/QSGMII
+  - CSL-FL (Chip support library)
+  - GPIO
+  - I2C
+  - IPC (inter processor communication)
+  - McASP
+  - MMCSD with FATFS (A72 with RTOS)
+  - OSAL
+  - SBL secondary bootloader
+  - SCI Client (DMSC interface)
+  - SPI driver (SPI, QSPI, OSPI, Hyperflash)
+  - UART
+  - UDMA and DRU
+  - DSS display (DSI, eDP and HDMI, BT601 discrete sync mode)
+  - CSI2-RX camera - **support for runtime addition/removal of channels**
+  - CSI2-TX
+  - VPAC and DMAC (VHWA)
+  - **PMIC Driver for LP8764x(Hera)**
+
+MCU Software (MCUSW)
+""""""""""""""""""""
+- AutoSAR MCAL driver and demo applications running on R5F
+- AutoSAR MCAL driver for Adc, Can, CDD IPC,Dio, Eth, Gpt, Pwm, Spi & Wdg
+
+  - **Pwm : based on EHRPWM**, **CDD IPC with Linux**
+- **AUTOSAR Specification Version: 4.3.1**
+- Migrated Gpt & Dio MCAL to AUTOSAR 4.3.1 specification
+- Ethernet CPSW 2G & CPSW\ |cpsw_port_num|\ G MCAL driver
+- MCU Demo Applications
+
+  - CAN Profiling Application
+  - CDD IPC Profiling Application
+  - SPI IPC Profiling Application
+
+TI Deep learning Library (TIDL) and MMALIB
+""""""""""""""""""""""""""""""""""""""""""
+- Optimized performance for higher resolutions (upto 2 MP)
+- TIDL deep learning inference engine library running on C7x/MMA
+- MMALIB for accelerating convolution, deconvolution layers on MMA (used by TIDL internally)
+- TIDL network import tool and performance analyzer tool
+- Supports Caffe, ONXX, TFlite network import formats
+- Supported layers: Convolution, deconvolution, pooling, ReLU, Elt-wise, Inner product, Soft-max, and many more, refer TIDL user guide (|tidl_user_guide|)
+- Custom / User defined layer Call-back to plugin user specific layers
+- **Post Training Quantization options for 8-bit inference**
+- **Optimized Object detection Post Processing Layer**
+- **NEO-AI-DLR support - TVM model compilation for heterogeneous execution (ARM+C7x-MMA)**
+- **Support for Additional layers - Sigmoid layer, Standalone Pad layer, Color conversion (YUV420SP to RGB) Layer, Depth to Space (Pixel Shuffle) Layer**
+
+TI OpenVX (TIOVX)
+"""""""""""""""""
+- OpenVX v1.1 compliant implementation with graph pipelining and user data object extension support
+- OpenVX API on A72 running Linux/QNX
+- OpenVX target kernels on C7x, C6x, R5F, A72
+- OpenVX v1.1 C6x kernels
+- OpenVX nodes for
+
+  - TIDL (C7x-MMA)
+  - VISS (R5F)
+  - LDC (R5F)
+  - MSC (multi-scalar) (R5F)
+  - Pyramid (using MSC) (R5F)
+  - Dense Optical Flow (R5F)
+  - Stereo Disparity Engine (R5F)
+  - BLNF (bilateral noise filter) (R5F)
+  - CSI2-RX camera (R5F)
+  - CSI2-TX (R5F)
+  - Display (eDP and HDMI) (R5F)
+  - Video decode (R5F)
+  - Video encode (R5F)
+- OpenVX tutorials for getting started
+- PyTIOVX tools for target kernel code generation
+- **Performance Analyzer tool for run time logging of OpenVX graphs**
+
+TI OpenVX (TIOVX) with ROS Development Framework
+""""""""""""""""""""""""""""""""""""""""""""""""
+- **TI Vision Apps Library deployed on the J721e target that enables building applications directly on the target**
+- **Docker container environment on J721e for TIOVX + ROS development framework**
+- **Demo applications developed in TIOVX + ROS framework**
+
+  - **Stereo vision processing node accelerated on LDC and SDE**
+  - **CNN semantic segmentation node with TIDL running on C7x/MMA**
+- **Available on a public GIT repository** `here <https://git.ti.com/cgit/processor-sdk-vision/jacinto_ros_perception/about>`__.
+
+Imaging
+"""""""
+- IMX390 2MP sensor driver (30/60fps) with IQ tuning
+- AR0233 2.5MP sensor driver with IQ tuning
+- AR0820 8MP sensor driver with IQ tuning
+- TI Auto-exposure and auto white-balance algorithms
+
+  - AEWB framework improvements to image quality and performance
+- Support for UB960 broadcast mode
+- Live Tuning Runtime interaction with PC tuning tool over Ethernet
+
+Ethernet Switch Firmware (ETHFW)
+""""""""""""""""""""""""""""""""
+- Ethernet firmware interface API
+- Ethernet switch firmware running on R5F for CPSW9G (or **CPSW5G**)
+- Layer 2 switching
+- NDK integration
+- Remote switch configuration server
+- GUI switch configuration tool
+- Inter VLAN routing
+- IP next header filtering
+- Rate limiting
+- CPSW Proxy/Server layer for remote core integration
+- Integration with AutoSAR Eth Virtual MAC driver
+- PTP Support
+
+TI Autonomous Driving Algorithms (TIADALG)
+""""""""""""""""""""""""""""""""""""""""""
+- Image pre-processing APIs for color plane conversion and separation YUV to RGB for DL applications (C6x optimized)
+- Camera Pose estimation API using solve pnp technique (C6x optimized)
+- Visual localization algorithm (C6x optimized)
+
+Video Codecs
+""""""""""""
+- Single and multi channel (up to 2 channel) H264 decoder on RTOS R5F
+- Upto 1080p resolution, I and I+P frame
+- 8bit NV12 output
+- Single and multi channel (up to 2 channel) H264 encoder on RTOS R5F
+- Upto 1080p resolution, I and I+P frame
+- 8bit NV12 input
+
+TI-RTOS
+"""""""
+- SysBIOS for |rtos_cores|
+- Network developer kit (NDK) on R5F
+
+Code Gen Tools (CGT)
+""""""""""""""""""""
+- TI Compiler, assembler, linker for |rtos_cores|
+- |separate_download|
+
+Device Support and Validation Information
+-----------------------------------------
+
++------------------------+-------------------------------+----------------------------------+-------------------------------------------+
+| SoC                    | Build Host (OS)               | Run Target (OS)                  | Test Plaform                              |
++========================+===============================+==================================+===========================================+
+| |dev_platform|         | x86_64 (Linux Ubuntu 18.04)   | |rtos_cores| running TI-RTOS     | |dev_platform| EVM with daughter cards    |
+|                        |                               |                                  |                                           |
+|                        |                               | A72 running Linux or QNX         |                                           |
++------------------------+-------------------------------+----------------------------------+-------------------------------------------+
+| PC emulation mode (1)  | x86_64 (Linux Ubuntu 18.04)   | x86_64 (Linux Ubuntu 18.04)      | x86_64 (Linux Ubuntu 18.04)               |
++------------------------+-------------------------------+----------------------------------+-------------------------------------------+
+
+\(1\) Requires download of addon package from mySecure Software
+
+
+Upgrade and Compatibility
+-------------------------
+In this section, we only highlight a few significant changes in this SDK.  For full list of upgrade and
+compatibility topics, please refer to individual components release notes :ref:`sdk_components`.
+
+System Firmware Architecture Upgrade (PDK)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This release introduces the new architecture for System firmware where the TI Foundational Security (TIFS)
+is running on the DMSC and Power Management & Resource Management (collectively known as Device Management (DM))
+runs as a library on the MCU1_0 R5F. Refer to following pages for more details:
+
+- :ref:`mcu1_0_app_with_sysfw` : Top-level SDK developer note
+- |tisci_migration| : Specific details on SYSFW achitecture change in the PDK user guide
+
+ENET LLD (PDK)
+^^^^^^^^^^^^^^
+Low-level driver support for CPSW Ethernet peripherals has been migrated from CPSW LLD to Enet LLD.  This change comes
+with API name changes.  More details of this change can be found in the Upgrade and Compatibility section of the PDK
+Release Notes: |pdk_release_notes|
+
+SDK Name and packaging (SDK)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- Even though much of the source code of components within the SDK can apply to several devices, several components in
+  this SDK come prebuilt only with binaries for this specific device, to better optimize the growing SDK memory size.
+- The SDK is now delivered as a package installer instead of a tar ball.
+- The name and several references in the SDK to "auto" or "automotive" have been removed since the applications that the
+  SDK supports are broader than just the automotive market (such as robotics, and industrial automation).
+
+
+Known Issues
+------------
+
+Refer to individual :ref:`sdk_components` release notes for known issues in each component
+
+Additional Reports
+------------------
+
+For additional reports like test report, traceability refer [|psdkra_additional_reports|] (or ${PSDK RTOS_PATH}/psdk_rtos/docs/additional_reports in package)
+

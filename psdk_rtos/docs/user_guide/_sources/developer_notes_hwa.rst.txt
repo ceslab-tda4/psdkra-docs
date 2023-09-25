@@ -1,0 +1,171 @@
+
+Developing HW accelerator applications with OpenVX
+==================================================
+
+Introduction
+------------
+
+Jacinto 7 SoC supports various HW accelerators (HWAs) like VPAC, DMPAC, camera, display, CSITX.
+OpenVX provides nodes for these HWAs which allows developers to easily incorporate these features in
+their applications from A72.
+
+OpenVX HWA nodes run on R5F and use drivers from within PDK or other components to access the HW interfaces.
+Further for camera, one needs to also program an external image sensor, typically via I2C.
+And for display one needs to sometimes program an external video encoder, typically via I2C.
+Both the image sensor and video encoder programming is done in PSDK RTOS from R5F.
+
+The scope of this developer note is to point to various documentation and source code resources available
+within the SDK to understand and use HWA's in a user application.
+
+Documentation References
+------------------------
+
+Device Drivers for HWA's
+************************
+
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+PDK             |pdk_trainings|                        CSI2RX, CSI2TX, DSS, VHWA (VPAC, DMPAC) HW and driver overview                   Trainings
+PDK             |pdk_api_guide|                        CSI2RX API on R5F                                                                CSI2RX Driver
+PDK             |pdk_api_guide|                        CSI2TX API on R5F                                                                CSI2TX Driver
+PDK             |pdk_api_guide|                        DSS (Display Sub sustem) API on R5F                                              DSS Driver
+PDK             |pdk_api_guide|                        VHWA (VPAC, DMPAC) API on R5F                                                    VHWA Driver
+PDK             |pdk_api_guide|                        I2C API on R5F                                                                   I2C Driver
+=============   ====================================== ================================================================================ =========
+
+OpenVX nodes for HWA's
+**********************
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+TI OpenVX       |tiovx_user_guide|                     Capture OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxCaptureNode
+TI OpenVX       |tiovx_user_guide|                     Display OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxDisplayNode
+TI OpenVX       |tiovx_user_guide|                     VISS    OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxVpacVissNode
+TI OpenVX       |tiovx_user_guide|                     LDC     OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxVpacLdcNode
+TI OpenVX       |tiovx_user_guide|                     NF      OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxVpacNfGenericNode, tivxVpacNfBilateralNode
+TI OpenVX       |tiovx_user_guide|                     MSC     OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxVpacMscScaleNode, tivxVpacMscPyramidNode
+TI OpenVX       |tiovx_user_guide|                     DOF     OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxDmpacDofNode
+TI OpenVX       |tiovx_user_guide|                     SDE     OpenVX Node API on A72                                                   TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxDmpacSdeNode
+TI OpenVX       |tiovx_user_guide|                     CSITX OpenVX Node API on A72                                                     TIOVX User Guide > TIOVX Support Kernels > TI Extension Kernels > tivxCsitxNode
+Imaging         |imaging_user_guide|                   Auto-exposure and auto white-balance (2A) OpenVX nodes                           Main Page
+=============   ====================================== ================================================================================ =========
+
+Image sensor and display video encoder programming
+**************************************************
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+Imaging         |imaging_user_guide|                   Image sensor drivers and framework                                               Main Page
+vision apps     |vision_apps_user_guide|               Display controller control APIs                                                  APIs > Utility and infrastructure APIs > Display controller remote service APIs
+vision apps     |vision_apps_user_guide|               Display sub-system eDP/HDMI init APIs                                            APIs > Utility and infrastructure APIs > Display subsystem initialization APIs
+=============   ====================================== ================================================================================ =========
+
+Demo applications for HWA's
+***************************
+=============   ====================================== ================================================================================ =========
+SDK Component   Documentation                          Description                                                                       Section
+=============   ====================================== ================================================================================ =========
+vision apps     |vision_apps_user_guide|               Capture + VISS + LDC + MSC + Display Demo Application (Single channel)           Application / Demos > Basic Demos > Single Camera VPAC Application
+vision apps     |vision_apps_user_guide|               Capture + VISS + LDC + MSC + Display Demo Application (Multi channel)            Application / Demos > Basic Demos > Multi Camera VPAC Application
+vision apps     |vision_apps_user_guide|               File IN + MSC + DOF + Display Demo Application                                   Application / Demos > Basic Demos > Dense Optical Flow Application
+vision apps     |vision_apps_user_guide|               File IN + SDE + Display Demo Application                                         Application / Demos > Basic Demos > Stereo Disparity Application
+=============   ====================================== ================================================================================ =========
+
+Source Code References
+----------------------
+
+Device Drivers for HWA's
+************************
+
+=============   ============================================================================== ===============================================================
+SDK Component   File / Folder                                                                  Description
+=============   ============================================================================== ===============================================================
+PDK             pdk/packages/ti/drv/csirx/csirx.h                                              CSI2RX driver interface on R5F
+PDK             pdk/packages/ti/drv/dss/dss.h                                                  DSS driver interface on R5F
+PDK             pdk/packages/ti/drv/vhwa/include                                               VPAC, DMPAC driver interface on R5F
+PDK             pdk/packages/ti/drv/i2c/I2C.h                                                  I2C driver interface on R5F
+PDK             pdk/packages/ti/drv/board/                                                     Board drivers for display video encoder on R5F
+PDK             pdk/packages/ti/drv/csitx/csitx.h                                              CSI2TX driver interface on R5F
+=============   ============================================================================== ===============================================================
+
+OpenVX nodes and conformance tests for HWA's
+********************************************
+
+=============   ============================================================================== ===============================================================
+SDK Component   File / Folder                                                                  Description
+=============   ============================================================================== ===============================================================
+TI OpenVX       imaging/kernels/hwa/                                                           HWA OpenVX node implementation on R5F and A72
+TI OpenVX       imaging/kernels/include/TI/``*``.h                                             HWA OpenVX node interface on A72
+TI OpenVX       imaging/kernels/hwa/test/                                                      HWA TI OpenVX conformance tests (simple unit level examples)
+Imaging         imaging/kernels/aewb                                                           2A OpenVX node implementation on R5F and A72
+=============   ============================================================================== ===============================================================
+
+Image sensor and display video encoder programming
+**************************************************
+=============   ============================================================================== ===============================================================
+SDK Component   File / Folder                                                                  Decription
+=============   ============================================================================== ===============================================================
+Imaging         imaging/sensor_drv/include/iss_sensors.h                                       Image sensor programming interface on A72
+Imaging         imaging/sensor_drv/src                                                         Image sensor drivers on R5F and snesor framework on R5F and A72
+vision apps     vision_apps/utils/dss                                                          Display controller APIs on A72/R5F and eDP/HDMI selection on R5F
+=============   ============================================================================== ===============================================================
+
+Demo applications for HWA's
+***************************
+=============   ============================================================================== ===============================================================
+SDK Component   File / Folder                                                                  Decription
+=============   ============================================================================== ===============================================================
+vision apps     vision_apps/apps/basic_demos/app_single_cam                                    Capture + Display OpenVX Demo application (single channel)
+vision apps     vision_apps/apps/basic_demos/app_multi_cam                                     Capture + Display OpenVX Demo application (multi channel)
+vision apps     vision_apps/apps/basic_demos/app_dof                                           DOF OpenVX Demo application
+vision apps     vision_apps/apps/basic_demos/app_stereo                                        Stereo OpenVX Demo application
+=============   ============================================================================== ===============================================================
+
+SL2 Allocation Guide
+--------------------
+
+The below tables describes the SL2 allocation for inputs and outputs by the VPAC.  The total SL2 size currently reserved is around 326KB.
+
+The driver calculates the total memory required and reserves at init time.  It allocates from this reserved memory based on resolution.
+
+SL2 for VPAC Input 
+******************
+====== ===== ====== === ===== ======= =====
+Module Width Height BPP Depth Padding Total
+====== ===== ====== === ===== ======= =====
+LDC    0     0      0   0     0       0
+VISS   1920  1      2   3     64      11584
+VISS   1920  1      2   3     64      11584
+VISS   1920  1      2   3     64      11584
+MSC    1920  1      2   6     64      23104
+MSC    1920  1      2   6     64      23104
+NF     1920  1      2   6     64      23104
+====== ===== ====== === ===== ======= =====
+
+
+SL2 for VPAC Output 
+*******************
+====== ===== ====== === ===== ======= =====
+Module Width Height BPP Depth Padding Total
+====== ===== ====== === ===== ======= =====
+LDC    192   80     2   2     0       61440
+LDC    192   80     2   2     0       61440
+VISS   1920  1      2   2     64      7744
+VISS   1920  1      2   2     64      7744
+VISS   1920  1      1   2     64      3904
+VISS   1920  1      1   2     64      3904
+VISS   1920  1      1   2     64      3904
+VISS                                  2048
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      2   2     64      7744
+MSC    1920  1      4   2     64      15424
+====== ===== ====== === ===== ======= =====

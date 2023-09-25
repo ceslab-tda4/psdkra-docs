@@ -1,0 +1,318 @@
+
+Enabling TI's inline ECC for DDR
+================================
+
+Introduction
+------------
+
+For continuously validating data integrity in SDRAM, TI's proprietary inline ECC for J7 class of devices is the recommended approach which reduces the impact on overall system performance to a minimum. The ECC syndromes are interleaved alongside with data thereby avoiding the need for a dedicated RAM and accompanying infra for propagation of the syndromes. This document captures the steps involved in enabling ECC and also provides general guidelines while applying ECC to different code/data/buffer sections in the DDR. This is only a supplemental document to the section "Inline ECC for SDRAM Data" under DDRSS MSMC2DDR Bridge chapter, available as part of `AM752x/DRA829/TDA4xM TRM <https://www.ti.com/lit/pdf/spruil1>`_
+
+.. IMPORTANT::
+    While enabling TI's inline ECC in the MSMC2DDR bridge the inline ECC in the DDR controller must be **turned OFF**. 
+
+    .. code:: bash
+
+        Set DDRSS_CTL_206[17-16] ECC_ENABLE to 0x00
+    
+    Please refer to the TRM for more details.
+
+Data arrangement in DDR when ECC is enabled
+-------------------------------------------
+
+8-bit single error correction double error detection (SECDED) ECC is calculated over 64-bit data quanta. For every 512-byte data block 64 bytes of ECC is stored inline. Thus 1/9th of the total SDRAM space is used for ECC storage and the rest 8/9th is available for system use. From system point of view that 8/9th of the SDRAM data space are seen as consecutive byte addresses. Even if there are non-ECC protected regions the previously described 1/9th-8/9th rule still applies and consecutive byte addresses are seen from system point of view.
+
+
+Steps to prepare DDR for ECC check
+----------------------------------
+There are 3 steps to enable ECC check to a section of DDR
+
+    - Defining ECC regions
+    - Pre-loading regions with a known pattern
+    - Enabling ECC check
+
+Defining ECC regions
+********************
+Address ranges can be specified by programming the region registers, there are 3 sets of region registers for entire DDR. User can either group multiple sections and enable only one region or can have multiple regions as required.
+
+.. code:: bash
+
+    DDRSS_ECC_R0_STR_ADDR_REG
+    DDRSS_ECC_R0_END_ADDR_REG
+    DDRSS_ECC_R1_STR_ADDR_REG
+    DDRSS_ECC_R1_END_ADDR_REG
+    DDRSS_ECC_R2_STR_ADDR_REG
+    DDRSS_ECC_R2_END_ADDR_REG
+
+
+Pre-loading ECC region with a known pattern
+*******************************************
+Before enabling **ECC check** the region to be protected must be initialized with a known pattern. User can either choose to do a CPU memset, which will be slow and affect boot time or use DMA to initialize which would be faster. The size of region to be protected also affects the boot time. This needs to be done before enabling **ECC check**.
+
+.. code:: bash
+
+    Set DDRSS_ECC_CTRL_REG[0] ECC_EN = 0x1 /* This will reassemble the data, ECC check is not turned ON yet */
+    Set DDRSS_ECC_CTRL_REG[1] RMW_EN = 0x1 /* This will compute the syndromes on ECC regions pre-loaded with a known pattern */
+
+.. IMPORTANT::
+    If ECC regions are not preloaded with a known pattern and ECC check gets enabled then multiple single/double bit errors will be logged.
+    It is highly recommended that ECC regions are initialized **before** enabling ECC check
+
+Enabling ECC check
+******************
+Once data is pre-loaded ECC check can be enabled which will start monitoring the specified ECC regions for errors. For 1-bit errors the MSMC2DDR bridge corrects the error and returns to the requestor, however the actual data in the memory is untouched. An issue will be logged in the ECC stats collector which system software can read and take corrective actions.
+
+.. code:: bash
+
+    Set DDRSS_ECC_CTRL_REG[2] ECC_CK = 0x1 /* This will enable ECC checking */
+
+ECC stats collector
+-------------------
+For 1-bit errors the correction is applied on-the-fly and the address location is recorded in a register. The number of 1-bit errors are also counted and recorded in a register. There is also an option of specifying a threshold for 1-bit errors which when met or exceeded MSMC2DDR bridge can be programmed to send a high priority error interrupt to the user.
+
+.. code:: bash
+
+    DDRSS_ECC_1B_ERR_ADR_LOG_REG   /* Reports address location of 1-bit error */
+    DDRSS_ECC_1B_ERR_CNT_REG       /* Records the number of 1-bit errors */
+    DDRSS_ECC_1B_ERR_THRSH_REG     /* Register to specify the threshold for 1-bit errors */
+
+For 2-bit errors there is no correction applied and the MSMC2DDR bridge registers the address location and issues a high priority error interrupt to the user to take corrective actions.
+
+.. code:: bash
+
+    DDRSS_ECC_2B_ERR_ADR_LOG_REG   /* Reports address location of 2-bit errors */
+
+Refer to **ECC Statistics** section under MSMC2DDR Bridge chapter in the TRM for more details
+
+Advance topic - ECC Cache
+-------------------------
+The MSMC2DDR bridge implements a 64byte wide, 128 line deep, read allocate, fully associative cache to allocate ECC syndromes. User can program and change the allocation policy by reserving cache lines to specific RouteID. Example allocation could be as shown
+
+.. code:: bash
+
+    cache line 0 - RouteID 0
+    cache line 1 - RouteID 0
+    cache line 2 - RouteID 0
+    cache line 3 - RouteID 0
+    cache line 4 - RouteID 1
+    cache line 5 - RouteID 1
+    cache line 6 - RouteID 1
+    cache line 7 - RouteID 1
+    ...
+    
+Write to **DDRSS_ECC_RID_INDX_REG** and **DDRSS_ECC_RID_VAL_REG** registers back to back for multiple line allocations. 
+
+.. NOTE::
+    The ECC cache performance is studied extensively and it is recommended to leave it as default settings for optimal performance. 
+    If a need arises for manual allocation, it is recommended NOT to allocate more than 4 cache lines per RouteID and also leave about 16 cache lines unassigned which can be used by rest of the SoC
+    Please refer to the **Route ID** tables under System Interconnect chapter in TRM.
+
+ECC Recommendations
+-------------------
+- Use TI's inline ECC in MSMC2DDR bridge instead of ECC implementation in DDRSS as its more optimal.
+- Check system memory map to identify critical sections which requires ECC and non-critical sections which do not require ECC.
+- Define ECC regions to cover only **critical sections** such as code/data/const etc. and NOT image buffers which are several Mega Bytes in size. 
+- Set aside 1/9th of the total available memory for storing ECC syndromes. These syndromes are interleaved with data as explained above
+- Enable ECC check in u-boot right after DDR init. ECC regions should be initialized with a known pattern. Use DMA to initialize the memory which will help reduce boot time.
+- Stick to default ECC cache line allocation policy. If a need arises allocate not more than 4 cache lines per RouteID. Always leave a few cache lines un-alloted for rest of SoC traffic.
+
+Reference Implementation on Linux u-boot
+----------------------------------------
+This section provides reference code to program ECC in MSMC2DDR bridge. User will have to modify as per their use-case requirements.
+
+Identify **critical sections** 
+******************************
+From system_memory_map.html available at **vision_apps/apps/basic_demos/app_tirtos/tirtos_linux/system_memory_map.html**
+
+Address range from **0xA000_0000** to **0xABFF_FFFF** is identified as ECC region
+
+.. figure::  images/ddr_ecc_critical_sections.png
+
+Program the ECC Region registers
+********************************
+As the ECC region identified is contiguous we can use just one set of region registers
+
+In the file **<PSDK_LINUX_PATH>/board-support/u-boot-<commit-id>/drivers/ram/k3-j721e/k3-j721e-ddrss.c** enable ECC regions as below,
+
+.. code:: bash
+
+    #define DDRSS_ECC_R0_STR_ADDR_REG  (0x02980130U)
+    #define DDRSS_ECC_R0_END_ADDR_REG  (0x02980134U)
+    #define DDRSS_ECC_R1_STR_ADDR_REG  (0x02980138U)
+    #define DDRSS_ECC_R1_END_ADDR_REG  (0x0298013CU)
+    #define DDRSS_ECC_R2_STR_ADDR_REG  (0x02980140U)
+    #define DDRSS_ECC_R2_END_ADDR_REG  (0x02980144U)
+
+    static void set_ecc_range_r0(unsigned int start_address, unsigned int size)
+    {
+        *((unsigned int *)DDRSS_ECC_R0_STR_ADDR_REG) = (start_address) >> 16;
+        *((unsigned int *)DDRSS_ECC_R0_END_ADDR_REG) = (start_address + size - 1) >> 16;
+    }
+
+    static void set_ecc_range_r1(unsigned int start_address, unsigned int size)
+    {
+        *((unsigned int *)DDRSS_ECC_R1_STR_ADDR_REG) = (start_address) >> 16;
+        *((unsigned int *)DDRSS_ECC_R1_END_ADDR_REG) = (start_address + size - 1) >> 16;
+    }
+
+    static void set_ecc_range_r2(unsigned int start_address, unsigned int size)
+    {
+        *((unsigned int *)DDRSS_ECC_R2_STR_ADDR_REG) = (start_address) >> 16;
+        *((unsigned int *)DDRSS_ECC_R2_END_ADDR_REG) = (start_address + size - 1) >> 16;
+    }
+
+    ...
+
+    #define DDR_BASE (0x80000000U)
+
+    static void j721e_lpddr4_ecc_init()
+    {
+        unsigned int ecc_region_start = 0xA0000000; /* Obtained from system_memory_map.html */
+        unsigned int ecc_range = 0xAC000000 - 0xA0000000; /* Protect only critical section identified */
+
+        /* While programming the region address, subtract the DDR_BASE */
+        set_ecc_range_r0((unsigned int)ecc_region_start - (unsigned int)DDR_BASE, ecc_range);
+        ...
+    }
+
+.. IMPORTANT::
+    - Subtract the DDR base before programming the region start address
+    - Length of ECC region should be in bytes
+
+Revise the total available space
+********************************
+In the file **<PSDK_LINUX_PATH>/board-support/u-boot-<commit-id>/board/ti/j721e/evm.c** update the available size to 1/9th the total space.
+Here we reduce it by 512MB which is more than 1/9th of total space considering 4GB DDR space.
+
+.. code:: bash
+
+    int dram_init_banksize(void)
+    {
+        /* Bank 0 declares the memory available in the DDR low region */
+        gd->bd->bi_dram[0].start = CONFIG_SYS_SDRAM_BASE;
+        gd->bd->bi_dram[0].size = 0x80000000;
+        gd->ram_size = 0x80000000;
+
+    #ifdef CONFIG_PHYS_64BIT
+        /* Bank 1 declares the memory available in the DDR high region */
+        gd->bd->bi_dram[1].start = CONFIG_SYS_SDRAM_BASE1;
+        gd->bd->bi_dram[1].size = 0x80000000 - 0x20000000; /* Reduce size by 512MB */
+        gd->ram_size = 0x100000000 - 0x20000000; /* Reduce size by 512MB */
+    #endif
+
+        return 0;
+    }
+
+Enable ECC and pre-load the DDR with known pattern
+**************************************************
+Enable the ECC to reassemble the contents of DDR and initialize with a known patten. In this implementation CPU copy is used but using DMA to initialize will help reduce boot time.
+
+In the file **<PSDK_LINUX_PATH>/board-support/u-boot-<commit-id>/drivers/ram/k3-j721e/k3-j721e-ddrss.c** enable ECC as below,
+
+.. code:: bash
+
+    #define DDRSS_ECC_CTRL_REG (0x02980120U)
+
+    static void enable_ecc()
+    {
+        /* bit0 - ECC_EN   - 1 */
+        /* bit1 - RMW_EN   - 1 */
+        /* bit2 - ECC_CK   - 0 */
+        /* bit4 - WR_ALLOC - 1 */
+        *((unsigned int *)DDRSS_ECC_CTRL_REG) = 0x00000013;
+    }
+
+    /* Routine to fill memory with provided 32-bit pattern */
+    static void clear_mem_sect(unsigned int *pAddr, unsigned int size, unsigned int word)
+    {
+        int i;
+
+        /* This CPU copy will be slow, use DMA to perform the same task for faster boot */
+        for(i = 0; i < (size / 4); i++)
+        {
+            pAddr[i] = word;
+        }
+    }
+
+    ...
+
+    static void j721e_lpddr4_ecc_init()
+    {
+        unsigned int ecc_region_start = 0xA0000000; /* Obtained from system_memory_map.html */
+        unsigned int ecc_range = 0xAC000000 - 0xA0000000; /* Protect only critical section identified */
+
+        /* While programming the region address, subtract the DDR_BASE */
+        set_ecc_range_r0((unsigned int)ecc_region_start - (unsigned int)DDR_BASE, ecc_range);
+
+        /* Enable ECC */
+        enable_ecc();
+
+        /* Pre-load ECC region with known pattern, say 0x00000000 */
+        clear_mem_sect((unsigned int *)ecc_region_start, ecc_range, 0x00000000);
+
+        ...
+    }
+
+Enable ECC check
+****************
+Once ECC region is enabled and pre-loaded with known pattern clear the 1 bit count register and enable ECC.
+
+In the file **<PSDK_LINUX_PATH>/board-support/u-boot-<commit-id>/drivers/ram/k3-j721e/k3-j721e-ddrss.c** enable ECC check as below,
+
+.. code:: bash
+
+    static void enable_ecc_check()
+    {
+        /* bit0 - ECC_EN   - 1  */
+        /* bit1 - RMW_EN   - 1  */
+        /* bit2 - ECC_CK   - 1  */
+        /* bit4 - WR_ALLOC - 1  */
+        
+        *((unsigned int *)DDRSS_ECC_CTRL_REG) = 0x00000017;
+    }
+
+    #define DDRSS_ECC_1B_ERR_CNT_REG (0x02980150U)
+
+    static void clr_ecc_1bit_cnt()
+    {
+        /* Writing a 1 clears the register */
+        *((unsigned int *)DDRSS_ECC_1B_ERR_CNT_REG) = 1;
+    }
+
+    ...
+
+    static void j721e_lpddr4_ecc_init()
+    {
+        unsigned int ecc_region_start = 0xA0000000; /* Obtained from system_memory_map.html */
+        unsigned int ecc_range = 0xAC000000 - 0xA0000000; /* Protect only critical section identified */
+
+        /* While programming the region address, subtract the DDR_BASE */
+        set_ecc_range_r0((unsigned int)ecc_region_start - (unsigned int)DDR_BASE, ecc_range);
+
+        /* Enable ECC */
+        enable_ecc();
+
+        /* Pre-load ECC region with known pattern, say 0x00000000 */
+        clear_mem_sect((unsigned int *)ecc_region_start, ecc_range, 0x00000000);
+
+        /* Clear the 1 bit err log register */
+        clr_ecc_1bit_cnt();
+
+        /* Enable ECC checking */
+        enable_ecc_check();
+    }
+
+All this must be done just after DDR start
+
+.. code:: bash
+
+    static int j721e_ddrss_probe(struct udevice *dev)
+    {
+        ...
+
+        j721e_lpddr4_start();
+
+        /* Enable ECC checking right after DDR start */
+        j721e_lpddr4_ecc_init();
+
+        return ret;
+    }
